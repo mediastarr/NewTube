@@ -1,0 +1,260 @@
+import React, { useEffect, useRef, useState } from "react";
+import YouTube from "react-youtube";
+
+const YT_API_KEY = "YOUR_YOUTUBE_API_KEY"; // <-- Insert your API key!
+const BG = "rgba(20,24,36,0.97)";
+const ACCENT = "#62a0ff";
+const RADIUS = 18;
+
+// ----------- MW Display Adapter helpers -----------
+function sendToWearables(view) {
+  // Integration point: serialize virtual view to MW Display SDK if running on device
+  // e.g. window.MWDisplay.send(view)
+}
+
+// ----------- "FlexBox" UI Primitives --------------
+function FlexBox({ dir = "column", spacing = 12, align = "start", cross = "center", style = {}, ...props }) {
+  // Use native web flex for web, but easy to map to MW Display DSL in Swift
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: dir,
+        gap: spacing,
+        alignItems: cross,
+        justifyContent: align,
+        ...style
+      }}
+      {...props}
+    />
+  );
+}
+
+function GlassPanel({ children, style }) {
+  // Wrap the main app panel for glass/additive look. In MW Display, just a FlexBox/panel with transparent BG.
+  return (
+    <div
+      style={{
+        background: BG,
+        color: "#e5eaff",
+        width: 600,
+        height: 600,
+        borderRadius: RADIUS,
+        boxShadow: "0 9px 60px #000c, 0 1.5px 15px 1px #5070b4c0",
+        border: `2px solid #426bae44`,
+        userSelect: "none",
+        position: "relative",
+        overflow: "hidden",
+        fontFamily: "system-ui, sans-serif",
+        ...style
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+export default function App() {
+  // State
+  const [screen, setScreen] = useState("search"); // "search", "list", "player"
+  const [search, setSearch] = useState(""); // current query in search box
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState([]); // [{id, title, thumb}]
+  const [sel, setSel] = useState(0); // selected index
+  const [video, setVideo] = useState(null); // {id, title}
+
+  // Iframe API control ref
+  const playerRef = useRef();
+
+  // For autofocus
+  const searchBox = useRef();
+
+  // ---- Search YouTube API ----
+  async function fetchVideos(q) {
+    setLoading(true);
+    setResults([]);
+    setSel(0);
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&q=${encodeURIComponent(q)}&key=${YT_API_KEY}`;
+    const data = await fetch(url).then((r) => r.json());
+    setResults(
+      (data.items || []).map((v) => ({
+        id: v.id.videoId,
+        title: v.snippet.title,
+        thumb: v.snippet.thumbnails.medium.url
+      }))
+    );
+    setLoading(false);
+
+    // MW Display: send video list UI as view
+    // sendToWearables(MWFlexBoxListView(q, ...));
+  }
+
+  // ---- Keyboard navigation handler ----
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (screen === "search") {
+        if (e.key === "Enter") {
+          fetchVideos(search || "lofi music");
+          setScreen("list");
+        } else if (e.key === "ArrowDown") {
+          setScreen("list");
+          setSel(0);
+          e.preventDefault();
+        }
+      } else if (screen === "list") {
+        if (e.key === "ArrowDown") {
+          setSel((i) => (i + 1) % results.length);
+          e.preventDefault();
+        } else if (e.key === "ArrowUp") {
+          setSel((i) => (i - 1 + results.length) % results.length);
+          e.preventDefault();
+        } else if (e.key === "ArrowLeft") {
+          setScreen("search");
+          e.preventDefault();
+        } else if (e.key === "Enter") {
+          if (results[sel]) {
+            setVideo(results[sel]);
+            setScreen("player");
+          }
+        }
+      } else if (screen === "player") {
+        if (e.key === "Enter") {
+          // Play/pause toggle
+          playerRef.current?.internalPlayer?.getPlayerState().then((st) => {
+            if (st === 1) playerRef.current.internalPlayer.pauseVideo();
+            else playerRef.current.internalPlayer.playVideo();
+          });
+        } else if (e.key === "ArrowLeft") {
+          playerRef.current?.internalPlayer?.seekBy(-10);
+        } else if (e.key === "ArrowRight") {
+          playerRef.current?.internalPlayer?.seekBy(10);
+        } else if (e.key === "ArrowDown") {
+          setScreen("list");
+        }
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line
+  }, [screen, sel, search, results]);
+
+  // ---- Focuses input field in search view ----
+  useEffect(() => {
+    if (screen === "search") searchBox.current?.focus();
+  }, [screen]);
+
+  // ------------------- Render ---------------------
+  return (
+    <GlassPanel>
+      {/* App header */}
+      <FlexBox dir="row" style={{ padding: "18px 24px 8px 24px" }} cross="center">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
+          alt="YouTube"
+          style={{ height: 34, marginRight: 14, filter: "brightness(1.15)" }}
+        />
+        <span style={{ fontWeight: 700, fontSize: 20, color: ACCENT, letterSpacing: 0.1, flex: 1 }}>
+          MW GlassTube
+        </span>
+      </FlexBox>
+      {/* Search box */}
+      <FlexBox dir="column" spacing={7} style={{ padding: "0 24px 12px 26px" }}>
+        <input
+          ref={searchBox}
+          autoFocus
+          disabled={screen !== "search"}
+          value={search}
+          tabIndex={-1}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search videos…"
+          style={{
+            fontSize: 18,
+            background: "#1e2535",
+            border: screen === "search" ? `2px solid ${ACCENT}` : "2px solid #333",
+            borderRadius: 8,
+            padding: "8px 14px",
+            color: "#fff",
+            outline: "none",
+            width: 380
+          }}
+        />
+        <span style={{ color: "#699ef7", fontSize: 13 }}>[Enter]=Search &nbsp; [↓]=List &nbsp; [Tab/Mouse are disabled]</span>
+      </FlexBox>
+      {/* Results list */}
+      <div style={{
+        minHeight: 210, maxHeight: 215,
+        overflowY: screen === "list" ? "auto" : "hidden",
+        padding: "0 14px",
+        marginTop: 2
+      }}>
+        {loading && <span style={{ color: "#7fbaf7", fontSize: 18, marginLeft: 16 }}>Loading...</span>}
+        {!loading && results.length === 0 && (
+          <span style={{ color: "#56698a", fontSize: 17, marginLeft: 16 }}>No results found</span>
+        )}
+        {!loading && results.map((v, i) => (
+          <FlexBox key={v.id} dir="row" spacing={17} cross="center"
+            style={{
+              background: screen === "list" && sel === i ? ACCENT : "#22314c",
+              color: screen === "list" && sel === i ? "#fff" : "#eff5fc",
+              borderRadius: 11, padding: "7px 12px", cursor: "pointer", fontWeight: 500,
+              boxShadow: screen === "list" && sel === i ? "0 2.5px 12px #46a0ff55" : undefined,
+              outline: screen === "list" && sel === i ? `2px solid #fff6` : undefined
+            }}>
+            <img src={v.thumb} alt="" height={38} width={68}
+              style={{
+                borderRadius: 8,
+                boxShadow: screen === "list" && sel === i ? "0 2px 14px #8bc8ff39" : undefined,
+                filter: screen === "list" && sel === i ? "brightness(1.1)" : "brightness(0.8)"
+              }} />
+            <span style={{ width: 330, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>
+              {v.title}
+            </span>
+          </FlexBox>
+        ))}
+      </div>
+      {/* Player panel */}
+      {screen === "player" && video && (
+        <div style={{
+          position: "absolute", left: 0, top: 0, width: 600, height: 600,
+          background: "rgba(10,16,32,0.98)", borderRadius: RADIUS,
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          zIndex: 10
+        }}>
+          <YouTube
+            videoId={video.id}
+            ref={playerRef}
+            opts={{
+              width: 520,
+              height: 293,
+              playerVars: { autoplay: 1, controls: 0 }
+            }}
+          />
+          <span style={{
+            marginTop: 18,
+            color: "#fff", fontWeight: 600, fontSize: 17, textAlign: "center",
+            textShadow: "0 2px 19px #2a6bfa55"
+          }}>
+            {video.title}
+          </span>
+          <FlexBox dir="row" spacing={11} cross="center" style={{ color: ACCENT, fontSize: 15, marginTop: 19 }}>
+            <kbd style={kbd}>Enter</kbd> Play/Pause
+            <kbd style={kbd}>←</kbd> Rewind
+            <kbd style={kbd}>→</kbd> Fast Forward
+            <kbd style={kbd}>↓</kbd> Back
+          </FlexBox>
+        </div>
+      )}
+    </GlassPanel>
+  );
+}
+
+// MW-style key legend styling
+const kbd = {
+  background: "#212c49",
+  color: "#76a8ff",
+  padding: "0 7px",
+  borderRadius: 7,
+  border: "1.5px solid #68a5fc22",
+  fontSize: 15,
+  fontWeight: 600
+};
