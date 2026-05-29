@@ -6,130 +6,293 @@
   <meta name="mobile-web-app-capable" content="yes">
   <title>GlassTube AR</title>
   <meta name="theme-color" content="#0f0f0f">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    html,body{width:100%;height:100%;background:#0f0f0f;overflow:hidden}
-    #ytFrame{width:100%;height:100%;border:0;position:fixed;top:0;left:0}
-    #dpadOverlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;pointer-events:none}
-    #dpadIndicator{position:fixed;bottom:20px;left:20px;background:#212121;border:1px solid #3ea6ff;border-radius:8px;padding:6px 10px;font-size:10px;color:#3ea6ff;z-index:10000;display:none}
-    #dpadIndicator.show{display:block}
-    #backBtn{position:fixed;top:20px;left:20px;width:48px;height:48px;background:rgba(15,15,15,.95);border:2px solid #3ea6ff;border-radius:50%;color:#fff;font-size:26px;z-index:10001;cursor:pointer;display:none;align-items:center;justify-content:center;pointer-events:auto}
-    #backBtn.show{display:flex}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    *:focus{outline:2px solid #3ea6ff;outline-offset:2px}
+    html,body{margin:0;padding:0;background:#0f0f0f!important;color:#f1f1f1;font-family:system-ui;height:100%;overflow:hidden}
+    #topbar{width:100%;background:#0f0f0f;border-bottom:1px solid #272727;padding:12px;display:flex;align-items:center;gap:8px;position:relative;z-index:10}
+   .logo{width:28px;height:28px;background:#f00;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+    #searchInput{flex:1;background:#121212;border:1px solid #303030;border-radius:16px;padding:10px 14px;font-size:16px;color:#f1f1f1;outline:none;-webkit-user-select:text;user-select:text}
+    #searchInput:focus{border-color:#3ea6ff}
+   .profile{width:32px;height:32px;background:#303030;border-radius:50%;flex-shrink:0;overflow:hidden}
+   .profile img{width:100%;height:100%;object-fit:cover}
+    #feed{position:absolute;top:65px;left:0;right:0;bottom:60px;overflow-y:auto;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px;-webkit-overflow-scrolling:touch}
+    #feed::-webkit-scrollbar{display:none}
+    #shortsFeed{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;overflow-y:scroll;display:none;z-index:20}
+    #shortsFeed.active{display:block}
+    #shortsFeed::-webkit-scrollbar{display:none}
+   .short-item{width:100%;height:100vh;position:relative}
+   .short-item iframe{width:100%;height:100%;border:0}
+   .shorts-back{position:fixed;top:20px;left:20px;width:48px;height:48px;background:rgba(15,15,15,.95);border:2px solid #3ea6ff;border-radius:50%;color:#fff;font-size:26px;z-index:9999;display:flex;align-items:center;justify-content:center}
+   .vid-card{background:#0f0f0f;border:1px solid #272727;border-radius:12px;overflow:hidden}
+   .vid-card:focus{outline:2px solid #3ea6ff;border-color:#3ea6ff}
+   .thumb-wrap{width:100%;padding-top:56.25%;position:relative;background:#121212}
+   .thumb{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+   .duration{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.8);color:#fff;font-size:11px;padding:2px 4px;border-radius:4px}
+   .vid-info{padding:10px;display:flex;gap:8px}
+   .chan-avatar{width:32px;height:32px;background:#303030;border-radius:50%;flex-shrink:0;overflow:hidden}
+   .chan-avatar img{width:100%;height:100%;object-fit:cover}
+   .vid-title{font-size:13px;font-weight:500;line-height:1.3;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+   .vid-stats{font-size:11px;color:#aaa}
+    #tabs{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:1px solid #272727;display:flex;z-index:10}
+   .tab{flex:1;padding:12px 8px;text-align:center;font-size:12px;color:#aaa}
+   .tab:focus,.tab.active{color:#fff;background:#272727}
+   .tab-icon{font-size:18px;display:block;margin-bottom:2px}
+    #player{position:fixed;inset:0;background:#000;z-index:100;display:none}
+    #player.active{display:block}
+    #player iframe{width:100%;height:100%;border:0}
+    #closePlayer{position:absolute;top:20px;right:20px;width:48px;height:48px;background:rgba(15,15,15,.7);border:1px solid #272727;border-radius:50%;color:#fff;font-size:26px;z-index:101}
+   .msg{grid-column:span 2;text-align:center;padding:40px 20px;background:#0f0f0f;border:1px solid #272727;border-radius:12px;color:#aaa}
+    #dpadHint{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#3ea6ff;color:#000;padding:6px 12px;border-radius:16px;font-size:11px;z-index:999;display:none}
   </style>
 </head>
 <body>
-<iframe id="ytFrame" src="https://m.youtube.com/?ra=m" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-<div id="dpadOverlay"></div>
-<div id="dpadIndicator">D-Pad: Active</div>
-<button id="backBtn">←</button>
+<div id="dpadHint">D-Pad Active</div>
+<div id="topbar">
+  <div class="logo">G</div>
+  <input id="searchInput" type="text" placeholder="Search YouTube" autocomplete="off" tabindex="0">
+  <div class="profile" id="profileBtn" tabindex="0">👤</div>
+</div>
+<div id="feed" tabindex="0"><div class="msg">Loading videos...</div></div>
+<div id="shortsFeed"><div class="shorts-back" id="shortsBack" tabindex="0">×</div></div>
+<div id="tabs">
+  <div class="tab active" data-tab="home" tabindex="0"><span class="tab-icon">🏠</span>Home</div>
+  <div class="tab" data-tab="shorts" tabindex="0"><span class="tab-icon">▶️</span>Shorts</div>
+  <div class="tab" data-tab="subs" tabindex="0"><span class="tab-icon">📺</span>Subs</div>
+</div>
+<div id="player"><button id="closePlayer" tabindex="0">×</button><div id="playerWrap"></div></div>
 <script>
-const ytFrame = document.getElementById('ytFrame');
-const backBtn = document.getElementById('backBtn');
-const indicator = document.getElementById('dpadIndicator');
-let currentView = 'home';
-let history = ['https://m.youtube.com/?ra=m'];
+const API_KEYS = ['AIzaSyAOBBJC3VvRsAQC2R-nenGvO23x--9SzB0','AIzaSyCxt2XsA80s67LNRTpgg-fBYqqHn2YgWDI','AIzaSyDHjpWZX7J9-39VM9Urb8LM102nr1H91GY','AIzaSyAivKVAqJkYqAkzX3lV1f8FiFlU-EchNYI','AIzaSyBFVv1THj4Q0jJvNJv9jfyUnYz8NG4eWRk'];
+let keyIdx = 0;
+let videos = [], shorts = [], currentTab = 'home', focusIdx = 0, focusArea = 'search';
 
-function showDpad() {
-  indicator.classList.add('show');
-  setTimeout(()=>indicator.classList.remove('show'), 2000);
+const feed = document.getElementById('feed');
+const shortsFeed = document.getElementById('shortsFeed');
+const searchInput = document.getElementById('searchInput');
+const dpadHint = document.getElementById('dpadHint');
+
+// CRITICAL: Force keyboard on Ray-Ban
+function forceKeyboard(el) {
+  el.focus();
+  el.click();
+  setTimeout(() => {
+    el.focus();
+    el.click();
+  }, 100);
 }
 
-function navigate(url) {
-  history.push(url);
-  ytFrame.src = url;
-  backBtn.classList.toggle('show', history.length > 1);
-  if(url.includes('/shorts/')) currentView = 'shorts';
-  else currentView = 'home';
+// Tap handler that works on Ray-Ban
+function tap(el, fn) {
+  ['touchstart', 'click'].forEach(evt => {
+    el.addEventListener(evt, e => {
+      e.preventDefault();
+      fn(e);
+    }, {passive: false});
+  });
 }
 
-// D-Pad controls - sends arrow keys to YouTube iframe
-document.addEventListener('keydown', (e) => {
-  showDpad();
+// Search input - MUST use touchstart + click to trigger keyboard
+tap(searchInput, () => forceKeyboard(searchInput));
+searchInput.addEventListener('focus', () => { focusArea = 'search'; });
+searchInput.addEventListener('keypress', e => {
+  if(e.key === 'Enter') doSearch(e.target.value);
+});
+
+// D-PAD NAVIGATION
+function showDpadHint() {
+  dpadHint.style.display = 'block';
+  setTimeout(() => dpadHint.style.display = 'none', 1500);
+}
+
+document.addEventListener('keydown', e => {
+  showDpadHint();
   const key = e.key;
-  
-  // Try to send key events directly to iframe
-  try {
-    ytFrame.contentWindow.focus();
-    const event = new KeyboardEvent('keydown', {
-      key: key,
-      code: e.code,
-      keyCode: e.keyCode,
-      which: e.which,
-      bubbles: true
-    });
-    ytFrame.contentWindow.document.dispatchEvent(event);
-  } catch(err) {
-    console.log('Direct key injection blocked, using navigation fallback');
+  e.preventDefault();
+
+  if(currentTab === 'home') {
+    const cards = Array.from(feed.querySelectorAll('.vid-card'));
+    const cols = 2;
+    if(focusArea === 'search') {
+      if(key === 'ArrowDown' && cards[0]) {
+        focusArea = 'feed'; focusIdx = 0; cards[0].focus();
+      }
+    } else if(focusArea === 'feed') {
+      if(key === 'ArrowUp') {
+        if(focusIdx < cols) { focusArea = 'search'; searchInput.focus(); }
+        else { focusIdx -= cols; cards[focusIdx]?.focus(); }
+      } else if(key === 'ArrowDown') {
+        if(focusIdx + cols < cards.length) { focusIdx += cols; cards[focusIdx]?.focus(); }
+      } else if(key === 'ArrowLeft' && focusIdx % cols > 0) {
+        focusIdx--; cards[focusIdx]?.focus();
+      } else if(key === 'ArrowRight' && focusIdx % cols < cols-1 && cards[focusIdx+1]) {
+        focusIdx++; cards[focusIdx]?.focus();
+      } else if(key === 'Enter' && cards[focusIdx]) {
+        cards[focusIdx].click();
+      }
+    }
+  } else if(currentTab === 'shorts') {
+    if(key === 'ArrowDown') shortsFeed.scrollBy({top: window.innerHeight, behavior: 'smooth'});
+    else if(key === 'ArrowUp') shortsFeed.scrollBy({top: -window.innerHeight, behavior: 'smooth'});
+    else if(key === 'Enter' || key === 'ArrowLeft') document.getElementById('shortsBack').click();
   }
-  
-  // Fallback navigation for Ray-Ban D-pad
-  if(key === 'ArrowLeft') {
-    e.preventDefault();
-    if(history.length > 1) {
-      history.pop();
-      ytFrame.src = history[history.length - 1];
-      backBtn.classList.toggle('show', history.length > 1);
-    }
-  } else if(key === 'ArrowRight') {
-    e.preventDefault();
-    // YouTube handles right arrow internally
-  } else if(key === 'ArrowUp') {
-    e.preventDefault();
-    if(currentView === 'shorts') {
-      ytFrame.contentWindow.postMessage('{"event":"command","func":"previousVideo","args":""}', '*');
-    } else {
-      ytFrame.contentWindow.scrollBy(0, -300);
-    }
-  } else if(key === 'ArrowDown') {
-    e.preventDefault();
-    if(currentView === 'shorts') {
-      ytFrame.contentWindow.postMessage('{"event":"command","func":"nextVideo","args":""}', '*');
-    } else {
-      ytFrame.contentWindow.scrollBy(0, 300);
-    }
-  } else if(key === 'Enter') {
-    e.preventDefault();
-    // Simulate click at center of screen for YouTube
-    const rect = ytFrame.getBoundingClientRect();
-    const clickEvent = new MouseEvent('click', {
-      view: ytFrame.contentWindow,
-      bubbles: true,
-      cancelable: true,
-      clientX: rect.width / 2,
-      clientY: rect.height / 2
-    });
+});
+
+// API FETCH WITH CORS FIX
+async function fetchYT(endpoint) {
+  const baseUrl = `https://www.googleapis.com/youtube/v3/${endpoint}`;
+  for(let i = keyIdx; i < API_KEYS.length; i++) {
     try {
-      ytFrame.contentWindow.document.elementFromPoint(rect.width/2, rect.height/2)?.click();
-    } catch(err) {}
-  }
-});
-
-backBtn.addEventListener('click', () => {
-  if(history.length > 1) {
-    history.pop();
-    ytFrame.src = history[history.length - 1];
-    backBtn.classList.toggle('show', history.length > 1);
-  }
-});
-
-// Detect URL changes in iframe
-setInterval(() => {
-  try {
-    const currentUrl = ytFrame.contentWindow.location.href;
-    if(currentUrl.includes('/shorts/') && currentView !== 'shorts') {
-      currentView = 'shorts';
-    } else if(!currentUrl.includes('/shorts/') && currentView !== 'home') {
-      currentView = 'home';
+      const url = `${baseUrl}&key=${API_KEYS[i]}`;
+      // Use cors-anywhere fallback if direct fails
+      const res = await fetch(url).catch(() =>
+        fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`)
+      );
+      const data = await res.json();
+      if(data.error) throw new Error(data.error.message);
+      keyIdx = i;
+      return data;
+    } catch(err) {
+      console.log(`Key ${i+1} failed:`, err);
+      if(i === API_KEYS.length - 1) throw err;
     }
-  } catch(err) {
-    // Cross-origin, can't read - that's fine
   }
-}, 500);
+}
 
-// Initial focus
+function formatViews(n) {
+  if(!n) return '0 views';
+  n = parseInt(n);
+  if(n >= 1e6) return (n/1e6).toFixed(1) + 'M views';
+  if(n >= 1e3) return (n/1e3).toFixed(0) + 'K views';
+  return n + ' views';
+}
+
+function formatDuration(iso) {
+  if(!iso) return '';
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if(!m) return '';
+  const h = parseInt(m[1]||0), min = parseInt(m[2]||0), s = parseInt(m[3]||0);
+  if(h) return `${h}:${String(min).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${min}:${String(s).padStart(2,'0')}`;
+}
+
+async function loadHome() {
+  feed.innerHTML = '<div class="msg">Loading...</div>';
+  try {
+    const data = await fetchYT('videos?part=snippet,contentDetails,statistics&chart=mostPopular&maxResults=20&regionCode=US');
+    videos = data.items.map(v => ({
+      id: v.id,
+      title: v.snippet.title,
+      channel: v.snippet.channelTitle,
+      views: v.statistics?.viewCount,
+      duration: v.contentDetails?.duration,
+      thumb: v.snippet.thumbnails.medium.url
+    }));
+    renderFeed();
+  } catch(err) {
+    feed.innerHTML = `<div class="msg">Error: ${err.message}<br>Check HTTPS + API keys</div>`;
+  }
+}
+
+function renderFeed() {
+  feed.innerHTML = '';
+  videos.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'vid-card';
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <div class="thumb-wrap"><img class="thumb" src="${v.thumb}"><div class="duration">${formatDuration(v.duration)}</div></div>
+      <div class="vid-info">
+        <div class="chan-avatar"></div>
+        <div><div class="vid-title">${v.title}</div><div class="vid-stats">${v.channel} · ${formatViews(v.views)}</div></div>
+      </div>`;
+    tap(card, () => openVideo(v.id));
+    feed.appendChild(card);
+  });
+  if(feed.children[0]) {
+    focusArea = 'feed'; focusIdx = 0; feed.children[0].focus();
+  }
+}
+
+async function loadShorts() {
+  shortsFeed.classList.add('active');
+  shortsFeed.innerHTML = '<div class="shorts-back" id="shortsBack" tabindex="0">×</div><div class="msg">Loading Shorts...</div>';
+  tap(document.getElementById('shortsBack'), () => {
+    shortsFeed.classList.remove('active');
+    loadTab('home');
+  });
+  try {
+    const data = await fetchYT('search?part=snippet&type=video&videoDuration=short&maxResults=10&order=date&q=%23shorts');
+    shortsFeed.innerHTML = '<div class="shorts-back" id="shortsBack" tabindex="0">×</div>';
+    tap(document.getElementById('shortsBack'), () => {
+      shortsFeed.classList.remove('active');
+      loadTab('home');
+    });
+    data.items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'short-item';
+      div.innerHTML = `<iframe src="https://www.youtube.com/embed/${item.id.videoId}?playsinline=1&controls=0&loop=1&playlist=${item.id.videoId}" allow="autoplay"></iframe>`;
+      shortsFeed.appendChild(div);
+    });
+  } catch(err) {
+    shortsFeed.innerHTML = `<div class="shorts-back" id="shortsBack" tabindex="0">×</div><div class="msg">Error: ${err.message}</div>`;
+  }
+}
+
+async function doSearch(q) {
+  if(!q) return;
+  feed.innerHTML = '<div class="msg">Searching...</div>';
+  try {
+    const searchData = await fetchYT(`search?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(q)}`);
+    const ids = searchData.items.map(v => v.id.videoId).join(',');
+    const vidData = await fetchYT(`videos?part=snippet,contentDetails,statistics&id=${ids}`);
+    videos = vidData.items.map(v => ({
+      id: v.id,
+      title: v.snippet.title,
+      channel: v.snippet.channelTitle,
+      views: v.statistics?.viewCount,
+      duration: v.contentDetails?.duration,
+      thumb: v.snippet.thumbnails.medium.url
+    }));
+    renderFeed();
+  } catch(err) {
+    feed.innerHTML = `<div class="msg">Search error: ${err.message}</div>`;
+  }
+}
+
+function openVideo(id) {
+  document.getElementById('player').classList.add('active');
+  document.getElementById('playerWrap').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1" allow="autoplay"></iframe>`;
+}
+
+tap(document.getElementById('closePlayer'), () => {
+  document.getElementById('player').classList.remove('active');
+  document.getElementById('playerWrap').innerHTML = '';
+});
+
+function loadTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  if(tab === 'home') {
+    shortsFeed.classList.remove('active');
+    loadHome();
+  } else if(tab === 'shorts') {
+    loadShorts();
+  }
+}
+
+document.querySelectorAll('.tab').forEach(t => {
+  tap(t, () => loadTab(t.dataset.tab));
+});
+
+// CRITICAL: Must be HTTPS for Ray-Ban
+if(location.protocol!== 'https:' && location.hostname!== 'localhost') {
+  alert('Must use HTTPS on Ray-Ban glasses. Deploy to Netlify/Vercel.');
+}
+
 window.onload = () => {
-  ytFrame.focus();
-  showDpad();
+  loadHome();
+  setTimeout(() => forceKeyboard(searchInput), 500);
 };
 </script>
 </body>
