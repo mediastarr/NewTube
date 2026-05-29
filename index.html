@@ -12,15 +12,15 @@
     html,body{margin:0;padding:0;background:#0f0f0f;color:#f1f1f1;font-family:system-ui;height:100%;overflow:hidden}
     #debug{position:fixed;top:0;left:0;right:0;background:#ff9800;color:#000;padding:6px;text-align:center;font-size:12px;font-weight:600;z-index:10000}
     #topbar{width:100%;background:#0f0f0f;border-bottom:3px solid #272727;padding:16px;display:flex;align-items:center;gap:12px;margin-top:36px}
- .logo{width:36px;height:36px;background:#f00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px}
+.logo{width:36px;height:36px;background:#f00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;flex-shrink:0}
     #searchBtn{flex:1;background:#1a1a1a;border:4px solid #404040;border-radius:24px;padding:16px 20px;font-size:20px;color:#f1f1f1;text-align:left}
     #searchBtn:focus{border-color:#3ea6ff;background:#252525}
     #feed{position:absolute;top:100px;left:0;right:0;bottom:80px;overflow-y:auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
     #feed::-webkit-scrollbar{display:none}
 .vid-card{background:#0f0f0f;border:4px solid #272727;border-radius:20px;overflow:hidden}
-.vid-card:focus{border-color:#3ea6ff;transform:scale(1.05);box-shadow:0 0 0 6px rgba(62,166,255,0.4)}
-.thumb-wrap{width:100%;padding-top:56.25%;position:relative;background:#1a1a1a}
-.thumb{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.vid-card:focus{border-color:#3ea6ff;transform:scale(1.03)}
+.thumb-wrap{width:100%;position:relative;background:#000;line-height:0}
+.thumb{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover}
 .duration{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.95);color:#fff;font-size:14px;padding:6px 10px;border-radius:8px;font-weight:700}
 .vid-info{padding:16px}
 .vid-title{font-size:16px;font-weight:700;line-height:1.3;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -29,14 +29,14 @@
 .tab{flex:1;padding:18px 8px;text-align:center;font-size:15px;color:#aaa;border:4px solid transparent;font-weight:600}
 .tab:focus,.tab.active{color:#fff;background:#1a1a1a;border-color:#3ea6ff}
     #player{position:fixed;inset:0;background:#000;z-index:100;display:none}
-    #player.active{display:block}
-    #player iframe{width:100%;height:100%;border:0}
-    #closePlayer{position:absolute;top:28px;right:28px;width:60px;height:60px;background:rgba(15,15,15,.95);border:4px solid #3ea6ff;border-radius:50%;color:#fff;font-size:36px}
+    #player.active{display:flex;align-items:center;justify-content:center}
+    #player iframe{width:100%;height:100%;border:0;max-width:100%;max-height:100%}
+    #closePlayer{position:absolute;top:28px;right:28px;width:60px;height:60px;background:rgba(15,15,15,.95);border:4px solid #3ea6ff;border-radius:50%;color:#fff;font-size:36px;z-index:101}
 .msg{grid-column:span 2;text-align:center;padding:60px 20px;background:#0f0f0f;border:4px solid #272727;border-radius:20px;color:#aaa;font-size:18px;font-weight:600}
   </style>
 </head>
 <body>
-<div id="debug">Initializing Ray-Ban SDK...</div>
+<div id="debug">Initializing...</div>
 <div id="topbar">
   <div class="logo">G</div>
   <button id="searchBtn" tabindex="0">Tap to search YouTube</button>
@@ -44,8 +44,7 @@
 <div id="feed" tabindex="0"></div>
 <div id="tabs">
   <div class="tab active" data-idx="0" tabindex="0">🏠 Home</div>
-  <div class="tab" data-idx="1" tabindex="0">🔍 Search</div>
-  <div class="tab" data-idx="2" tabindex="0">← Back</div>
+  <div class="tab" data-idx="1" tabindex="0">← Back</div>
 </div>
 <div id="player"><button id="closePlayer" tabindex="0">×</button><div id="playerWrap"></div></div>
 
@@ -64,25 +63,19 @@ function setDebug(msg, ok = false) {
   debug.style.color = ok? '#fff' : '#000';
 }
 
-// ===== META SDK INIT - MUST BE IN META VIEW APP =====
 async function initSDK() {
   if (typeof MetaWearables === 'undefined') {
     setDebug('ERROR: Open in Meta View App > Web Apps');
     feed.innerHTML = '<div class="msg">❌ Not on Ray-Ban<br><br>1. Open Meta View app<br>2. Menu > Web Apps<br>3. Enter this URL</div>';
-    return false;
+    return;
   }
 
   try {
     metaSDK = await MetaWearables.init({ appId: 'glasstube' });
-    setDebug('Ray-Ban SDK Connected ✓', true);
+    setDebug('Ray-Ban SDK Ready ✓', true);
     setTimeout(() => debug.style.display = 'none', 2000);
 
-    // D-PAD: 'up','down','left','right','select'
-    metaSDK.input.on('dpad', (e) => {
-      handleDpad(e.value);
-    });
-
-    // CAPTURE BUTTON: acts as Enter
+    metaSDK.input.on('dpad', (e) => handleDpad(e.value));
     metaSDK.input.on('button', (e) => {
       if (e.button === 'capture' && e.state === 'down') {
         document.activeElement?.click();
@@ -91,11 +84,9 @@ async function initSDK() {
 
     loadHome();
     setTimeout(() => searchBtn.focus(), 500);
-    return true;
 
   } catch (err) {
     setDebug('SDK Error: ' + err.message);
-    return false;
   }
 }
 
@@ -158,25 +149,22 @@ function handleDpad(dir) {
 
 function handleTab(idx) {
   if (idx === 0) {
+    player.classList.remove('active');
+    playerWrap.innerHTML = '';
     loadHome();
     focusArea = 'search';
     searchBtn.focus();
   } else if (idx === 1) {
-    focusArea = 'search';
-    openKeyboard();
-  } else if (idx === 2) {
     player.classList.remove('active');
     playerWrap.innerHTML = '';
   }
 }
 
-// ===== KEYBOARD: Uses Ray-Ban system dialog =====
 async function openKeyboard() {
   if (!metaSDK?.input?.requestTextInput) {
-    setDebug('ERROR: requestTextInput not available');
+    setDebug('ERROR: Text input not available');
     return;
   }
-
   try {
     setDebug('Opening Ray-Ban text input...', true);
     const result = await metaSDK.input.requestTextInput({
@@ -184,11 +172,9 @@ async function openKeyboard() {
       value: currentQuery,
       placeholder: 'Say or type search'
     });
-
     if (result?.text) {
       currentQuery = result.text;
       searchBtn.textContent = result.text;
-      setDebug('Searching: ' + result.text, true);
       doSearch(result.text);
     }
   } catch (err) {
@@ -198,7 +184,6 @@ async function openKeyboard() {
 
 searchBtn.addEventListener('click', openKeyboard);
 
-// ===== YOUTUBE API =====
 async function fetchYT(endpoint) {
   const url = `https://www.googleapis.com/youtube/v3/${endpoint}&key=${API_KEYS[keyIdx]}`;
   const res = await fetch(url);
@@ -233,7 +218,7 @@ async function loadHome() {
       channel: v.snippet.channelTitle,
       views: v.statistics?.viewCount,
       duration: v.contentDetails?.duration,
-      thumb: v.snippet.thumbnails.medium.url
+      thumb: v.snippet.thumbnails.high.url
     }));
     renderFeed();
   } catch (err) {
@@ -248,7 +233,10 @@ function renderFeed() {
     card.className = 'vid-card';
     card.tabIndex = 0;
     card.innerHTML = `
-      <div class="thumb-wrap"><img class="thumb" src="${v.thumb}"><div class="duration">${formatDuration(v.duration)}</div></div>
+      <div class="thumb-wrap">
+        <img class="thumb" src="${v.thumb}" loading="lazy">
+        <div class="duration">${formatDuration(v.duration)}</div>
+      </div>
       <div class="vid-info">
         <div class="vid-title">${v.title}</div>
         <div class="vid-stats">${v.channel} · ${formatViews(v.views)} views</div>
@@ -271,7 +259,7 @@ async function doSearch(q) {
       channel: v.snippet.channelTitle,
       views: v.statistics?.viewCount,
       duration: v.contentDetails?.duration,
-      thumb: v.snippet.thumbnails.medium.url
+      thumb: v.snippet.thumbnails.high.url
     }));
     renderFeed();
     focusArea = 'feed';
@@ -284,7 +272,8 @@ async function doSearch(q) {
 
 function openVideo(id) {
   player.classList.add('active');
-  playerWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1" allow="autoplay"></iframe>`;
+  // CRITICAL: allow="autoplay; encrypted-media" is required for YouTube on Ray-Ban
+  playerWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
 }
 
 document.getElementById('closePlayer').addEventListener('click', () => {
@@ -296,7 +285,6 @@ document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => handleTab(parseInt(tab.dataset.idx)));
 });
 
-// START
 if (location.protocol!== 'https:') {
   setDebug('ERROR: Must use HTTPS');
 } else {
