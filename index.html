@@ -6,176 +6,131 @@
   <meta name="mobile-web-app-capable" content="yes">
   <title>GlassTube AR</title>
   <meta name="theme-color" content="#0f0f0f">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="ray-ban-display" content="true">
-  <link rel="manifest" href="manifest.json">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    *:focus{outline:2px solid #3ea6ff;outline-offset:2px}
-    html, body {background:#0f0f0f!important;margin:0;padding:0}
-    body{color:#f1f1f1;font-family:'Roboto',system-ui;min-height:100vh}
-.topbar{position:fixed;top:12%;left:50%;transform:translateX(-50%);width:88%;max-width:820px;z-index:10;display:flex;align-items:center;gap:8px;background:#0f0f0f;border:1px solid #272727;border-radius:24px;padding:8px 12px}
-.logo{width:28px;height:28px;background:#ff0000;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;font-weight:700}
-.searchbox{flex:1;background:#121212;border:1px solid #303030;border-radius:16px;padding:8px 12px;font-size:14px;color:#f1f1f1;outline:none}
-.searchbox:focus{border-color:#3ea6ff}
-.profile{width:32px;height:32px;background:#303030;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;overflow:hidden;flex-shrink:0}
-.profile img{width:100%;height:100%;object-fit:cover}
-.ptr{position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:40px;height:40px;background:#212121;border:1px solid #383838;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all.3s;opacity:0;z-index:5}
-.ptr.active{top:10px;opacity:1}
-.ptr.spinning{animation:spin 1s linear infinite}
-    #feed{position:fixed;top:22%;left:50%;transform:translateX(-50%);width:88%;max-width:820px;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:12px;max-height:58vh;overflow-y:auto;padding-bottom:20px;-webkit-overflow-scrolling:touch;background:#0f0f0f!important}
-    #feed::-webkit-scrollbar{width:0}
-    #feed.hidden{display:none}
-    #shortsFeed{position:fixed;top:0;left:0;right:0;bottom:0;z-index:15;display:none;overflow-y:scroll;background:#000}
-    #shortsFeed.active{display:block}
-    #shortsFeed::-webkit-scrollbar{width:0}
-.short-item{width:100%;height:100vh;position:relative;display:flex;align-items:center;justify-content:center;background:#000}
-.short-item iframe{width:100%;height:100%;border:0;pointer-events:none}
-.short-overlay{position:absolute;bottom:80px;left:12px;right:80px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.8);pointer-events:none;z-index:2}
-.short-title{font-size:14px;font-weight:500;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.short-channel{font-size:12px;opacity:.9}
-.short-actions{position:absolute;right:12px;bottom:80px;display:flex;flex-direction:column;gap:20px;z-index:3}
-.short-btn{width:48px;height:48px;background:rgba(15,15,15,.6);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;cursor:pointer}
-.shorts-back{position:fixed;top:20px;left:20px;width:48px;height:48px;background:rgba(15,15,15,.95);border:2px solid #3ea6ff;border-radius:50%;color:#fff;font-size:26px;z-index:9999;cursor:pointer;display:flex;align-items:center;justify-content:center;pointer-events:auto}
-.shorts-back:focus{background:#3ea6ff}
-.mute-overlay{position:absolute;top:0;left:0;right:0;bottom:0;z-index:4;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.mute-indicator{width:80px;height:80px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:40px;color:#fff;pointer-events:none;opacity:0;transition:opacity.3s;gap:4px}
-.mute-indicator span{font-size:12px}
-.mute-indicator.show{opacity:1}
-.vid-card{background:#0f0f0f;border:1px solid #272727;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform.15s}
-.vid-card:focus{outline:2px solid #3ea6ff;transform:scale(1.03);border-color:#3ea6ff}
-.vid-card:active{transform:scale(.97)}
-.thumb-wrap{width:100%;padding-top:56.25%;position:relative;overflow:hidden;background:#121212}
-.thumb{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
-.duration{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.8);color:#fff;font-size:11px;padding:2px 4px;border-radius:4px;font-weight:500}
-.vid-info{padding:10px;display:flex;gap:8px}
-.chan-avatar{width:32px;height:32px;background:#303030;border-radius:50%;flex-shrink:0;overflow:hidden}
-.chan-avatar img{width:100%;height:100%;object-fit:cover}
-.vid-meta{flex:1;min-width:0}
-.vid-title{font-size:13px;font-weight:500;line-height:1.3;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#f1f1f1}
-.vid-stats{font-size:11px;color:#aaa}
-.tabs{position:fixed;bottom:8%;left:50%;transform:translateX(-50%);display:flex;gap:0;z-index:10;background:#0f0f0f;border:1px solid #272727;border-radius:28px;padding:4px}
-.tabs.hidden{display:none}
-.tab{padding:8px 16px;border-radius:24px;color:#aaa;font-size:12px;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:64px}
-.tab:focus{background:#272727;color:#fff;outline:2px solid #3ea6ff}
-.tab.active{background:#272727;color:#fff}
-.tab-icon{font-size:18px}
-    #player{position:fixed;top:0;left:0;right:0;height:100vh;background:#000;z-index:100;opacity:0;pointer-events:none;transition:opacity.3s}
-    #player.active{opacity:1;pointer-events:auto}
-    #playerWrap{position:absolute;inset:0}
-    #playerWrap iframe{width:100%;height:100%;border:0;display:block}
-    #closePlayer{position:absolute;top:20px;right:20px;width:48px;height:48px;background:rgba(15,15,15,.7);border:1px solid #272727;border-radius:50%;color:#fff;font-size:26px;z-index:6;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.msg{grid-column:span 2;text-align:center;padding:40px 20px;background:#0f0f0f;border:1px solid #272727;border-radius:12px;font-size:14px;color:#aaa}
-.spin{display:inline-block;animation:spin.8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    #authModal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:200;display:none;align-items:center;justify-content:center}
-    #authModal.show{display:flex}
-.auth-box{background:#212121;border:1px solid #383838;border-radius:20px;padding:32px;max-width:320px;text-align:center}
-.auth-title{font-size:18px;font-weight:700;margin-bottom:12px;color:#f1f1f1}
-.auth-text{font-size:13px;color:#aaa;margin-bottom:20px;line-height:1.4}
-.auth-close{position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(255,255,.1);border-radius:50%;color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.key-indicator{position:fixed;top:8px;right:8px;background:#212121;border:1px solid #383838;border-radius:12px;padding:4px 8px;font-size:10px;color:#aaa;z-index:300}
-.dpad-indicator{position:fixed;bottom:20px;left:20px;background:#212121;border:1px solid #3ea6ff;border-radius:8px;padding:6px 10px;font-size:10px;color:#3ea6ff;z-index:300;display:none}
-.dpad-indicator.show{display:block}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{width:100%;height:100%;background:#0f0f0f;overflow:hidden}
+    #ytFrame{width:100%;height:100%;border:0;position:fixed;top:0;left:0}
+    #dpadOverlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;pointer-events:none}
+    #dpadIndicator{position:fixed;bottom:20px;left:20px;background:#212121;border:1px solid #3ea6ff;border-radius:8px;padding:6px 10px;font-size:10px;color:#3ea6ff;z-index:10000;display:none}
+    #dpadIndicator.show{display:block}
+    #backBtn{position:fixed;top:20px;left:20px;width:48px;height:48px;background:rgba(15,15,15,.95);border:2px solid #3ea6ff;border-radius:50%;color:#fff;font-size:26px;z-index:10001;cursor:pointer;display:none;align-items:center;justify-content:center;pointer-events:auto}
+    #backBtn.show{display:flex}
   </style>
 </head>
 <body>
-<div class="key-indicator" id="keyIndicator">Key 1/14</div>
-<div class="dpad-indicator" id="dpadIndicator">D-Pad: Active</div>
-<div class="topbar">
-  <div class="logo">G</div>
-  <input class="searchbox" id="searchInput" placeholder="Search" type="search" inputmode="search" autocapitalize="off" autocomplete="off" tabindex="0">
-  <div class="profile" id="profileBtn" tabindex="0">👤</div>
-</div>
-<div id="feed" tabindex="0">
-  <div class="ptr" id="ptr"><span class="spin">⟳</span></div>
-  <div class="msg"><span class="spin">⟳</span> Loading…</div>
-</div>
-<div id="shortsFeed" tabindex="0">
-  <div class="shorts-back" id="shortsBack" tabindex="0">×</div>
-</div>
-<div class="tabs" id="tabs">
-  <div class="tab active" data-tab="home" tabindex="0"><div class="tab-icon">🏠</div>Home</div>
-  <div class="tab" data-tab="shorts" tabindex="0"><div class="tab-icon">▶️</div>Shorts</div>
-  <div class="tab" data-tab="subs" tabindex="0"><div class="tab-icon">📺</div>Subs</div>
-  <div class="tab" data-tab="library" tabindex="0"><div class="tab-icon">📚</div>Library</div>
-</div>
-<div id="player">
-  <button id="closePlayer" tabindex="0">×</button>
-  <div id="playerWrap"></div>
-</div>
-<div id="authModal">
-  <div class="auth-close" id="closeAuth" tabindex="0">×</div>
-  <div class="
-        const item=document.createElement('div');
-    item.className='short-item';
-    item.dataset.index=i;
-    item.innerHTML=`<iframe id="short_${i}" src="https://www.youtube.com/embed/${s.id}?enablejsapi=1&playsinline=1&controls=0&loop=1&playlist=${s.id}" allow="autoplay"></iframe><div class="mute-overlay" data-index="${i}" tabindex="0"><div class="mute-indicator" id="mute_${i}">🔇<span>Tap to unmute</span></div></div><div class="short-overlay"><div class="short-title">${s.title}</div><div class="short-channel">@${s.channel}</div></div><div class="short-actions"><div class="short-btn" tabindex="0">❤️</div><div class="short-btn" tabindex="0">💬</div><div class="short-btn" tabindex="0">↗️</div></div>`;
-    shortsFeed.appendChild(item);
-    const overlay = item.querySelector('.mute-overlay');
-    tap(overlay,()=>toggleMute(i));
-    shortsObserver.observe(item);
-  });
-  setTimeout(()=>{const firstMute = document.getElementById('mute_0');if(firstMute) {firstMute.classList.add('show');setTimeout(()=>firstMute.classList.remove('show'),2000);}},500);
+<iframe id="ytFrame" src="https://m.youtube.com/?ra=m" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div id="dpadOverlay"></div>
+<div id="dpadIndicator">D-Pad: Active</div>
+<button id="backBtn">←</button>
+<script>
+const ytFrame = document.getElementById('ytFrame');
+const backBtn = document.getElementById('backBtn');
+const indicator = document.getElementById('dpadIndicator');
+let currentView = 'home';
+let history = ['https://m.youtube.com/?ra=m'];
+
+function showDpad() {
+  indicator.classList.add('show');
+  setTimeout(()=>indicator.classList.remove('show'), 2000);
 }
-function toggleMute(index) {
-  const iframe = document.getElementById(`short_${index}`);
-  const mute = document.getElementById(`mute_${index}`);
-  if(iframe && iframe.contentWindow) {
-    iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
-    iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-    if(mute) {
-      mute.innerHTML='🔊<span>Unmuted</span>';
-      mute.classList.add('show');
-      setTimeout(()=>mute.classList.remove('show'),1000);
-    }
-  }
+
+function navigate(url) {
+  history.push(url);
+  ytFrame.src = url;
+  backBtn.classList.toggle('show', history.length > 1);
+  if(url.includes('/shorts/')) currentView = 'shorts';
+  else currentView = 'home';
 }
-function loadHistory(){
-  const h=JSON.parse(localStorage.getItem('gt_history')||'[]');
-  if(!h.length){feed.innerHTML='<div class="msg">No history yet</div>';return;}
-  videos=h;renderFeed();
-}
-function renderFeed(append=false){
-  if(!append) feed.innerHTML='<div class="ptr" id="ptr"><span class="spin">⟳</span></div>';
-  const startIdx = append?feed.children.length-1:0;
-  videos.slice(startIdx).forEach((v,i)=>{
-    const card=document.createElement('div');
-    card.className='vid-card';
-    card.tabIndex = 0;
-    card.innerHTML=`<div class="thumb-wrap"><img class="thumb" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" loading="lazy"><div class="duration">${formatDuration(v.duration)}</div></div><div class="vid-info"><div class="chan-avatar">${v.channelAvatar?`<img src="${v.channelAvatar}">`:''}</div><div class="vid-meta"><div class="vid-title">${v.title}</div><div class="vid-stats">${v.channel} · ${formatViews(v.views)} · ${timeAgo(v.published)}</div></div></div>`;
-    tap(card,()=>openVideo(v));
-    feed.appendChild(card);
-  });
-}
-function openVideo(v){
-  let h=JSON.parse(localStorage.getItem('gt_history')||'[]');
-  h=h.filter(x=>x.id!==v.id);h.unshift(v);if(h.length>50)h.pop();
-  localStorage.setItem('gt_history',JSON.stringify(h));
-  playerEl.classList.add('active');
-  playerWrap.innerHTML=`<iframe src="https://www.youtube.com/embed/${v.id}?autoplay=1&playsinline=1&rel=0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
-}
-async function doSearch(q){
-  if(!q)return;
-  feed.classList.remove('hidden');
-  shortsFeed.classList.remove('active');
-  tabs.classList.remove('hidden');
-  feed.innerHTML='<div class="msg"><span class="spin">⟳</span> Searching…</div>';
+
+// D-Pad controls - sends arrow keys to YouTube iframe
+document.addEventListener('keydown', (e) => {
+  showDpad();
+  const key = e.key;
+  
+  // Try to send key events directly to iframe
   try {
-    const d = await fetchWithKey(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(q)}&maxResults=30`);
-    const ids = (d.items||[]).map(v=>v.id.videoId).filter(Boolean);
-    if(!ids.length) {feed.innerHTML='<div class="msg">No results</div>';return;}
-    const details = await fetchWithKey(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${ids.join(',')}`);
-    videos=(details.items||[]).map(v=>({id:v.id,title:v.snippet.title,channel:v.snippet.channelTitle,channelId:v.snippet.channelId,views:v.statistics.viewCount,duration:v.contentDetails.duration,published:v.snippet.publishedAt}));
-    await addChannelAvatars();
-    renderFeed();
-    currentFocusArea = 'feed';
-    focusIndex = 0;
-    setTimeout(()=>{const cards=feed.querySelectorAll('.vid-card');if(cards[0])cards[0].focus();},100);
-  } catch(e) {feed.innerHTML=`<div class="msg">Search error: ${e.message}</div>`;}
-}
+    ytFrame.contentWindow.focus();
+    const event = new KeyboardEvent('keydown', {
+      key: key,
+      code: e.code,
+      keyCode: e.keyCode,
+      which: e.which,
+      bubbles: true
+    });
+    ytFrame.contentWindow.document.dispatchEvent(event);
+  } catch(err) {
+    console.log('Direct key injection blocked, using navigation fallback');
+  }
+  
+  // Fallback navigation for Ray-Ban D-pad
+  if(key === 'ArrowLeft') {
+    e.preventDefault();
+    if(history.length > 1) {
+      history.pop();
+      ytFrame.src = history[history.length - 1];
+      backBtn.classList.toggle('show', history.length > 1);
+    }
+  } else if(key === 'ArrowRight') {
+    e.preventDefault();
+    // YouTube handles right arrow internally
+  } else if(key === 'ArrowUp') {
+    e.preventDefault();
+    if(currentView === 'shorts') {
+      ytFrame.contentWindow.postMessage('{"event":"command","func":"previousVideo","args":""}', '*');
+    } else {
+      ytFrame.contentWindow.scrollBy(0, -300);
+    }
+  } else if(key === 'ArrowDown') {
+    e.preventDefault();
+    if(currentView === 'shorts') {
+      ytFrame.contentWindow.postMessage('{"event":"command","func":"nextVideo","args":""}', '*');
+    } else {
+      ytFrame.contentWindow.scrollBy(0, 300);
+    }
+  } else if(key === 'Enter') {
+    e.preventDefault();
+    // Simulate click at center of screen for YouTube
+    const rect = ytFrame.getBoundingClientRect();
+    const clickEvent = new MouseEvent('click', {
+      view: ytFrame.contentWindow,
+      bubbles: true,
+      cancelable: true,
+      clientX: rect.width / 2,
+      clientY: rect.height / 2
+    });
+    try {
+      ytFrame.contentWindow.document.elementFromPoint(rect.width/2, rect.height/2)?.click();
+    } catch(err) {}
+  }
+});
+
+backBtn.addEventListener('click', () => {
+  if(history.length > 1) {
+    history.pop();
+    ytFrame.src = history[history.length - 1];
+    backBtn.classList.toggle('show', history.length > 1);
+  }
+});
+
+// Detect URL changes in iframe
+setInterval(() => {
+  try {
+    const currentUrl = ytFrame.contentWindow.location.href;
+    if(currentUrl.includes('/shorts/') && currentView !== 'shorts') {
+      currentView = 'shorts';
+    } else if(!currentUrl.includes('/shorts/') && currentView !== 'home') {
+      currentView = 'home';
+    }
+  } catch(err) {
+    // Cross-origin, can't read - that's fine
+  }
+}, 500);
+
+// Initial focus
+window.onload = () => {
+  ytFrame.focus();
+  showDpad();
+};
 </script>
 </body>
 </html>
