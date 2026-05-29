@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>GlassTube AR</title>
   <meta name="theme-color" content="#0f0f0f">
+  <meta name="mobile-web-app-capable" content="yes">
   <script src="https://metaweareables.com/sdk/v1.2/meta-wearables.js"></script>
   <style>
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -15,8 +16,16 @@
 .logo{width:36px;height:36px;background:#f00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;flex-shrink:0}
     #searchBtn{flex:1;background:#1a1a1a;border:4px solid #404040;border-radius:24px;padding:16px 20px;font-size:20px;color:#f1f1f1;text-align:left}
     #searchBtn:focus{border-color:#3ea6ff;background:#252525}
-    #content{position:absolute;top:100px;left:0;right:0;bottom:80px;background:#000}
-    #content iframe{width:100%;height:100%;border:0}
+    #feed{position:absolute;top:100px;left:0;right:0;bottom:80px;overflow-y:auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    #feed::-webkit-scrollbar{display:none}
+.vid-card{background:#0f0f0f;border:4px solid #272727;border-radius:20px;overflow:hidden}
+.vid-card:focus{border-color:#3ea6ff;transform:scale(1.03)}
+.thumb-wrap{width:100%;position:relative;background:#000;line-height:0}
+.thumb{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover}
+.duration{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.95);color:#fff;font-size:14px;padding:6px 10px;border-radius:8px;font-weight:700}
+.vid-info{padding:16px}
+.vid-title{font-size:16px;font-weight:700;line-height:1.3;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vid-stats{font-size:14px;color:#aaa}
     #tabs{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:4px solid #272727;display:flex}
 .tab{flex:1;padding:18px 8px;text-align:center;font-size:15px;color:#aaa;border:4px solid transparent;font-weight:600}
 .tab:focus,.tab.active{color:#fff;background:#1a1a1a;border-color:#3ea6ff}
@@ -24,7 +33,7 @@
     #player.active{display:flex;align-items:center;justify-content:center}
     #player iframe{width:100%;height:100%;border:0}
     #closePlayer{position:absolute;top:28px;right:28px;width:60px;height:60px;background:rgba(15,15,15,.95);border:4px solid #3ea6ff;border-radius:50%;color:#fff;font-size:36px;z-index:101}
-.msg{text-align:center;padding:60px 20px;color:#aaa;font-size:18px;font-weight:600}
+.msg{grid-column:span 2;text-align:center;padding:60px 20px;background:#0f0f0f;border:4px solid #272727;border-radius:20px;color:#aaa;font-size:18px;font-weight:600}
   </style>
 </head>
 <body>
@@ -33,19 +42,17 @@
   <div class="logo">G</div>
   <button id="searchBtn" tabindex="0">Tap to search YouTube</button>
 </div>
-<div id="content">
-  <div class="msg">Loading Ray-Ban SDK...</div>
-</div>
+<div id="feed" tabindex="0"></div>
 <div id="tabs">
   <div class="tab active" data-idx="0" tabindex="0">🏠 Home</div>
-  <div class="tab" data-idx="1" tabindex="0">📱 Shorts</div>
-  <div class="tab" data-idx="2" tabindex="0">← Back</div>
+  <div class="tab" data-idx="1" tabindex="0">← Back</div>
 </div>
 <div id="player"><button id="closePlayer" tabindex="0">×</button><div id="playerWrap"></div></div>
 
 <script>
-let metaSDK = null, currentTab = 0, currentQuery = '';
-const content = document.getElementById('content');
+const API_KEYS = ['AIzaSyAOBBJC3VvRsAQC2R-nenGvO23x--9SzB0','AIzaSyCxt2XsA80s67LNRTpgg-fBYqqHn2YgWDI'];
+let keyIdx = 0, videos = [], focusIdx = 0, focusArea = 'search', currentQuery = '', metaSDK = null;
+const feed = document.getElementById('feed');
 const searchBtn = document.getElementById('searchBtn');
 const debug = document.getElementById('debug');
 const player = document.getElementById('player');
@@ -60,7 +67,7 @@ function setDebug(msg, ok = false) {
 async function initSDK() {
   if (typeof MetaWearables === 'undefined') {
     setDebug('ERROR: Open in Meta View App > Web Apps');
-    content.innerHTML = '<div class="msg">❌ Not on Ray-Ban<br><br>1. Open Meta View app<br>2. Menu > Web Apps<br>3. Enter this URL</div>';
+    feed.innerHTML = '<div class="msg">❌ Not on Ray-Ban<br><br>1. Open Meta View app<br>2. Menu > Web Apps<br>3. Enter this URL</div>';
     return;
   }
 
@@ -85,43 +92,72 @@ async function initSDK() {
 }
 
 function handleDpad(dir) {
-  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const cards = Array.from(feed.querySelectorAll('.vid-card'));
+  const cols = 2;
 
-  if (dir === 'left' && currentTab > 0) {
-    currentTab--;
-    tabs[currentTab].focus();
-    switchTab(currentTab);
-  } else if (dir === 'right' && currentTab < tabs.length - 1) {
-    currentTab++;
-    tabs[currentTab].focus();
-    switchTab(currentTab);
-  } else if (dir === 'up') {
-    searchBtn.focus();
-  } else if (dir === 'select') {
-    if (document.activeElement === searchBtn) {
+  if (focusArea === 'search') {
+    if (dir === 'down' && cards[0]) {
+      focusArea = 'feed';
+      focusIdx = 0;
+      cards[0].focus();
+    } else if (dir === 'select') {
       openKeyboard();
-    } else if (document.activeElement.classList.contains('tab')) {
-      switchTab(parseInt(document.activeElement.dataset.idx));
+    }
+  } else if (focusArea === 'feed') {
+    if (dir === 'up') {
+      if (focusIdx < cols) {
+        focusArea = 'search';
+        searchBtn.focus();
+      } else {
+        focusIdx -= cols;
+        cards[focusIdx]?.focus();
+      }
+    } else if (dir === 'down') {
+      if (focusIdx + cols < cards.length) {
+        focusIdx += cols;
+        cards[focusIdx]?.focus();
+      } else {
+        focusArea = 'tabs';
+        focusIdx = 0;
+        document.querySelectorAll('.tab')[0].focus();
+      }
+    } else if (dir === 'left' && focusIdx % cols > 0) {
+      focusIdx--;
+      cards[focusIdx]?.focus();
+    } else if (dir === 'right' && focusIdx % cols < cols - 1 && cards[focusIdx + 1]) {
+      focusIdx++;
+      cards[focusIdx]?.focus();
+    } else if (dir === 'select' && cards[focusIdx]) {
+      openVideo(videos[focusIdx].id);
+    }
+  } else if (focusArea === 'tabs') {
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    if (dir === 'up') {
+      focusArea = 'feed';
+      focusIdx = Math.max(0, cards.length - cols);
+      cards[focusIdx]?.focus();
+    } else if (dir === 'left' && focusIdx > 0) {
+      focusIdx--;
+      tabs[focusIdx]?.focus();
+    } else if (dir === 'right' && focusIdx < tabs.length - 1) {
+      focusIdx++;
+      tabs[focusIdx]?.focus();
+    } else if (dir === 'select') {
+      handleTab(parseInt(tabs[focusIdx].dataset.idx));
     }
   }
 }
 
-function switchTab(idx) {
-  currentTab = idx;
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', i === idx);
-  });
-
+function handleTab(idx) {
   if (idx === 0) {
-    loadHome();
-  } else if (idx === 1) {
-    loadShorts();
-  } else if (idx === 2) {
     player.classList.remove('active');
     playerWrap.innerHTML = '';
     loadHome();
-    currentTab = 0;
-    document.querySelectorAll('.tab')[0].classList.add('active');
+    focusArea = 'search';
+    searchBtn.focus();
+  } else if (idx === 1) {
+    player.classList.remove('active');
+    playerWrap.innerHTML = '';
   }
 }
 
@@ -146,23 +182,95 @@ async function openKeyboard() {
 
 searchBtn.addEventListener('click', openKeyboard);
 
-// ===== LOAD m.youtube.com STYLE FEEDS =====
-function loadHome() {
-  setDebug('Loading YouTube Home...', true);
-  // YouTube trending playlist mimics m.youtube.com home feed
-  content.innerHTML = `<iframe src="https://www.youtube.com/embed?listType=playlist&list=PLFgquLnL59alCl_2TQvOiD5Vgm1hCaGSI&autoplay=0&rel=0&modestbranding=1&playsinline=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+async function fetchYT(endpoint) {
+  const url = `https://www.googleapis.com/youtube/v3/${endpoint}&key=${API_KEYS[keyIdx]}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
 }
 
-function loadShorts() {
-  setDebug('Loading Shorts...', true);
-  // Direct Shorts player - same as m.youtube.com/shorts/tuKGo7FS6uU
-  content.innerHTML = `<iframe src="https://www.youtube.com/embed/tuKGo7FS6uU?autoplay=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=tuKGo7FS6uU" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+function formatViews(n) {
+  n = parseInt(n || 0);
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K';
+  return n + '';
 }
 
-function doSearch(q) {
-  setDebug('Searching: ' + q, true);
-  // YouTube search results embed
-  content.innerHTML = `<iframe src="https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(q)}&autoplay=0&rel=0&modestbranding=1&playsinline=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+function formatDuration(iso) {
+  if (!iso) return '';
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return '';
+  const h = parseInt(m[1]||0), min = parseInt(m[2]||0), s = parseInt(m[3]||0);
+  if (h) return `${h}:${String(min).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${min}:${String(s).padStart(2,'0')}`;
+}
+
+async function loadHome() {
+  feed.innerHTML = '<div class="msg">Loading trending...</div>';
+  try {
+    const data = await fetchYT('videos?part=snippet,contentDetails,statistics&chart=mostPopular&maxResults=20&regionCode=US');
+    videos = data.items.map(v => ({
+      id: v.id,
+      title: v.snippet.title,
+      channel: v.snippet.channelTitle,
+      views: v.statistics?.viewCount,
+      duration: v.contentDetails?.duration,
+      thumb: v.snippet.thumbnails.high.url
+    }));
+    renderFeed();
+  } catch (err) {
+    feed.innerHTML = `<div class="msg">Error: ${err.message}</div>`;
+  }
+}
+
+function renderFeed() {
+  feed.innerHTML = '';
+  videos.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'vid-card';
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <div class="thumb-wrap">
+        <img class="thumb" src="${v.thumb}" loading="lazy">
+        <div class="duration">${formatDuration(v.duration)}</div>
+      </div>
+      <div class="vid-info">
+        <div class="vid-title">${v.title}</div>
+        <div class="vid-stats">${v.channel} · ${formatViews(v.views)} views</div>
+      </div>`;
+    card.addEventListener('click', () => openVideo(v.id));
+    feed.appendChild(card);
+  });
+}
+
+async function doSearch(q) {
+  if (!q) return;
+  feed.innerHTML = '<div class="msg">Searching...</div>';
+  try {
+    const searchData = await fetchYT(`search?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(q)}`);
+    const ids = searchData.items.map(v => v.id.videoId).join(',');
+    const vidData = await fetchYT(`videos?part=snippet,contentDetails,statistics&id=${ids}`);
+    videos = vidData.items.map(v => ({
+      id: v.id,
+      title: v.snippet.title,
+      channel: v.snippet.channelTitle,
+      views: v.statistics?.viewCount,
+      duration: v.contentDetails?.duration,
+      thumb: v.snippet.thumbnails.high.url
+    }));
+    renderFeed();
+    focusArea = 'feed';
+    focusIdx = 0;
+    setTimeout(() => feed.querySelector('.vid-card')?.focus(), 100);
+  } catch (err) {
+    feed.innerHTML = `<div class="msg">Search error: ${err.message}</div>`;
+  }
+}
+
+function openVideo(id) {
+  player.classList.add('active');
+  playerWrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1&rel=0&modestbranding=1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
 }
 
 document.getElementById('closePlayer').addEventListener('click', () => {
@@ -171,7 +279,7 @@ document.getElementById('closePlayer').addEventListener('click', () => {
 });
 
 document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => switchTab(parseInt(tab.dataset.idx)));
+  tab.addEventListener('click', () => handleTab(parseInt(tab.dataset.idx)));
 });
 
 if (location.protocol!== 'https:') {
