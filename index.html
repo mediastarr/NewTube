@@ -5,45 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>GlassTube AR</title>
   <meta name="theme-color" content="#0f0f0f">
-  <meta name="mobile-web-app-capable" content="yes">
   <script src="https://metaweareables.com/sdk/v1.2/meta-wearables.js"></script>
   <style>
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    *:focus{outline:4px solid #3ea6ff!important;outline-offset:2px!important}
+    *:focus{outline:4px solid #3ea6ff!important;outline-offset:3px!important}
     html,body{margin:0;padding:0;background:#0f0f0f;color:#f1f1f1;font-family:system-ui;height:100%;overflow:hidden}
-    #debug{position:fixed;top:0;left:0;right:0;background:#f44336;color:#fff;padding:4px;text-align:center;font-size:10px;z-index:10000;display:none}
-    #debug.show{display:block}
-    #topbar{width:100%;background:#0f0f0f;border-bottom:2px solid #272727;padding:14px;display:flex;align-items:center;gap:10px}
- .logo{width:32px;height:32px;background:#f00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
-    #searchBtn{flex:1;background:#1a1a1a;border:3px solid #404040;border-radius:20px;padding:14px 18px;font-size:18px;color:#aaa;text-align:left;cursor:pointer}
-    #searchBtn:focus{border-color:#3ea6ff;background:#252525;color:#fff}
-    #feed{position:absolute;top:80px;left:0;right:0;bottom:70px;overflow-y:auto;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    #debug{position:fixed;top:0;left:0;right:0;background:#ff9800;color:#000;padding:6px;text-align:center;font-size:12px;font-weight:600;z-index:10000}
+    #topbar{width:100%;background:#0f0f0f;border-bottom:3px solid #272727;padding:16px;display:flex;align-items:center;gap:12px;margin-top:36px}
+ .logo{width:36px;height:36px;background:#f00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px}
+    #searchBtn{flex:1;background:#1a1a1a;border:4px solid #404040;border-radius:24px;padding:16px 20px;font-size:20px;color:#f1f1f1;text-align:left}
+    #searchBtn:focus{border-color:#3ea6ff;background:#252525}
+    #feed{position:absolute;top:100px;left:0;right:0;bottom:80px;overflow-y:auto;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
     #feed::-webkit-scrollbar{display:none}
- .vid-card{background:#0f0f0f;border:3px solid #272727;border-radius:16px;overflow:hidden}
- .vid-card:focus{border-color:#3ea6ff;transform:scale(1.05);box-shadow:0 0 0 4px rgba(62,166,255,0.3)}
- .thumb-wrap{width:100%;padding-top:56.25%;position:relative;background:#1a1a1a}
- .thumb{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
- .duration{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.95);color:#fff;font-size:12px;padding:4px 8px;border-radius:6px;font-weight:600}
- .vid-info{padding:14px}
- .vid-title{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
- .vid-stats{font-size:13px;color:#aaa}
-    #tabs{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:3px solid #272727;display:flex}
- .tab{flex:1;padding:16px 8px;text-align:center;font-size:14px;color:#aaa;border:3px solid transparent}
- .tab:focus,.tab.active{color:#fff;background:#1a1a1a;border-color:#3ea6ff}
+.vid-card{background:#0f0f0f;border:4px solid #272727;border-radius:20px;overflow:hidden}
+.vid-card:focus{border-color:#3ea6ff;transform:scale(1.05);box-shadow:0 0 0 6px rgba(62,166,255,0.4)}
+.thumb-wrap{width:100%;padding-top:56.25%;position:relative;background:#1a1a1a}
+.thumb{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.duration{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.95);color:#fff;font-size:14px;padding:6px 10px;border-radius:8px;font-weight:700}
+.vid-info{padding:16px}
+.vid-title{font-size:16px;font-weight:700;line-height:1.3;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vid-stats{font-size:14px;color:#aaa}
+    #tabs{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:4px solid #272727;display:flex}
+.tab{flex:1;padding:18px 8px;text-align:center;font-size:15px;color:#aaa;border:4px solid transparent;font-weight:600}
+.tab:focus,.tab.active{color:#fff;background:#1a1a1a;border-color:#3ea6ff}
     #player{position:fixed;inset:0;background:#000;z-index:100;display:none}
     #player.active{display:block}
     #player iframe{width:100%;height:100%;border:0}
-    #closePlayer{position:absolute;top:24px;right:24px;width:56px;height:56px;background:rgba(15,15,15,.95);border:3px solid #3ea6ff;border-radius:50%;color:#fff;font-size:32px}
- .msg{grid-column:span 2;text-align:center;padding:50px 20px;background:#0f0f0f;border:3px solid #272727;border-radius:16px;color:#aaa;font-size:16px}
+    #closePlayer{position:absolute;top:28px;right:28px;width:60px;height:60px;background:rgba(15,15,15,.95);border:4px solid #3ea6ff;border-radius:50%;color:#fff;font-size:36px}
+.msg{grid-column:span 2;text-align:center;padding:60px 20px;background:#0f0f0f;border:4px solid #272727;border-radius:20px;color:#aaa;font-size:18px;font-weight:600}
   </style>
 </head>
 <body>
-<div id="debug"></div>
+<div id="debug">Initializing Ray-Ban SDK...</div>
 <div id="topbar">
   <div class="logo">G</div>
   <button id="searchBtn" tabindex="0">Tap to search YouTube</button>
 </div>
-<div id="feed" tabindex="0"><div class="msg">Waiting for SDK...</div></div>
+<div id="feed" tabindex="0"></div>
 <div id="tabs">
   <div class="tab active" data-idx="0" tabindex="0">🏠 Home</div>
   <div class="tab" data-idx="1" tabindex="0">🔍 Search</div>
@@ -53,49 +51,51 @@
 
 <script>
 const API_KEYS = ['AIzaSyAOBBJC3VvRsAQC2R-nenGvO23x--9SzB0','AIzaSyCxt2XsA80s67LNRTpgg-fBYqqHn2YgWDI'];
-let keyIdx = 0, videos = [], focusIdx = 0, focusArea = 'search', currentQuery = '';
+let keyIdx = 0, videos = [], focusIdx = 0, focusArea = 'search', currentQuery = '', metaSDK = null;
 const feed = document.getElementById('feed');
 const searchBtn = document.getElementById('searchBtn');
 const debug = document.getElementById('debug');
 const player = document.getElementById('player');
 const playerWrap = document.getElementById('playerWrap');
 
-function log(msg) {
+function setDebug(msg, ok = false) {
   debug.textContent = msg;
-  debug.classList.add('show');
-  setTimeout(() => debug.classList.remove('show'), 3000);
-  console.log('[GlassTube]', msg);
+  debug.style.background = ok? '#4caf50' : '#ff9800';
+  debug.style.color = ok? '#fff' : '#000';
 }
 
-// ===== META WEARABLES SDK =====
+// ===== META SDK INIT - MUST BE IN META VIEW APP =====
 async function initSDK() {
   if (typeof MetaWearables === 'undefined') {
-    log('ERROR: Not on Ray-Ban Meta');
-    feed.innerHTML = '<div class="msg">Open in Meta View app > Web Apps</div>';
-    return;
+    setDebug('ERROR: Open in Meta View App > Web Apps');
+    feed.innerHTML = '<div class="msg">❌ Not on Ray-Ban<br><br>1. Open Meta View app<br>2. Menu > Web Apps<br>3. Enter this URL</div>';
+    return false;
   }
 
   try {
-    const sdk = await MetaWearables.init({ appId: 'glasstube' });
-    log('SDK Connected ✓');
-    window.metaSDK = sdk;
+    metaSDK = await MetaWearables.init({ appId: 'glasstube' });
+    setDebug('Ray-Ban SDK Connected ✓', true);
+    setTimeout(() => debug.style.display = 'none', 2000);
 
-    sdk.input.on('dpad', (e) => {
-      log(`D-pad: ${e.value}`);
+    // D-PAD: 'up','down','left','right','select'
+    metaSDK.input.on('dpad', (e) => {
       handleDpad(e.value);
     });
 
-    sdk.input.on('button', (e) => {
+    // CAPTURE BUTTON: acts as Enter
+    metaSDK.input.on('button', (e) => {
       if (e.button === 'capture' && e.state === 'down') {
-        log('Capture pressed');
-        handleSelect();
+        document.activeElement?.click();
       }
     });
 
     loadHome();
+    setTimeout(() => searchBtn.focus(), 500);
+    return true;
 
   } catch (err) {
-    log('SDK Init failed: ' + err.message);
+    setDebug('SDK Error: ' + err.message);
+    return false;
   }
 }
 
@@ -156,10 +156,6 @@ function handleDpad(dir) {
   }
 }
 
-function handleSelect() {
-  document.activeElement?.click();
-}
-
 function handleTab(idx) {
   if (idx === 0) {
     loadHome();
@@ -174,32 +170,29 @@ function handleTab(idx) {
   }
 }
 
-// ===== KEYBOARD FIX: Use SDK Text Input Dialog =====
+// ===== KEYBOARD: Uses Ray-Ban system dialog =====
 async function openKeyboard() {
-  if (!window.metaSDK?.input?.requestTextInput) {
-    log('ERROR: requestTextInput not available');
+  if (!metaSDK?.input?.requestTextInput) {
+    setDebug('ERROR: requestTextInput not available');
     return;
   }
 
   try {
-    log('Opening text input...');
-    // This opens Ray-Ban's system text input overlay
-    const result = await window.metaSDK.input.requestTextInput({
+    setDebug('Opening Ray-Ban text input...', true);
+    const result = await metaSDK.input.requestTextInput({
       prompt: 'Search YouTube',
       value: currentQuery,
-      placeholder: 'Enter search terms'
+      placeholder: 'Say or type search'
     });
 
-    if (result && result.text) {
+    if (result?.text) {
       currentQuery = result.text;
-      searchBtn.textContent = result.text || 'Tap to search YouTube';
-      log('Searching: ' + result.text);
+      searchBtn.textContent = result.text;
+      setDebug('Searching: ' + result.text, true);
       doSearch(result.text);
-    } else {
-      log('Search cancelled');
     }
   } catch (err) {
-    log('Text input error: ' + err.message);
+    setDebug('Input cancelled');
   }
 }
 
@@ -216,9 +209,9 @@ async function fetchYT(endpoint) {
 
 function formatViews(n) {
   n = parseInt(n || 0);
-  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M views';
-  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K views';
-  return n + ' views';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K';
+  return n + '';
 }
 
 function formatDuration(iso) {
@@ -231,7 +224,7 @@ function formatDuration(iso) {
 }
 
 async function loadHome() {
-  feed.innerHTML = '<div class="msg">Loading...</div>';
+  feed.innerHTML = '<div class="msg">Loading trending...</div>';
   try {
     const data = await fetchYT('videos?part=snippet,contentDetails,statistics&chart=mostPopular&maxResults=20&regionCode=US');
     videos = data.items.map(v => ({
@@ -245,7 +238,6 @@ async function loadHome() {
     renderFeed();
   } catch (err) {
     feed.innerHTML = `<div class="msg">Error: ${err.message}</div>`;
-    log('API Error: ' + err.message);
   }
 }
 
@@ -259,7 +251,7 @@ function renderFeed() {
       <div class="thumb-wrap"><img class="thumb" src="${v.thumb}"><div class="duration">${formatDuration(v.duration)}</div></div>
       <div class="vid-info">
         <div class="vid-title">${v.title}</div>
-        <div class="vid-stats">${v.channel} · ${formatViews(v.views)}</div>
+        <div class="vid-stats">${v.channel} · ${formatViews(v.views)} views</div>
       </div>`;
     card.addEventListener('click', () => openVideo(v.id));
     feed.appendChild(card);
@@ -304,8 +296,9 @@ document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => handleTab(parseInt(tab.dataset.idx)));
 });
 
-if (location.protocol!== 'https:' && location.hostname!== 'localhost') {
-  log('ERROR: Must use HTTPS');
+// START
+if (location.protocol!== 'https:') {
+  setDebug('ERROR: Must use HTTPS');
 } else {
   window.addEventListener('load', initSDK);
 }
