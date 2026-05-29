@@ -6,7 +6,6 @@
   <title>GlassTube AR</title>
   <meta name="theme-color" content="#0f0f0f">
   <meta name="mobile-web-app-capable" content="yes">
-  <!-- Meta Wearables SDK -->
   <script src="https://metaweareables.com/sdk/v1.2/meta-wearables.js"></script>
   <style>
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -15,34 +14,34 @@
     #debug{position:fixed;top:0;left:0;right:0;background:#f44336;color:#fff;padding:4px;text-align:center;font-size:10px;z-index:10000;display:none}
     #debug.show{display:block}
     #topbar{width:100%;background:#0f0f0f;border-bottom:2px solid #272727;padding:14px;display:flex;align-items:center;gap:10px}
-  .logo{width:32px;height:32px;background:#f00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
-    #searchInput{flex:1;background:#1a1a1a;border:3px solid #404040;border-radius:20px;padding:14px 18px;font-size:18px;color:#f1f1f1;outline:none}
-    #searchInput:focus{border-color:#3ea6ff;background:#252525}
+ .logo{width:32px;height:32px;background:#f00;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+    #searchBtn{flex:1;background:#1a1a1a;border:3px solid #404040;border-radius:20px;padding:14px 18px;font-size:18px;color:#aaa;text-align:left;cursor:pointer}
+    #searchBtn:focus{border-color:#3ea6ff;background:#252525;color:#fff}
     #feed{position:absolute;top:80px;left:0;right:0;bottom:70px;overflow-y:auto;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
     #feed::-webkit-scrollbar{display:none}
-  .vid-card{background:#0f0f0f;border:3px solid #272727;border-radius:16px;overflow:hidden}
-  .vid-card:focus{border-color:#3ea6ff;transform:scale(1.05);box-shadow:0 0 0 4px rgba(62,166,255,0.3)}
-  .thumb-wrap{width:100%;padding-top:56.25%;position:relative;background:#1a1a1a}
-  .thumb{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
-  .duration{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.95);color:#fff;font-size:12px;padding:4px 8px;border-radius:6px;font-weight:600}
-  .vid-info{padding:14px}
-  .vid-title{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .vid-stats{font-size:13px;color:#aaa}
+ .vid-card{background:#0f0f0f;border:3px solid #272727;border-radius:16px;overflow:hidden}
+ .vid-card:focus{border-color:#3ea6ff;transform:scale(1.05);box-shadow:0 0 0 4px rgba(62,166,255,0.3)}
+ .thumb-wrap{width:100%;padding-top:56.25%;position:relative;background:#1a1a1a}
+ .thumb{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+ .duration{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.95);color:#fff;font-size:12px;padding:4px 8px;border-radius:6px;font-weight:600}
+ .vid-info{padding:14px}
+ .vid-title{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .vid-stats{font-size:13px;color:#aaa}
     #tabs{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:3px solid #272727;display:flex}
-  .tab{flex:1;padding:16px 8px;text-align:center;font-size:14px;color:#aaa;border:3px solid transparent}
-  .tab:focus,.tab.active{color:#fff;background:#1a1a1a;border-color:#3ea6ff}
+ .tab{flex:1;padding:16px 8px;text-align:center;font-size:14px;color:#aaa;border:3px solid transparent}
+ .tab:focus,.tab.active{color:#fff;background:#1a1a1a;border-color:#3ea6ff}
     #player{position:fixed;inset:0;background:#000;z-index:100;display:none}
     #player.active{display:block}
     #player iframe{width:100%;height:100%;border:0}
     #closePlayer{position:absolute;top:24px;right:24px;width:56px;height:56px;background:rgba(15,15,15,.95);border:3px solid #3ea6ff;border-radius:50%;color:#fff;font-size:32px}
-  .msg{grid-column:span 2;text-align:center;padding:50px 20px;background:#0f0f0f;border:3px solid #272727;border-radius:16px;color:#aaa;font-size:16px}
+ .msg{grid-column:span 2;text-align:center;padding:50px 20px;background:#0f0f0f;border:3px solid #272727;border-radius:16px;color:#aaa;font-size:16px}
   </style>
 </head>
 <body>
 <div id="debug"></div>
 <div id="topbar">
   <div class="logo">G</div>
-  <input id="searchInput" type="text" placeholder="Swipe down to search" autocomplete="off" tabindex="0">
+  <button id="searchBtn" tabindex="0">Tap to search YouTube</button>
 </div>
 <div id="feed" tabindex="0"><div class="msg">Waiting for SDK...</div></div>
 <div id="tabs">
@@ -54,9 +53,9 @@
 
 <script>
 const API_KEYS = ['AIzaSyAOBBJC3VvRsAQC2R-nenGvO23x--9SzB0','AIzaSyCxt2XsA80s67LNRTpgg-fBYqqHn2YgWDI'];
-let keyIdx = 0, videos = [], focusIdx = 0, focusArea = 'search';
+let keyIdx = 0, videos = [], focusIdx = 0, focusArea = 'search', currentQuery = '';
 const feed = document.getElementById('feed');
-const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
 const debug = document.getElementById('debug');
 const player = document.getElementById('player');
 const playerWrap = document.getElementById('playerWrap');
@@ -68,25 +67,24 @@ function log(msg) {
   console.log('[GlassTube]', msg);
 }
 
-// ===== META WEARABLES SDK - CORRECT EVENT NAMES =====
+// ===== META WEARABLES SDK =====
 async function initSDK() {
   if (typeof MetaWearables === 'undefined') {
-    log('ERROR: Not on Ray-Ban Meta. Must use Meta View app.');
-    feed.innerHTML = '<div class="msg">Open this in Meta View app > Web Apps<br>Not in Chrome/Safari</div>';
+    log('ERROR: Not on Ray-Ban Meta');
+    feed.innerHTML = '<div class="msg">Open in Meta View app > Web Apps</div>';
     return;
   }
 
   try {
     const sdk = await MetaWearables.init({ appId: 'glasstube' });
     log('SDK Connected ✓');
+    window.metaSDK = sdk;
 
-    // RAY-BAN DISPLAY USES 'dpad' NOT 'touchpad'
     sdk.input.on('dpad', (e) => {
       log(`D-pad: ${e.value}`);
-      handleDpad(e.value); // value: 'up','down','left','right','select'
+      handleDpad(e.value);
     });
 
-    // Capture button = select
     sdk.input.on('button', (e) => {
       if (e.button === 'capture' && e.state === 'down') {
         log('Capture pressed');
@@ -94,8 +92,6 @@ async function initSDK() {
       }
     });
 
-    // Force keyboard method
-    window.metaSDK = sdk;
     loadHome();
 
   } catch (err) {
@@ -119,7 +115,7 @@ function handleDpad(dir) {
     if (dir === 'up') {
       if (focusIdx < cols) {
         focusArea = 'search';
-        searchInput.focus();
+        searchBtn.focus();
       } else {
         focusIdx -= cols;
         cards[focusIdx]?.focus();
@@ -168,7 +164,7 @@ function handleTab(idx) {
   if (idx === 0) {
     loadHome();
     focusArea = 'search';
-    searchInput.focus();
+    searchBtn.focus();
   } else if (idx === 1) {
     focusArea = 'search';
     openKeyboard();
@@ -178,19 +174,36 @@ function handleTab(idx) {
   }
 }
 
-function openKeyboard() {
-  searchInput.focus();
-  if (window.metaSDK?.input?.showKeyboard) {
-    window.metaSDK.input.showKeyboard();
-    log('Keyboard requested');
+// ===== KEYBOARD FIX: Use SDK Text Input Dialog =====
+async function openKeyboard() {
+  if (!window.metaSDK?.input?.requestTextInput) {
+    log('ERROR: requestTextInput not available');
+    return;
+  }
+
+  try {
+    log('Opening text input...');
+    // This opens Ray-Ban's system text input overlay
+    const result = await window.metaSDK.input.requestTextInput({
+      prompt: 'Search YouTube',
+      value: currentQuery,
+      placeholder: 'Enter search terms'
+    });
+
+    if (result && result.text) {
+      currentQuery = result.text;
+      searchBtn.textContent = result.text || 'Tap to search YouTube';
+      log('Searching: ' + result.text);
+      doSearch(result.text);
+    } else {
+      log('Search cancelled');
+    }
+  } catch (err) {
+    log('Text input error: ' + err.message);
   }
 }
 
-// Touch fallback for testing
-searchInput.addEventListener('click', openKeyboard);
-searchInput.addEventListener('keypress', e => {
-  if (e.key === 'Enter') doSearch(e.target.value);
-});
+searchBtn.addEventListener('click', openKeyboard);
 
 // ===== YOUTUBE API =====
 async function fetchYT(endpoint) {
@@ -291,7 +304,6 @@ document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => handleTab(parseInt(tab.dataset.idx)));
 });
 
-// INIT
 if (location.protocol!== 'https:' && location.hostname!== 'localhost') {
   log('ERROR: Must use HTTPS');
 } else {
