@@ -1,0 +1,49 @@
+{
+  "name": "GlassTube AR",
+  "short_name": "GlassTube",
+  "description": "YouTube-style video app optimized for Ray-Ban Meta Display glasses with AR pass-through",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "transparent",
+  "theme_color": "transparent",
+  "orientation": "any",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["entertainment", "video"],
+  "ray_ban_display": {
+    "ar_mode": true,
+    "pass_through": true,
+    "input": ["head_gesture", "voice", "touch"],
+    "cursor": true,
+    "haptic_feedback": true
+  },
+  "shortcuts": [
+    {
+      "name": "Search",
+      "short_name": "Search",
+      "description": "Search videos",
+      "url": "./index.html?tab=search",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Shorts",
+      "short_name": "Shorts",
+      "description": "Open Shorts feed",
+      "url": "./index.html?tab=shorts",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
