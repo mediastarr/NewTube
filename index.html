@@ -122,14 +122,11 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
 #playerSection.player-mini { position: fixed; right: 16px; bottom: 16px; top: auto; width: 260px; height: 150px; z-index: 40; }
 #playerSection.player-fullscreen {
   width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
-  background: radial-gradient(circle at 50% 0%, rgba(60,242,255,0.22), transparent 55%),
-    radial-gradient(circle at 0% 100%, rgba(120,80,255,0.18), transparent 65%),
-    radial-gradient(circle at 100% 100%, rgba(0,255,180,0.18), transparent 65%),
-    radial-gradient(circle at 50% 50%, rgba(5,6,12,0.99), rgba(2,3,8,1));
+  background: #000;
   position: fixed; top: 0; left: 0; z-index: 9999;
-  overflow: visible;
-  transform: perspective(1200px) translateZ(45px) scale(1.08) rotateX(4deg);
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), filter 0.55s ease, box-shadow 0.55s ease;
+  overflow: hidden;
+  transform: none;
+  transition: none;
 }
 #playerSection.player-fullscreen iframe { width: 100%; height: 100%; object-fit: contain; background: transparent; }
 #playerSection.player-fullscreen #playerFrame { width: 100%; height: 100%; }
@@ -318,16 +315,12 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
 .suggestion-item { padding: 5px 6px; font-size: 12px; cursor: pointer; border-radius: 10px; }
 .suggestion-item:hover { background: rgba(60,242,255,0.16); }
 #playerSection.fx-bloom { box-shadow: 0 0 40px rgba(60,242,255,0.65), 0 26px 70px rgba(0,0,0,0.85); }
-#playerSection.player-fullscreen.fx-bloom {
-  box-shadow: 0 0 80px rgba(60,242,255,0.85), 0 0 160px rgba(60,242,255,0.45), 0 0 260px rgba(0,200,255,0.3), 0 0 400px rgba(120,60,255,0.2);
-}
-#playerSection.player-fullscreen.fx-ambient {
-  background: radial-gradient(circle at 50% 0%, rgba(60,242,255,0.35), transparent 55%), radial-gradient(circle at 0% 100%, rgba(120,80,255,0.28), transparent 65%), radial-gradient(circle at 100% 100%, rgba(0,255,180,0.28), transparent 65%), radial-gradient(circle at 50% 50%, rgba(5,6,12,0.97), rgba(2,3,8,1));
-}
-#playerSection.player-fullscreen.fx-chroma::before { opacity: var(--chroma-opacity, 0.45) !important; filter: blur(var(--chroma-blur, 18px)) !important; inset: -30px; }
-#playerSection.player-fullscreen.fx-audio::after { inset: -80px; opacity: var(--audio-glow-opacity, 0.5) !important; filter: blur(var(--audio-glow-blur, 50px)) !important; }
-#playerSection.player-fullscreen::after { inset: -60px; background: radial-gradient(circle, rgba(60,242,255,0.75), rgba(120,60,255,0.35) 40%, transparent 70%); }
-#playerSection.player-fullscreen.fx-glass { backdrop-filter: blur(0px) saturate(1.8); border: 1px solid rgba(60,242,255,0.5); }
+#playerSection.player-fullscreen.fx-bloom { box-shadow: none; }
+#playerSection.player-fullscreen.fx-ambient { background: #000; }
+#playerSection.player-fullscreen.fx-chroma::before { display: none; }
+#playerSection.player-fullscreen.fx-audio::after { display: none; }
+#playerSection.player-fullscreen::after { display: none; }
+#playerSection.player-fullscreen.fx-glass { backdrop-filter: none; border: none; }
 #playerSection.fx-ambient {
   background: radial-gradient(circle at 50% 0%, rgba(60,242,255,0.25), transparent 60%), radial-gradient(circle at 0% 100%, rgba(120,80,255,0.18), transparent 70%), radial-gradient(circle at 100% 100%, rgba(0,255,180,0.18), transparent 70%), radial-gradient(circle at 50% 50%, rgba(5,6,12,0.98), rgba(2,3,8,1));
 }
@@ -345,13 +338,11 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   transition: opacity 0.12s ease-out, filter 0.12s ease-out; z-index: -3;
 }
 body.search-depth-mode #feed, body.search-depth-mode #channelPage { filter: blur(4px) brightness(0.7); pointer-events: none; }
-body.cinema-mode::before { content: ""; position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); z-index: 9998; pointer-events: none; }
-#playerSection.player-fullscreen.cinema { border-radius: 40px; overflow: hidden; transform: perspective(900px) rotateX(6deg); box-shadow: 0 0 80px rgba(0,0,0,0.6); }
+body.cinema-mode::before { display: none; }
+#playerSection.player-fullscreen.cinema { border-radius: 0; overflow: hidden; transform: none; box-shadow: none; }
 body.cinema-mode #playerSection {
-  --audio-glow-opacity: 0.55 !important; --audio-glow-blur: 55px !important;
-  --chroma-opacity: 0.45 !important; --chroma-blur: 18px !important;
-  box-shadow: 0 0 120px rgba(60,242,255,0.55), 0 0 180px rgba(0,200,255,0.45), 0 0 260px rgba(0,255,180,0.35);
-  transition: box-shadow 0.35s ease, filter 0.35s ease;
+  box-shadow: none;
+  transition: none;
 }
 #playerSection { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease, filter 0.45s ease; }
 body.cinema-mode::before { transition: background 0.45s ease, backdrop-filter 0.45s ease; }
@@ -382,6 +373,7 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
 #playerSection.player-fullscreen.ui-hidden #resBtn { opacity: 0; pointer-events: none; }
 #playerSection.player-mini .player-controls { gap: 4px; bottom: 6px; left: 6px; }
 #playerSection.player-mini .player-controls button { padding: 2px 4px; font-size: 8px; min-height: 18px; min-width: unset; }
+#playerSection.player-fullscreen .player-controls { bottom: 40px; }
 #playerSection.player-fullscreen .player-controls button { padding: 4px 7px; font-size: 9px; min-height: 24px; min-width: 24px; }
 #playerSection.player-fullscreen #closeMini { padding: 3px 7px; font-size: 9px; min-height: 24px; min-width: 24px; }
 body.fullscreen-active .exit-full-btn { display: block; padding: 3px 8px; font-size: 9px; }
@@ -491,6 +483,8 @@ body.fullscreen-active .exit-full-btn { display: block; padding: 3px 8px; font-s
 #plPickerStatus.success { color:#3cf2ff; }
 #plPickerStatus.error { color:#ff6b6b; }
 #playerSection.ui-hidden #addToPlaylistBtn { opacity:0; pointer-events:none; }
+#playerSection.player-fullscreen #addToPlaylistBtn { display: none; }
+#playerSection.player-mini #addToPlaylistBtn { display: none; }
 </style>
 </head>
 <body>
@@ -700,8 +694,14 @@ const API_KEYS = [
   "AIzaSyDF7DasyCt4U2nle8U6fPZm7QnOwbg_VKg","AIzaSyBkaog-TrCWGhT2pe9cVQ3aVNwyxvO-vpc",
   "AIzaSyCiEMfafGEgqpZ94b9ENjAg0UaIku0NRE8","AIzaSyA_lsaX7dRjRsaYb2cwxD2mB7U5t6iYdM0",
   "AIzaSyDI3sl7QYBrXOgAwCyjwJ23pV1nbjUMVL0","AIzaSyDiisGuMjbilWyxKAFpTPu4am8d5yQagJI",
-  "AIzaSyCpAzwCaG2I8gEusAsDKnkoxVMdkPg1Vpk","AIzaSyCJ2cLDhXE-e_KYbnfS7DmrT-gtbL9yxCY"
- 
+  "AIzaSyCpAzwCaG2I8gEusAsDKnkoxVMdkPg1Vpk","AIzaSyCJ2cLDhXE-e_KYbnfS7DmrT-gtbL9yxCY",
+  "AIzaSyA2DSf373Pmv26YLpcv2gnUMeZd0bGgNug","AIzaSyCzjoJptOBNzhkaxnNrkDZRP4SzsmTgTKQ",
+  "AIzaSyA0prh1a0eN4fZ6MA_eB4MPJ0UH4LPsIAc","AIzaSyD_Jfk_5wuEdVhDEsQX9uy3BW2Fio7xe0s",
+  "AIzaSyBt2YQ-X408_Ep3EYV4B70SgXeeADe_L08","AIzaSyCQsQnRJB6KgGKnSpGD66v6HNwikLUdFQ8",
+  "AIzaSyC6qu4BiEbQJ1uoy49GcvAy9_QxHKUE6Go","AIzaSyAtk1KIeZ9kFLNfhrqgNhmPzU4VJqTPeR8",
+  "AIzaSyDIjQgEy4VmFN2OxUkJisqVFw9repJcTF8","AIzaSyCb6lnHEoOXWd0TWfJK71T_mOiM8O2kfrI",
+  "AIzaSyD6aEVz7iaTGJShyDDBZT4C27YG1vEc1_M","AIzaSyAGKeySf2F3BskBrZNylOSGJuHQRX_Rp5E"
+
 ];
 
 let keyIndex = 0;
@@ -2156,9 +2156,12 @@ function applyDepthGlow(x, y, isFullscreen) {
 document.addEventListener("mousemove", (e) => {
   const x = (e.clientX / window.innerWidth) * 2 - 1;
   const y = (e.clientY / window.innerHeight) * 2 - 1;
-  document.querySelectorAll(".parallax").forEach(el => { el.style.transform = `translate(${x*8}px, ${y*8}px)`; });
-  document.querySelectorAll(".parallax-tab").forEach(el => { el.style.transform = `translate(${x*4}px, ${y*4}px)`; });
-  applyDepthGlow(x, y, playerSection.classList.contains("player-fullscreen"));
+  const inFullscreen = playerSection.classList.contains("player-fullscreen");
+  if (!inFullscreen) {
+    document.querySelectorAll(".parallax").forEach(el => { el.style.transform = `translate(${x*8}px, ${y*8}px)`; });
+    document.querySelectorAll(".parallax-tab").forEach(el => { el.style.transform = `translate(${x*4}px, ${y*4}px)`; });
+  }
+  applyDepthGlow(x, y, inFullscreen);
   applyChroma(x, y);
 });
 
@@ -2182,12 +2185,15 @@ function initGyroscope() {
     const y = Math.max(-1, Math.min(1, (beta - 45) / 30)); // 45° = neutral holding angle
 
     // Depth-layered parallax — topbar and tabs only (cards excluded for performance)
-    document.querySelectorAll(".parallax").forEach(el => {
-      el.style.transform = `translate(${x * 12}px, ${y * 12}px)`;
-    });
-    document.querySelectorAll(".parallax-tab").forEach(el => {
-      el.style.transform = `translate(${x * 6}px, ${y * 6}px)`;
-    });
+    // Skipped in fullscreen so nothing peeks out from behind the player on head tilt
+    if (!playerSection.classList.contains("player-fullscreen")) {
+      document.querySelectorAll(".parallax").forEach(el => {
+        el.style.transform = `translate(${x * 12}px, ${y * 12}px)`;
+      });
+      document.querySelectorAll(".parallax-tab").forEach(el => {
+        el.style.transform = `translate(${x * 6}px, ${y * 6}px)`;
+      });
+    }
 
     applyDepthGlow(x, y, playerSection.classList.contains("player-fullscreen"));
     applyChroma(x, y);
