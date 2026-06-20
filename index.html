@@ -700,8 +700,17 @@ const API_KEYS = [
   "AIzaSyBt2YQ-X408_Ep3EYV4B70SgXeeADe_L08","AIzaSyCQsQnRJB6KgGKnSpGD66v6HNwikLUdFQ8",
   "AIzaSyC6qu4BiEbQJ1uoy49GcvAy9_QxHKUE6Go","AIzaSyAtk1KIeZ9kFLNfhrqgNhmPzU4VJqTPeR8",
   "AIzaSyDIjQgEy4VmFN2OxUkJisqVFw9repJcTF8","AIzaSyCb6lnHEoOXWd0TWfJK71T_mOiM8O2kfrI",
-  "AIzaSyD6aEVz7iaTGJShyDDBZT4C27YG1vEc1_M","AIzaSyAGKeySf2F3BskBrZNylOSGJuHQRX_Rp5E"
-
+  "AIzaSyD6aEVz7iaTGJShyDDBZT4C27YG1vEc1_M","AIzaSyAGKeySf2F3BskBrZNylOSGJuHQRX_Rp5E",
+  "AIzaSyBBgj7-tN6VBAG3ziJQKCQL7EJZR4wUW-k","AIzaSyAJbkJYrguKWmBl7Vyd6ObPXZf0zu8-p3E",
+  "AIzaSyCUmBro68VHtC6_OsqlpssTVasHk2NmBLc","AIzaSyCz8qs_I_hbgfLZXZj9QMX1sO74hF5k84Q",
+  "AIzaSyBsq-CNj2VFfgaQkaGFCQJCzIc28OzuFuw","AIzaSyBq-q38IF6iVxgo7EeQLtkB7V25n6WcGYo",
+  "AIzaSyA9c7WYaPVU_kvlTfOvLfxcFZY8TIc5nwo","AIzaSyCqFHwn3azAH2eOSZK8Ch4tZivl3GKb_Zs",
+  "AIzaSyBTUdLTpyYG0-fuOUP1OkeX9tf06S-rVkY","AIzaSyDblb5nF7wjMPJR7DtBTRseyTr64rjXn7E",
+  "AIzaSyA772yWhSkiwVgIFymHk9txl2UotHBksgI","AIzaSyBYKzKQShGsifFIZZ0yV-9quqM50pmuCQk",
+  "AIzaSyAjREsAJQWVX1Q4optfjBKjQzKQvVGYUIM","AIzaSyAqKWwYEh1QFxT69Nh4htYAkQXlC6vAjwo",
+  "AIzaSyBsgRu97z8s_477NEKKQop46sndfe8ZdBE","AIzaSyApAIjVvwL8DQMe5-B5z815hdJtpj3YLDg",
+  "AIzaSyB7FKzBZCxfl4nwi6elI6wj-JCVXXtmA40","AIzaSyAUKic3SobVT3S60-H9fWmdHZJVgdOzRPg"
+ 
 ];
 
 let keyIndex = 0;
@@ -736,6 +745,7 @@ let channelNextPageToken = null;
 let channelUploadsId = null;
 let historyList = JSON.parse(localStorage.getItem("historyList") || "[]");
 let shortsItems = [];
+let shortsSeenIds = new Set();
 let shortsIndex = 0;
 let lastSearchQuery = "";
 let nextPageToken = null;
@@ -1601,7 +1611,17 @@ shortsTab.addEventListener("click", async () => {
     [shortsItems[i], shortsItems[j]] = [shortsItems[j], shortsItems[i]];
   }
   shortsIndex = 0;
-  nextPageToken = data.nextPageToken || null;
+  shortsSeenIds = new Set(shortsItems.map(v => v.id));
+
+  // Always seed a nextPageToken for infinite scroll, even if the pool came
+  // from subscriptions/keywords (which don't return a token themselves)
+  if (data.nextPageToken) {
+    nextPageToken = data.nextPageToken;
+  } else {
+    const seedQ = SHORT_QUERIES[shortQIdx % SHORT_QUERIES.length]; shortQIdx++;
+    const seed = await fetchYouTube("search", { part: "snippet", q: seedQ, type: "video", videoDuration: "short", videoEmbeddable: "true", regionCode: "US", maxResults: 1, _: Date.now() });
+    nextPageToken = seed.nextPageToken || "seed";
+  }
 
   if (!shortsItems.length) {
     shortsCounter.textContent = "No shorts — tap Back and retry";
@@ -1611,14 +1631,25 @@ shortsTab.addEventListener("click", async () => {
     const item = shortsItems[index]; if (!item) return;
     shortsIframe.src = `https://www.youtube.com/embed/${item.id}?autoplay=1&playsinline=1&rel=0&modestbranding=1&origin=${location.origin}`;
     updateCounter();
-    if (index >= shortsItems.length - 4 && nextPageToken) loadMoreShorts();
+    if (index >= shortsItems.length - 6 && !shortsLoadingMore) loadMoreShorts();
   }
+  let shortsLoadingMore = false;
   async function loadMoreShorts() {
-    if (!nextPageToken) return;
-    const more = await fetchYouTube("search", { part: "snippet", q: "#shorts", type: "video", videoDuration: "short", videoEmbeddable: "true", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
-    nextPageToken = more.nextPageToken || null;
-    shortsItems = shortsItems.concat((more.items || []).filter(v => v.id && v.id.videoId).map(v => ({ id: v.id.videoId, snippet: v.snippet })));
-    updateCounter();
+    if (shortsLoadingMore) return;
+    shortsLoadingMore = true;
+    try {
+      // Rotate through queries each batch so it doesn't just repeat "#shorts"
+      const q = SHORT_QUERIES[shortQIdx % SHORT_QUERIES.length]; shortQIdx++;
+      const validToken = nextPageToken && nextPageToken !== "seed" ? nextPageToken : undefined;
+      const more = await fetchYouTube("search", { part: "snippet", q, type: "video", videoDuration: "short", videoEmbeddable: "true", maxResults: 20, pageToken: validToken, _: Date.now() });
+      nextPageToken = more.nextPageToken || "seed"; // keep a truthy token so we keep trying different queries
+      const fresh = (more.items || []).filter(v => v.id && v.id.videoId && !shortsSeenIds.has(v.id.videoId));
+      fresh.forEach(v => shortsSeenIds.add(v.id.videoId));
+      shortsItems = shortsItems.concat(fresh.map(v => ({ id: v.id.videoId, snippet: v.snippet })));
+      updateCounter();
+    } finally {
+      shortsLoadingMore = false;
+    }
   }
   // Transition: fully covers iframe while loading, fades after iframe ready
   let transitioning = false;
@@ -1960,7 +1991,7 @@ async function loadMoreVideos() {
   let data;
   if (currentTab === "home")     data = await fetchYouTube("videos",        { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
   if (currentTab === "movies")   data = await fetchYouTube("search",        { part: "snippet", q: "full movie", type: "video", videoDuration: "long", videoEmbeddable: "true", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
-  if (currentTab === "trending") data = await fetchYouTube("videos",        { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
+  if (currentTab === "trending") data = await fetchYouTube("videos",        { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: getTopCategoryId() || undefined, maxResults: 20, pageToken: nextPageToken, _: Date.now() });
   if (currentTab === "search")   data = await fetchYouTube("search",        { part: "snippet", q: lastSearchQuery, type: "video", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
   if (currentTab === "channel")  data = await fetchYouTube("playlistItems", { part: "snippet", playlistId: channelUploadsId, maxResults: 20, pageToken: nextPageToken, _: Date.now() });
   if (!data) return;
