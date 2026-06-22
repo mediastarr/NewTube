@@ -32,8 +32,6 @@ body {
   color: #f5f7ff;
   overflow-x: hidden;
   min-height: 100vh;
-  touch-action: pan-y;
-  overscroll-behavior: none;
 }
 body.light {
   background: radial-gradient(circle at 0% 0%, #fdfdff 0%, #e4e7ff 40%, #cfd3ff 100%);
@@ -110,8 +108,6 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   box-shadow: 0 0 18px rgba(60,242,255,0.7);
   background: radial-gradient(circle at 0% 0%, rgba(60,242,255,0.22), rgba(10,12,20,0.9));
 }
-.tab-btn:focus, .tab-btn:focus-visible { border-color: var(--accent); box-shadow: 0 0 14px rgba(60,242,255,0.6); outline: none; }
-.topbar-btn:focus, .topbar-btn:focus-visible { border-color: var(--accent); box-shadow: 0 0 14px rgba(60,242,255,0.6); outline: none; }
 /* CHANGE: sticky so medium player stays visible in viewport */
 #playerSection {
   margin-top: 16px; border-radius: 22px; overflow: hidden; position: sticky; top: 12px; z-index: 30;
@@ -128,7 +124,7 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   transform: none;
   transition: none;
 }
-#playerSection.player-fullscreen iframe { width: 100%; height: 100%; object-fit: contain; background: transparent; }
+#playerSection.player-fullscreen iframe { width: 100%; height: 100%; object-fit: contain; background: #000; }
 #playerSection.player-fullscreen #playerFrame { width: 100%; height: 100%; }
 #playerSection { --glow-strength: 0.35; --glow-blur: 22px; --glow-shift-x: 0px; --glow-shift-y: 0px; }
 #playerSection::after {
@@ -151,8 +147,8 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
 }
 #closeMini {
   position: absolute; right: 8px; top: 8px; border-radius: 999px;
-  border: 1px solid rgba(120,130,160,0.7); padding: 3px 7px; font-size: 9px;
-  min-height: 24px; min-width: 24px;
+  border: 1px solid rgba(120,130,160,0.7); padding: 3px 6px; font-size: 9px;
+  min-height: 22px; min-width: 22px;
   background: radial-gradient(circle at 0% 0%, rgba(255,80,80,0.35), rgba(10,12,20,0.9));
   color: #f5f7ff; cursor: pointer; z-index: 12;
   touch-action: manipulation;
@@ -163,14 +159,14 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   color: #f5f7ff; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
   opacity: 0; pointer-events: none; z-index: 60;
 }
-#feed { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; position: relative; z-index: 10; touch-action: pan-y; }
+#feed { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; position: relative; z-index: 10; }
 .video-card {
   display: flex; gap: 10px; padding: 14px; border-radius: 18px;
   background: radial-gradient(circle at 0% 0%, rgba(60,242,255,0.08), rgba(8,10,16,0.96));
   cursor: pointer; position: relative; transform-style: preserve-3d; perspective: 1100px;
   transition: transform 0.15s ease-out;
   min-height: 52px;
-  touch-action: pan-y;
+  touch-action: manipulation;
   -webkit-tap-highlight-color: rgba(60,242,255,0.2);
 }
 .skeleton {
@@ -201,11 +197,6 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   transform: translateZ(22px) scale(1.03);
   box-shadow: 0 0 28px rgba(60,242,255,0.35), 0 0 55px rgba(60,242,255,0.18);
   transition: transform 0.15s ease-out, box-shadow 0.2s ease-out;
-}
-.video-card:focus, .video-card:focus-visible {
-  outline: 2px solid rgba(60,242,255,0.7);
-  outline-offset: -2px;
-  box-shadow: 0 0 22px rgba(60,242,255,0.4), 0 0 44px rgba(60,242,255,0.15);
 }
 .video-card::after {
   content: ""; position: absolute; inset: 0; border-radius: 18px; z-index: -1;
@@ -270,7 +261,18 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   color: #f5f7ff; cursor: pointer;
 }
 .playlist-items-title { font-size: 13px; font-weight: 600; opacity: 0.9; flex: 1; }
-#playlistItemsList { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.pl-pick-item { display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; min-height:52px; border-radius:14px; background:radial-gradient(circle at 0% 0%,rgba(60,242,255,0.08),rgba(8,10,16,0.96)); border:1px solid rgba(120,130,160,0.25); margin-bottom:6px; width:100%; text-align:left; color:#f5f7ff; font-family:inherit; font-size:inherit; outline:none; touch-action:manipulation; -webkit-tap-highlight-color:rgba(60,242,255,0.25); transition:transform 0.15s, box-shadow 0.2s; }
+.pl-pick-item:active { transform:scale(0.97); box-shadow:0 0 18px rgba(60,242,255,0.4); }
+.pl-pick-item:hover { box-shadow:0 0 16px rgba(60,242,255,0.25); border-color:rgba(60,242,255,0.35); }
+.pl-pick-item:focus { box-shadow:0 0 18px rgba(60,242,255,0.5); border-color:rgba(60,242,255,0.6); outline:none; }
+.pl-pick-thumb { width:48px; height:36px; border-radius:8px; overflow:hidden; background:#11131c; flex-shrink:0; }
+.pl-pick-thumb img { width:100%; height:100%; object-fit:cover; }
+.pl-pick-info { flex:1; min-width:0; }
+.pl-pick-title { font-size:12px; font-weight:500; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pl-pick-count { font-size:10px; opacity:0.6; margin-top:2px; }
+.pl-pick-msg { padding:16px; text-align:center; font-size:12px; opacity:0.7; }
+#plPickerStatus.success { color:#3cf2ff; }
+#plPickerStatus.error { color:#ff6b6b; }
 #playlistLoginPanel { margin-top: 12px; padding: 12px; border-radius: 16px; background: linear-gradient(135deg, rgba(8,10,18,0.95), rgba(16,20,32,0.95)); }
 #channelPage { margin-top: 16px; display: none; position: relative; z-index: 10; }
 .channel-banner {
@@ -340,10 +342,7 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
 body.search-depth-mode #feed, body.search-depth-mode #channelPage { filter: blur(4px) brightness(0.7); pointer-events: none; }
 body.cinema-mode::before { display: none; }
 #playerSection.player-fullscreen.cinema { border-radius: 0; overflow: hidden; transform: none; box-shadow: none; }
-body.cinema-mode #playerSection {
-  box-shadow: none;
-  transition: none;
-}
+body.cinema-mode #playerSection { box-shadow: none; }
 #playerSection { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease, filter 0.45s ease; }
 body.cinema-mode::before { transition: background 0.45s ease, backdrop-filter 0.45s ease; }
 body.cinema-mode #playerSection { transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), border-radius 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s ease, filter 0.55s ease; }
@@ -355,7 +354,7 @@ body.cinema-mode #playerSection { transition: transform 0.55s cubic-bezier(0.22,
 #playerSection.player-fullscreen.cinema.zoom-intro { animation: cinemaZoomIntro 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 body.fullscreen-active .exit-full-btn { display: block; }
 .exit-full-btn {
-  position: fixed; left: 20px; top: 20px; border-radius: 999px;
+  position: fixed; left: 16px; top: 16px; border-radius: 999px;
   border: 1px solid rgba(120,130,160,0.7); padding: 3px 8px; font-size: 9px;
   background: radial-gradient(circle at 0% 0%, rgba(60,242,255,0.35), rgba(10,12,20,0.9));
   color: #f5f7ff; cursor: pointer; z-index: 999999999 !important; pointer-events: auto; display: none;
@@ -370,14 +369,15 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
 #playerSection.ui-hidden #hideUIBtn:hover, #playerSection.ui-hidden #hideUIBtn:active { opacity: 1; }
 #resBtn { display: none; }
 #playerSection.player-fullscreen #resBtn { display: inline-block; }
+#playerSection.player-fullscreen .player-controls { bottom: 48px; }
+#playerSection.player-fullscreen .player-controls button { padding: 3px 7px; font-size: 9px; min-height: 22px; min-width: 22px; }
+#playerSection.player-fullscreen #closeMini { padding: 3px 6px; font-size: 9px; min-height: 22px; min-width: 22px; top: 8px; right: 8px; }
+#playerSection.ui-hidden #addToPlaylistBtn { opacity:0; pointer-events:none; }
+#playerSection.player-fullscreen #addToPlaylistBtn { display: none; }
+#playerSection.player-mini #addToPlaylistBtn { display: none; }
 #playerSection.player-fullscreen.ui-hidden #resBtn { opacity: 0; pointer-events: none; }
 #playerSection.player-mini .player-controls { gap: 4px; bottom: 6px; left: 6px; }
-#playerSection.player-mini .player-controls button { padding: 2px 4px; font-size: 8px; min-height: 18px; min-width: unset; }
-#playerSection.player-fullscreen .player-controls { bottom: 40px; }
-#playerSection.player-fullscreen .player-controls button { padding: 4px 7px; font-size: 9px; min-height: 24px; min-width: 24px; }
-#playerSection.player-fullscreen #closeMini { padding: 3px 7px; font-size: 9px; min-height: 24px; min-width: 24px; }
-body.fullscreen-active .exit-full-btn { display: block; padding: 3px 8px; font-size: 9px; }
-#playerSection.player-mini #closeMini { padding: 2px 4px; font-size: 8px; min-height: 18px; min-width: unset; top: 3px; right: 3px; }
+#playerSection.player-mini .player-controls button { padding: 5px 7px; font-size: 10px; min-height: 28px; min-width: unset; }
 #playerSection.player-mini #closeMini { padding: 4px 7px; font-size: 10px; min-height: 28px; min-width: unset; top: 6px; right: 6px; }
 #shortsPage { display: none; position: fixed; inset: 0; z-index: 5000; background: #000; overflow: hidden; touch-action: none; }
 #shortsIframe { width: 100%; height: 100%; border: none; display: block; background: #000; }
@@ -469,22 +469,6 @@ body.fullscreen-active .exit-full-btn { display: block; padding: 3px 8px; font-s
   60% { width: 75%; }
   100% { width: 100%; }
 }
-/* Playlist picker - inline page */
-.pl-pick-item { display:flex; align-items:center; gap:12px; padding:14px; cursor:pointer; min-height:56px; border-radius:18px; background:radial-gradient(circle at 0% 0%,rgba(60,242,255,0.08),rgba(8,10,16,0.96)); border:1px solid rgba(120,130,160,0.25); margin-bottom:8px; width:100%; text-align:left; color:#f5f7ff; font-family:inherit; font-size:inherit; outline:none; touch-action:manipulation; -webkit-tap-highlight-color:rgba(60,242,255,0.25); transition:transform 0.15s, box-shadow 0.2s; }
-.pl-pick-item:active { transform:scale(0.97); box-shadow:0 0 18px rgba(60,242,255,0.4); }
-.pl-pick-item:hover { box-shadow:0 0 22px rgba(60,242,255,0.3); border-color:rgba(60,242,255,0.4); }
-.pl-pick-item:focus { box-shadow:0 0 18px rgba(60,242,255,0.5); border-color:rgba(60,242,255,0.6); outline:none; }
-.pl-pick-thumb { width:56px; height:42px; border-radius:10px; overflow:hidden; background:#11131c; flex-shrink:0; }
-.pl-pick-thumb img { width:100%; height:100%; object-fit:cover; }
-.pl-pick-info { flex:1; min-width:0; }
-.pl-pick-title { font-size:13px; font-weight:500; line-height:1.3; }
-.pl-pick-count { font-size:11px; opacity:0.6; margin-top:2px; }
-.pl-pick-msg { padding:20px 16px; text-align:center; font-size:13px; opacity:0.7; }
-#plPickerStatus.success { color:#3cf2ff; }
-#plPickerStatus.error { color:#ff6b6b; }
-#playerSection.ui-hidden #addToPlaylistBtn { opacity:0; pointer-events:none; }
-#playerSection.player-fullscreen #addToPlaylistBtn { display: none; }
-#playerSection.player-mini #addToPlaylistBtn { display: none; }
 </style>
 </head>
 <body>
@@ -502,6 +486,7 @@ body.fullscreen-active .exit-full-btn { display: block; padding: 3px 8px; font-s
     </div>
     <div class="topbar-right">
       <button id="themeToggle" class="topbar-btn">Theme</button>
+      <button id="syncBtn" class="topbar-btn">⟳ Sync</button>
       <button id="backBtn" class="topbar-btn">Mini</button>
     </div>
   </div>
@@ -534,15 +519,27 @@ body.fullscreen-active .exit-full-btn { display: block; padding: 3px 8px; font-s
   </div>
   <button id="exitFullBtn" class="exit-full-btn">Back</button>
   <button id="scrollTopBtn">▲</button>
+  <div id="hud"></div>
+  <div id="syncOverlay" style="display:none; position:fixed; inset:0; z-index:100001; background:rgba(0,0,0,0.88); align-items:center; justify-content:center;">
+    <div id="syncBox" style="width:90%; max-width:380px; border-radius:22px; background:linear-gradient(135deg,rgba(10,12,20,0.98),rgba(20,24,40,0.98)); border:1px solid rgba(60,242,255,0.35); box-shadow:0 0 40px rgba(60,242,255,0.2); padding:20px;">
+      <div style="font-size:15px; font-weight:700; letter-spacing:0.05em; margin-bottom:6px; color:#f5f7ff;">⟳ Sync from YouTube</div>
+      <div style="font-size:11px; opacity:0.65; margin-bottom:16px; line-height:1.5;">Reads your liked videos, playlists, subscriptions and activity to build a taste profile — so your Home feed matches your real YouTube.</div>
+      <div id="syncStatus" style="font-size:11px; color:rgba(60,242,255,0.9); min-height:16px; margin-bottom:14px;"></div>
+      <div id="syncProgress" style="width:100%; height:3px; background:rgba(60,242,255,0.12); border-radius:3px; margin-bottom:16px; display:none;"><div id="syncProgressFill" style="height:100%; width:0%; background:linear-gradient(90deg,rgba(60,242,255,0.9),rgba(0,255,180,0.7)); border-radius:3px; transition:width 0.4s ease;"></div></div>
+      <div style="display:flex; gap:8px;">
+        <button id="syncStartBtn" class="topbar-btn" style="flex:1;">Start Sync</button>
+        <button id="syncCloseBtn" class="topbar-btn" style="flex:0 0 auto;">Close</button>
+      </div>
+    </div>
+  </div>
   <div id="playlistPickerPage" style="display:none; margin-top:16px; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-      <button id="plPickerClose" class="topbar-btn" style="flex:0 0 auto;">← Cancel</button>
+      <button id="plPickerClose" class="topbar-btn" tabindex="0" style="flex:0 0 auto;">← Cancel</button>
       <div style="font-size:14px; font-weight:600; letter-spacing:0.04em; flex:1;">Add to Playlist</div>
     </div>
     <div id="plPickerList"></div>
     <div id="plPickerStatus" style="display:none; padding:10px; text-align:center; font-size:12px; border-radius:12px; margin-top:8px;"></div>
   </div>
-  <div id="hud"></div>
   <div id="searchPanel">
     <div class="search-input-bar">
       <input id="searchInput" type="text" placeholder="Search videos..." />
@@ -577,6 +574,7 @@ body.fullscreen-active .exit-full-btn { display: block; padding: 3px 8px; font-s
     <div id="subsLoginPanel" style="margin-top:12px; padding:12px; border-radius:16px; background:linear-gradient(135deg, rgba(8,10,18,0.95), rgba(16,20,32,0.95));">
       <div style="font-size:13px; opacity:0.85; margin-bottom:6px;">Sign in to load your YouTube subscriptions</div>
       <button id="startLoginBtn" class="topbar-btn" style="margin-bottom:8px;">Login to YouTube</button>
+      <button id="reloginBtn" class="topbar-btn" style="margin-bottom:8px; background:radial-gradient(circle at 0% 0%,rgba(255,80,80,0.2),rgba(10,12,20,0.9));">Clear &amp; Re-login</button>
       <div id="deviceUserCode" style="font-size:12px; margin-top:6px; opacity:0.8;"></div>
       <div id="deviceLoginStatus" style="font-size:12px; margin-top:4px; opacity:0.8;"></div>
     </div>
@@ -709,8 +707,62 @@ const API_KEYS = [
   "AIzaSyA772yWhSkiwVgIFymHk9txl2UotHBksgI","AIzaSyBYKzKQShGsifFIZZ0yV-9quqM50pmuCQk",
   "AIzaSyAjREsAJQWVX1Q4optfjBKjQzKQvVGYUIM","AIzaSyAqKWwYEh1QFxT69Nh4htYAkQXlC6vAjwo",
   "AIzaSyBsgRu97z8s_477NEKKQop46sndfe8ZdBE","AIzaSyApAIjVvwL8DQMe5-B5z815hdJtpj3YLDg",
-  "AIzaSyB7FKzBZCxfl4nwi6elI6wj-JCVXXtmA40","AIzaSyAUKic3SobVT3S60-H9fWmdHZJVgdOzRPg"
- 
+  "AIzaSyB7FKzBZCxfl4nwi6elI6wj-JCVXXtmA40","AIzaSyAUKic3SobVT3S60-H9fWmdHZJVgdOzRPg",
+  "AIzaSyAQUxDKTdrQyCEXHBirQrEZ5pb9JaWibus","AIzaSyCK-FLtaBwhWcBiTWvUv7HhS34Z3O9LLvA",
+  "AIzaSyDkmFEOre2r1rcpUKvLkm3Siw5FDORXbNY","AIzaSyBwjcpX9eyHEDtJ5JwgEUb8EOF3YCePCMw",
+  "AIzaSyCfZpn1YBNdEXopAM-lOv5hoEvHoCKNo30","AIzaSyCLydlFt2Hl3qDD0DFkAaALLEcn-5JjTqQ",
+  "AIzaSyDUcS13prh73HQB8Cl8GKvhbRi0AGofMDQ","AIzaSyCHp3NvAXwjRRtYkw0t6Kj3TvIn3Izfx0o",
+  "AIzaSyASan345SwgI0lcXKNK-DSW9-lhm4NqqGs","AIzaSyArTrelF7wIG3RYDWLP7BzUkoN2qxcM-HY",
+  "AIzaSyBBDbaKVgzQ5ETh37MN6qeLHVap1RPKU4s","AIzaSyDO3RiiR_DeO1a_3A_2Ll71uusRrnswgIM",
+  "AIzaSyAvIf8brzBEbdGnpGoPkIaSF2ApObzihnM","AIzaSyCSgQatlbI6edL894VVO-PtMCMbLAqccR4",
+  "AIzaSyDqw37aGo1JfO_Qjj6aeOQq3r6MEY5srs4","AIzaSyAl97Urwh3SmWUpfLhwHXmN6iB_PxySoXU",
+  "AIzaSyAMnR9igJ7CAZk4fgGfXZnuAXcUSTQe9k0","AIzaSyAJpWpFiLLrRJIBxnPZ8qDsU8DMNUOa1sY",
+  "AIzaSyDkcP94_SL_cMh1awR8GRj7PDaTEtCjAEQ","AIzaSyCzVZPyIt_cLGXUoQZvi6vXe_fzG7zdyQU",
+  "AIzaSyBxJeSLp1CaFPklvA_eUtDXkXr6rmqQf8w","AIzaSyCpsw8XjapAsBb3qzwMk6-uYbHl854go3k",
+  "AIzaSyBEIGDs9IizUSBPiTCmfIDEDK-fxjd3c-U","AIzaSyA86vgjFGRtQ0eWNIzKoZKbIfcONfnD-x8",
+  "AIzaSyB85UDHjweS_35GSTJgG2jvq8bQJ9lZp98","AIzaSyDUCYvxfvwxfeeTwg_PCdP11ziFP4XX57w",
+  "AIzaSyBQVV8JV387xducmehPKsvySsf-8cd2mLU","AIzaSyAgebz-wGGECIi7b7SHEGUG18Iak8uO-7A",
+  "AIzaSyDWIRyYCUkMF-wLwV7m_bYVuzPTwYDQvVc","AIzaSyBt-fK0zc_H3I_lP2dKhU-Ti0vp__XiBj8",
+  "AIzaSyD5r3xyZGQxIoceBS4bJ3uFiEWbfRKliRw","AIzaSyDo5MtsaaX8Ve9M8NGb-WNBYLuACA8VheM",
+  "AIzaSyD72ZFSnHiv1GFIU0bjQJB3CGiX1P5lVLk","AIzaSyAaig2y0SZkP5PtPSLPH_vTEkOVabYFhVE",
+  "AIzaSyBONa2n3IQIeAnPTbSBXo_VzfFs13MFksQ","AIzaSyB02AOkqXeFXVC3RjTHnx1JOmzUrEHU3AM",
+  "AIzaSyC6QiQHKfSzvOXCQKrp_TWP1wBbqDOtgko","AIzaSyDmu5MJp9if4SYgw1C-qr1W6C3M7ZxC2pY",
+  "AIzaSyDIgSItm54zptmKbsZmTJJBP9XPsQ-Bw1A","AIzaSyBbou5lqkGjEJgcitY048hFQfR12Fsq0fg",
+  "AIzaSyCQ3x_B3Cb_-hb8INKcagJTYM8Aa0bIdE4","AIzaSyAo4SB6LsgWpoBwSA1o2tTaBwmCzq24-6A",
+  "AIzaSyB_9uhJ73_4qlocs_o6JNM1rXy99W0A77w","AIzaSyB7p9iVQwT_h51Kczd1lUWUZLcLoK8u208",
+  "AIzaSyD1ZrnaVPygZAvLM8HCmXOO4UGXN3ReOXY","AIzaSyDr-o2a4B9MraN2OXqOPVv4RsBnt-RTi9c",
+  "AIzaSyABzBkBv7U0r0MOUW4Ha76wh-5pSUg1iks","AIzaSyDQot2SFxaGCPp9OFSA_gU0ltcL-pIp8jA",
+  "AIzaSyB4eIx6h3mgwVQ_PDzrBoGJLPU7MNRIUc4","AIzaSyBTKio9NP697v86sdX5s6TVAwrhWxVFBaw",
+  "AIzaSyDF2BBoFFTl0kEguN7MvatVhIQ5Eca3jtk","AIzaSyDcpygup-KMUjYwMhl7eOLCDzFCsVfsD2g",
+  "AIzaSyDFDH19FJ0d1i0ZrB7ALR1bdNQyLk8wMoE","AIzaSyBCoHq18VumwlJpmqPeclNL_ahwo-x4c50",
+  "AIzaSyAQ3o2jVOxwgNXzmnycVcegZFL5rRvBXzg","AIzaSyBUAjsfYHERG0Lum8umR-lpryOfKIKfcLQ",
+  "AIzaSyD-pf2cx5Jxyi-_dg4ea3LhWf2uGWhAVUI","AIzaSyBHhoD4CIz7Z2673GONqdkXqwL6d9he8Gw",
+  "AIzaSyCv_FArQ3AD1J7-KwOX47f7BRuKO4OsveY","AIzaSyBA0pp1Qqkw2mWxdgJkccCw1hwlFkjFoZs",
+  "AIzaSyAa8TEy1VENLZvWJ7CUHleGqgiCUPzUsd0","AIzaSyBHYZ1sFLVm9UHtui0tD6QiuFqyF2_7exI",
+  "AIzaSyDnGXqfwro32CujRpxR-uZoNxjKulRNwH0","AIzaSyAxl2YeimopUuvARE9i3gAa55rSku2g10A",
+  "AIzaSyAW1c_Nj6NhGtbZ0rEY_yxfke4p-PhQW7A","AIzaSyDV5BIF-jmP10wQM_zs_RFZr4TtljNLAO0",
+  "AIzaSyBNljF5Pp_LaHXltD3QRf11VLVsOLewjjI","AIzaSyBrrp8X6-6CMZ1K4SDugl6xdKFygZQp5oI",
+  "AIzaSyBPpmxIKHhw1Xx5D19x90FpMLIpDQmW03s","AIzaSyBfukYsVrWDDOoxDgZlzcqVOOAKZG9g32A",
+  "AIzaSyDuGbWdRbeRFhwJw4gFhsBl5V8Ie4M-glA","AIzaSyAOy2z2tBo2k7PZJLqx8oILCJCGs43aNLI",
+  "AIzaSyBYQwJQCKr1-DGH9Vbl5yGRo5BLG9OsiME","AIzaSyCMMQj3sH_Zk7k_dO6H8_Kzbax9F04yFYc",
+  "AIzaSyD-fAvJEBTJYcKmkl03G-JXTps8js9uMrE","AIzaSyBf0N8TcPLk2Ep32aYyjcwRbhIbEJtAR50",
+  "AIzaSyBUKZmkA_CN7_T1Q6-9_TH47pczO2EvRfY","AIzaSyDBBY9MIcjIkbT3Ggyah4s7MI_TjC7e8HA",
+  "AIzaSyBpS1ffp-NEwZNFy7CxN-zwEDqrTxJjXSQ","AIzaSyDhtfsTq9vTPhcWevO1eGLKuzXh_PlWi68",
+  "AIzaSyCmUEiBbVkAr-hzZu5R5AEhldCaQLlOHjQ","AIzaSyBUy6g07uRuwyWRSULA6pS7V_PfWlPMKEk",
+  "AIzaSyC2qh4ofmzbXdn_wIE9gu08xrbJH86vkFM","AIzaSyDXU_965063hQaURGP-Vl5cnetgjDHLPAc",
+  "AIzaSyB8-sm9Nd1GA5P3pwC4z8wd-MvwlTKGcwo","AIzaSyAqErB0WmrOt2vGxnD-LRdeMBldoGoKbOo",
+  "AIzaSyA_F5GcpmUsCEiPCHs1vC8CEXzVN2EnfcI","AIzaSyBd_lVv5o3ytHUwDWLhtqq-NgcNcpNCHGA",
+  "AIzaSyBQriBvxSUYcLuutFIS7SLfOwpTme5Fgpk","AIzaSyDLZCdPCPp6hcqT37e1S2dbNTJADZBUt8o",
+  "AIzaSyBafO00Lc3ZEpRjHi0FhsL6Xfeb3GAJ_B8","AIzaSyDs2jIad2HCfY0o3j4kLFvducChpgv9qmU",
+  "AIzaSyC1pCcPHsL11vrxRuUNoeN3urdwt3qjilM","AIzaSyAF7addOWtR2zzVfZAXyW_GkUM-zSslFWA",
+  "AIzaSyDz_P6WIbRBr31VO7fQX0UcP3tFSBlGEE0","AIzaSyDsL7qek4qkCjmyczIUArhK8krUq2QV3mo",
+  "AIzaSyBKgt_-gM4Nnfkxj-6xz81tNHMydBLD0CQ","AIzaSyAxz8JgYT02TS12fcdIYVNqmhT_0OwA48Q",
+  "AIzaSyDM_mZiXih02mMOCKEUgfrJhHU0RCO_W4Y","AIzaSyAAqJcN9TJiNpPSvvIX8IP2pDCbwrwbH68",
+  "AIzaSyALpQ6mleh8v4SlVnk1V8nBZ2pTIUQAoLk","AIzaSyAGy9rR4lbNYMlRgQcluVUlCpuRFIWbnZk",
+  "AIzaSyD1f3AnsJRrGmTTBWK_XsgwqLnDQv2mA00","AIzaSyB0cB1FlDb4Azzq2xh7_ENz2CvwpWJnJXg",
+  "AIzaSyCjyaZibozhYOTolhznZ0zLz45mIqtOLaw","AIzaSyC9qC_Q3q-aDhVwfp4QOdIvecqQW04Mq3M",
+  "AIzaSyDTIw26DvcDWRCGftd-c-_SdcllN0zvxE0","AIzaSyALn7in8kXrFCzC1VU51UqNFZ9YuLkwXNY",
+  "AIzaSyB_3g7oRfcoKqQYqt7UPHwQNTt3BjLD4iw"
 ];
 
 let keyIndex = 0;
@@ -740,7 +792,7 @@ let currentTab = "home";
 let currentVideoId = null;
 let miniActive = false;
 let isLight = false;
-let currentChannelId = "AddChannelIDHere";
+let currentChannelId = "UCoLDGQ7a81ep9SJqPlDs2sg";
 let channelNextPageToken = null;
 let channelUploadsId = null;
 let historyList = JSON.parse(localStorage.getItem("historyList") || "[]");
@@ -798,10 +850,6 @@ const playlistItemsView = document.getElementById("playlistItemsView");
 const playlistBackBtn = document.getElementById("playlistBackBtn");
 const playlistItemsTitle = document.getElementById("playlistItemsTitle");
 const playlistItemsList = document.getElementById("playlistItemsList");
-const addToPlaylistBtn = document.getElementById("addToPlaylistBtn");
-const playlistPickerPage = document.getElementById("playlistPickerPage");
-const plPickerList = document.getElementById("plPickerList");
-const plPickerStatus = document.getElementById("plPickerStatus");
 
 function showHUD(text) {
   hudEl.textContent = text; hudEl.style.opacity = 1;
@@ -924,16 +972,14 @@ function saveSearchToProfile(query) {
   const profile = getTasteProfile();
   profile.searchHistory = profile.searchHistory || [];
   profile.searchHistory = [{ q: query.trim(), ts: Date.now() }, ...profile.searchHistory].slice(0, 30);
-  // Also boost keywords from search queries (stronger signal than title words)
   const stopwords = new Set(["the","a","an","and","or","of","to","in","is","on","for","with","how","why","what","this","that","i","my","we","you","it","at","be","are","was","were","by","from","as","but","not","have","has","do","did","new","vs","full","2024","2025","2026"]);
   const words = query.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 2 && !stopwords.has(w));
   profile.keywords = profile.keywords || {};
-  words.forEach(w => { profile.keywords[w] = (profile.keywords[w] || 0) + 3; }); // 3x weight vs title keywords
+  words.forEach(w => { profile.keywords[w] = (profile.keywords[w] || 0) + 3; });
   profile.bigrams = profile.bigrams || {};
-  for (let i = 0; i < words.length - 1; i++) { const bi = words[i] + " " + words[i + 1]; profile.bigrams[bi] = (profile.bigrams[bi] || 0) + 3; }
+  for (let i = 0; i < words.length - 1; i++) { const bi = words[i] + " " + words[i+1]; profile.bigrams[bi] = (profile.bigrams[bi] || 0) + 3; }
   localStorage.setItem("tasteProfile", JSON.stringify(profile));
 }
-
 function getRecentSearches(n) { return ((getTasteProfile().searchHistory || []).slice(0, n || 5)).map(s => s.q); }
 
 /* -----------------------------------------------------------
@@ -957,205 +1003,93 @@ function getRecentSearches(n) { return ((getTasteProfile().searchHistory || []).
 async function fetchPersonalizedFeed() {
   const token = await getValidToken();
   const watchedIds = new Set((getTasteProfile().recentVideoIds || []).slice(0, 50));
-  // SKIP videos shown in the LAST feed load — forces fresh content each tap
   let shownHistory = []; try { shownHistory = JSON.parse(localStorage.getItem("feedShownIds") || "[]"); } catch(e) {}
-  const lastFeedIds = new Set(shownHistory.slice(0, 80)); // skip last ~80 shown videos
+  const oneDayAgo = Date.now() - 86400000;
+  let shownHistoryParsed = []; try { shownHistoryParsed = JSON.parse(localStorage.getItem("feedShownTimed") || "[]"); } catch(e) {}
+  const recentShownIds = new Set(shownHistoryParsed.filter(e => e.ts > oneDayAgo).map(e => e.id));
   const seen = new Set();
   const allItems = [];
-
   function addItems(items, weight) {
     (items || []).forEach(item => {
       const id = item.id?.videoId || item.id;
-      if (!id || seen.has(id) || watchedIds.has(id) || lastFeedIds.has(id)) return;
-      seen.add(id);
-      allItems.push({ item, weight });
+      if (!id || seen.has(id) || watchedIds.has(id) || recentShownIds.has(id)) return;
+      seen.add(id); allItems.push({ item, weight });
     });
   }
-
-  /* ============================================================
-     SOURCE 1: SUBSCRIPTION UPLOADS (OAuth — your actual subs)
-     SHUFFLED each load so different channels surface each time
-  ============================================================ */
   if (token) {
     try {
-      const subsRes = await fetch(
-        "https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=50&order=relevance",
-        { headers: { Authorization: "Bearer " + token } }
-      );
+      const subsRes = await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=50&order=relevance", { headers: { Authorization: "Bearer " + token } });
       const subsData = await subsRes.json();
       const channelIds = (subsData.items || []).map(s => s.snippet.resourceId.channelId);
-
       if (channelIds.length > 0) {
-        const chRes = await fetchYouTube("channels", {
-          part: "contentDetails", id: channelIds.slice(0, 50).join(",")
-        });
-        const uploadPlaylists = (chRes.items || [])
-          .map(ch => ch.contentDetails?.relatedPlaylists?.uploads)
-          .filter(Boolean);
-
-        // Shuffle playlist order so each Home tap surfaces different channels
-        for (let i = uploadPlaylists.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [uploadPlaylists[i], uploadPlaylists[j]] = [uploadPlaylists[j], uploadPlaylists[i]];
-        }
-
-        // Sample 8 random channels (not always the same top 15)
-        const uploadFetches = uploadPlaylists.slice(0, 8).map(plId =>
-          fetchYouTube("playlistItems", { part: "snippet", playlistId: plId, maxResults: 4, _: Date.now() })
+        const chRes = await fetchYouTube("channels", { part: "contentDetails", id: channelIds.slice(0, 50).join(",") });
+        const uploadPlaylists = (chRes.items || []).map(ch => ch.contentDetails?.relatedPlaylists?.uploads).filter(Boolean);
+        for (let i = uploadPlaylists.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [uploadPlaylists[i], uploadPlaylists[j]] = [uploadPlaylists[j], uploadPlaylists[i]]; }
+        const uploadFetches = uploadPlaylists.slice(0, 10).map(plId =>
+          fetchYouTube("playlistItems", { part: "snippet,contentDetails", playlistId: plId, maxResults: 10, _: Date.now() })
         );
         const uploadResults = await Promise.allSettled(uploadFetches);
         uploadResults.forEach(r => {
           if (r.status === "fulfilled") {
-            const items = (r.value.items || []).map(it => ({
-              id: it.snippet?.resourceId?.videoId, snippet: it.snippet
-            }));
-            addItems(items, 5);
+            const sorted = (r.value.items || []).sort((a, b) => new Date(b.contentDetails?.videoPublishedAt || b.snippet?.publishedAt || 0) - new Date(a.contentDetails?.videoPublishedAt || a.snippet?.publishedAt || 0));
+            addItems(sorted.slice(0, 4).map(it => ({ id: it.snippet?.resourceId?.videoId, snippet: { ...it.snippet, publishedAt: it.contentDetails?.videoPublishedAt || it.snippet?.publishedAt } })), 6);
           }
         });
       }
-    } catch (e) {}
-
-    /* ============================================================
-       SOURCE 2: LIKED VIDEOS (OAuth — random offset each load)
-    ============================================================ */
+    } catch(e) {}
     try {
-      const llRes = await fetch(
-        "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=LL&maxResults=10",
-        { headers: { Authorization: "Bearer " + token } }
-      );
+      const llRes = await fetch("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=LL&maxResults=15", { headers: { Authorization: "Bearer " + token } });
       const llData = await llRes.json();
-      const likedItems = (llData.items || []).map(it => ({
-        id: it.snippet?.resourceId?.videoId, snippet: it.snippet
-      }));
-      // Shuffle liked videos so different ones surface
-      for (let i = likedItems.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [likedItems[i], likedItems[j]] = [likedItems[j], likedItems[i]];
-      }
+      const likedItems = (llData.items || []).map(it => ({ id: it.snippet?.resourceId?.videoId, snippet: { ...it.snippet, publishedAt: it.contentDetails?.videoPublishedAt || it.snippet?.publishedAt } }));
+      for (let i = likedItems.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [likedItems[i], likedItems[j]] = [likedItems[j], likedItems[i]]; }
       addItems(likedItems.slice(0, 5), 3);
-    } catch (e) {}
+    } catch(e) {}
   }
-
-  /* ============================================================
-     SOURCE 3: LOCAL TASTE + DISCOVERY — rotated each tap
-  ============================================================ */
-  const topChannels = getTopChannels(8);
-  const topKeywords = getTopKeywords(10);
-  const topBigrams = getTopBigrams(6);
-  const recentIds = getRecentVideoIds(5);
-  const topCats = getTopCategories(3);
-  const recentSearches = getRecentSearches(5);
-
-  // Shuffle all arrays so different items are picked each tap
-  function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-  const shuffledChannels = shuffle(topChannels);
-  const shuffledKeywords = shuffle(topKeywords);
-  const shuffledBigrams = shuffle(topBigrams);
-  const shuffledSearches = shuffle(recentSearches);
-  const shuffledRecent = shuffle(recentIds);
-
-  const localFetches = [];
-  const localWeights = [];
-
-  // Recent search queries — rotated (pick 2 random from last 5)
-  shuffledSearches.slice(0, 2).forEach(q => {
-    localFetches.push(fetchYouTube("search", { part: "snippet", q: q, type: "video", maxResults: 6, _: Date.now() }));
-    localWeights.push(5);
-  });
-
-  // Top watched channels — rotated (pick 2-3 random from top 8)
-  shuffledChannels.slice(0, token ? 2 : 4).forEach(ch => {
-    localFetches.push(fetchYouTube("search", { part: "snippet", channelId: ch.id, type: "video", order: "date", maxResults: 4, _: Date.now() }));
-    localWeights.push(4);
-  });
-
-  // Bigram topic searches — rotated (pick 1-2 random from top 6)
-  shuffledBigrams.slice(0, 2).forEach(phrase => {
-    localFetches.push(fetchYouTube("search", { part: "snippet", q: phrase, type: "video", maxResults: 6, _: Date.now() }));
-    localWeights.push(4);
-  });
-
-  // Keyword topic searches — different combo each tap
-  if (shuffledKeywords.length >= 2) {
-    const kwQ = shuffledKeywords.slice(0, 3).join(" ");
-    localFetches.push(fetchYouTube("search", { part: "snippet", q: kwQ, type: "video", maxResults: 6, _: Date.now() }));
-    localWeights.push(3);
-  }
-
-  // Collaborative filtering — rotated recent videos
-  shuffledRecent.slice(0, 2).forEach(videoId => {
-    localFetches.push(fetchYouTube("search", { part: "snippet", type: "video", relatedToVideoId: videoId, maxResults: 5, _: Date.now() }));
-    localWeights.push(3);
-  });
-
-  // Category trending — random category each tap for variety
+  const topChannels = getTopChannels(8); const topKeywords = getTopKeywords(10); const topBigrams = getTopBigrams(6);
+  const recentIds = getRecentVideoIds(5); const topCats = getTopCategories(3); const recentSearches = getRecentSearches(5);
+  function shuffle(arr) { const a = [...arr]; for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  const sC = shuffle(topChannels), sK = shuffle(topKeywords), sB = shuffle(topBigrams), sS = shuffle(recentSearches), sR = shuffle(recentIds);
+  const lf = [], lw = [];
+  sS.slice(0,2).forEach(q => { lf.push(fetchYouTube("search",{part:"snippet",q,type:"video",maxResults:6,_:Date.now()})); lw.push(5); });
+  sC.slice(0,token?2:4).forEach(ch => { lf.push(fetchYouTube("search",{part:"snippet",channelId:ch.id,type:"video",order:"date",maxResults:4,_:Date.now()})); lw.push(4); });
+  sB.slice(0,2).forEach(phrase => { lf.push(fetchYouTube("search",{part:"snippet",q:phrase,type:"video",maxResults:6,_:Date.now()})); lw.push(4); });
+  if (sK.length>=2) { lf.push(fetchYouTube("search",{part:"snippet",q:sK.slice(0,3).join(" "),type:"video",maxResults:6,_:Date.now()})); lw.push(3); }
+  sR.slice(0,2).forEach(videoId => { lf.push(fetchYouTube("search",{part:"snippet",type:"video",relatedToVideoId:videoId,maxResults:5,_:Date.now()})); lw.push(3); });
   const allCats = ["0","1","2","10","15","17","20","22","23","24","25","26","28"];
-  const myCats = topCats.length ? topCats : [allCats[Math.floor(Math.random() * allCats.length)]];
-  const randomCat = myCats[Math.floor(Math.random() * myCats.length)];
-  localFetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: randomCat, maxResults: 10, _: Date.now() }));
-  localWeights.push(2);
-
-  // General trending — always a different random category as fallback
-  const fallbackCat = allCats[Math.floor(Math.random() * allCats.length)];
-  localFetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: fallbackCat, maxResults: 10, _: Date.now() }));
-  localWeights.push(1);
-
-  const localResults = await Promise.allSettled(localFetches);
-  localResults.forEach((r, i) => {
-    if (r.status === "fulfilled") addItems(r.value.items, localWeights[i]);
-  });
-
-  /* ============================================================
-     SCORING — rank every candidate by relevance signals
-  ============================================================ */
-  const channelWeights = {};
-  topChannels.forEach(ch => { channelWeights[ch.id] = ch.score; });
-  const kwSet = new Set(topKeywords.map(w => w.toLowerCase()));
-  const biSet = new Set(topBigrams.map(b => b.toLowerCase()));
-
+  const myCats = topCats.length ? topCats : [allCats[Math.floor(Math.random()*allCats.length)]];
+  lf.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:myCats[Math.floor(Math.random()*myCats.length)],maxResults:10,_:Date.now()})); lw.push(2);
+  lf.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:allCats[Math.floor(Math.random()*allCats.length)],maxResults:10,_:Date.now()})); lw.push(1);
+  const lr = await Promise.allSettled(lf);
+  lr.forEach((r,i) => { if (r.status==="fulfilled") addItems(r.value.items, lw[i]); });
+  const chW = {}; topChannels.forEach(ch => { chW[ch.id] = ch.score; });
+  const kwSet = new Set(topKeywords.map(w=>w.toLowerCase())), biSet = new Set(topBigrams.map(b=>b.toLowerCase()));
   const scored = allItems.map(c => {
-    const snippet = c.item.snippet || {};
-    let score = c.weight;
-    const chId = snippet.channelId || "";
-    if (channelWeights[chId]) score += Math.min(channelWeights[chId], 8);
-    const titleLower = (snippet.title || "").toLowerCase();
-    kwSet.forEach(kw => { if (titleLower.includes(kw)) score += 1.5; });
-    biSet.forEach(bi => { if (titleLower.includes(bi)) score += 3; });
-    const ageHours = (Date.now() - new Date(snippet.publishedAt || 0).getTime()) / 3600000;
-    if (ageHours < 24) score += 3;
-    else if (ageHours < 168) score += 1.5;
-    return { item: c.item, score, channelId: chId };
+    const s = c.item.snippet||{}; let score = c.weight; const chId = s.channelId||"";
+    if (chW[chId]) score += Math.min(chW[chId],8);
+    const tl = (s.title||"").toLowerCase();
+    kwSet.forEach(kw => { if (tl.includes(kw)) score+=1.5; });
+    biSet.forEach(bi => { if (tl.includes(bi)) score+=3; });
+    const age = (Date.now()-new Date(s.publishedAt||0).getTime())/3600000;
+    if (age<24) score+=3; else if (age<168) score+=1.5;
+    return { item:c.item, score, channelId:chId };
   });
-
-  /* ============================================================
-     DIVERSITY-AWARE RANKING — space out same-channel videos
-  ============================================================ */
-  scored.sort((a, b) => b.score - a.score);
-  const feed = [];
-  const channelLastIndex = {};
+  scored.sort((a,b)=>b.score-a.score);
+  const feed = []; const cli = {};
   scored.forEach(c => {
-    const lastIdx = channelLastIndex[c.channelId];
-    if (lastIdx !== undefined && feed.length - lastIdx < 3) {
-      feed.splice(Math.min(feed.length + 2, scored.length), 0, c.item);
-    } else { feed.push(c.item); }
-    channelLastIndex[c.channelId] = feed.length - 1;
+    const li = cli[c.channelId];
+    if (li!==undefined && feed.length-li<3) feed.splice(Math.min(feed.length+2,scored.length),0,c.item);
+    else feed.push(c.item);
+    cli[c.channelId] = feed.length-1;
   });
-
-  // Light shuffle for natural feel
-  for (let i = 1; i < feed.length - 1; i++) {
-    if (Math.random() < 0.25) {
-      const j = i + (Math.random() < 0.5 ? 1 : -1);
-      if (j >= 0 && j < feed.length) [feed[i], feed[j]] = [feed[j], feed[i]];
-    }
-  }
-
-  // Save shown video IDs so next Home tap surfaces different content
-  const newShownIds = feed.map(item => item.id?.videoId || item.id).filter(Boolean);
-  const updatedShown = [...newShownIds, ...shownHistory].slice(0, 300);
-  try { localStorage.setItem("feedShownIds", JSON.stringify(updatedShown)); } catch(e) {}
-
+  for (let i=1;i<feed.length-1;i++) { if (Math.random()<0.25) { const j=i+(Math.random()<0.5?1:-1); if (j>=0&&j<feed.length) [feed[i],feed[j]]=[feed[j],feed[i]]; } }
+  const newIds = feed.map(item=>item.id?.videoId||item.id).filter(Boolean);
+  const newTimed = newIds.map(id=>({id,ts:Date.now()}));
+  const updTimed = [...newTimed,...shownHistoryParsed].filter(e=>e.ts>oneDayAgo).slice(0,200);
+  try { localStorage.setItem("feedShownTimed",JSON.stringify(updTimed)); } catch(e) {}
+  try { localStorage.setItem("feedShownIds",JSON.stringify([...newIds,...shownHistory].slice(0,300))); } catch(e) {}
   return feed;
 }
+
 
 function hideUIForVideo() {
   topbarEl.style.display = "flex";
@@ -1441,401 +1375,206 @@ homeTab.addEventListener("click", async () => {
 trendingTab.addEventListener("click", async () => {
   nextPageToken = null; setActiveTab("trending"); showSkeletons(8);
   const token = await getValidToken();
-  const myCat = getTopCategoryId();
-  const allItems = [];
-  const seen = new Set();
-
-  function addUnique(items) {
-    (items || []).forEach(item => {
-      const id = item.id?.videoId || item.id;
-      if (!id || seen.has(id)) return;
-      seen.add(id);
-      allItems.push(item);
-    });
-  }
-
+  const myCat = getTopCategoryId(); const cats = getTopCategories(3);
+  const allItems = []; const seen = new Set();
+  let tShown = []; try { tShown = JSON.parse(localStorage.getItem("trendingShownTimed")||"[]"); } catch(e) {}
+  const sixAgo = Date.now()-6*3600000;
+  const tRecent = new Set(tShown.filter(e=>e.ts>sixAgo).map(e=>e.id));
+  function addU(items) { (items||[]).forEach(item=>{ const id=item.id?.videoId||item.id; if(!id||seen.has(id)||tRecent.has(id))return; seen.add(id); allItems.push(item); }); }
   const fetches = [];
-
-  // Trending in YOUR top category (not random)
-  if (myCat) {
-    fetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: myCat, maxResults: 15, _: Date.now() }));
-  }
-  // Trending in a second category for variety
-  const cats = getTopCategories(3);
-  if (cats.length > 1) {
-    fetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: cats[1], maxResults: 10, _: Date.now() }));
-  }
-
-  // If logged in — popular recent uploads from subscribed channels
+  if (myCat) fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:myCat,maxResults:15,_:Date.now()}));
+  if (cats.length>1) fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:cats[1],maxResults:10,_:Date.now()}));
+  if (cats.length>2) fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:cats[2],maxResults:8,_:Date.now()}));
+  fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",maxResults:15,_:Date.now()}));
   if (token) {
-    fetches.push((async () => {
-      try {
-        const subsRes = await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=30&order=relevance", {
-          headers: { Authorization: "Bearer " + token }
-        });
-        const subsData = await subsRes.json();
-        const channelIds = (subsData.items || []).map(s => s.snippet.resourceId.channelId);
-        if (!channelIds.length) return { items: [] };
-        const chRes = await fetchYouTube("channels", { part: "contentDetails", id: channelIds.slice(0, 30).join(",") });
-        const plIds = (chRes.items || []).map(ch => ch.contentDetails?.relatedPlaylists?.uploads).filter(Boolean);
-        const upFetches = plIds.slice(0, 8).map(plId =>
-          fetchYouTube("playlistItems", { part: "snippet", playlistId: plId, maxResults: 3, _: Date.now() })
-        );
-        const upResults = await Promise.allSettled(upFetches);
-        const items = [];
-        upResults.forEach(r => {
-          if (r.status === "fulfilled") {
-            (r.value.items || []).forEach(it => {
-              const vid = it.snippet?.resourceId?.videoId;
-              if (vid) items.push({ id: vid, snippet: it.snippet });
-            });
-          }
-        });
-        return { items };
-      } catch(e) { return { items: [] }; }
-    })());
+    fetches.push((async()=>{ try {
+      const sr=await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=30&order=relevance",{headers:{Authorization:"Bearer "+token}});
+      const sd=await sr.json(); const cids=(sd.items||[]).map(s=>s.snippet.resourceId.channelId);
+      if(!cids.length) return {items:[]};
+      const cr=await fetchYouTube("channels",{part:"contentDetails",id:cids.slice(0,30).join(",")});
+      const pls=(cr.items||[]).map(ch=>ch.contentDetails?.relatedPlaylists?.uploads).filter(Boolean).sort(()=>Math.random()-0.5);
+      const ur=await Promise.allSettled(pls.slice(0,8).map(plId=>fetchYouTube("playlistItems",{part:"snippet,contentDetails",playlistId:plId,maxResults:10,_:Date.now()})));
+      const items=[];
+      ur.forEach(r=>{ if(r.status==="fulfilled") { const sorted=(r.value.items||[]).sort((a,b)=>new Date(b.contentDetails?.videoPublishedAt||b.snippet?.publishedAt||0)-new Date(a.contentDetails?.videoPublishedAt||a.snippet?.publishedAt||0)); sorted.slice(0,3).forEach(it=>{ const vid=it.snippet?.resourceId?.videoId; if(vid) items.push({id:vid,snippet:{...it.snippet,publishedAt:it.contentDetails?.videoPublishedAt||it.snippet?.publishedAt}}); }); } });
+      return {items};
+    } catch(e){return{items:[]};} })());
   }
-
-  // General trending fallback
-  fetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 15, _: Date.now() }));
-
   const results = await Promise.allSettled(fetches);
-  results.forEach(r => { if (r.status === "fulfilled") addUnique(r.value.items); });
-
-  nextPageToken = null; // trending uses merged sources, seed pagination separately
+  results.forEach(r=>{ if(r.status==="fulfilled") addU(r.value.items); });
   renderFeed(allItems);
-  // Seed pagination from general trending for infinite scroll
-  const seedData = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, _: Date.now() });
-  nextPageToken = seedData.nextPageToken || null;
-  showHUD(token ? "Trending For You ✦" : "Trending");
+  const shownNow=allItems.map(item=>item.id?.videoId||item.id).filter(Boolean);
+  try { localStorage.setItem("trendingShownTimed",JSON.stringify([...shownNow.map(id=>({id,ts:Date.now()})),...tShown].filter(e=>e.ts>sixAgo).slice(0,200))); } catch(e) {}
+  const seed=await fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:myCat||undefined,maxResults:20,_:Date.now()});
+  nextPageToken=seed.nextPageToken||null;
+  showHUD(token?"Trending For You ✦":"Trending");
 });
 
 shortsTab.addEventListener("click", async () => {
-  nextPageToken = null;
-  setActiveTab("shorts");
-  showHUD("Shorts");
+  nextPageToken = null; setActiveTab("shorts"); showHUD("Shorts");
   shortsPageEl.innerHTML = `
     <iframe id="shortsIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    <button id="shortsBackBtn">← Back</button>
-    <div id="shortsCounter">1 / …</div>
-    <div id="shortsHint">
-      <div class="shorts-arrow up">▼</div>
-      <div class="shorts-hint-text">swipe up/down</div>
-      <div class="shorts-arrow down">▼</div>
-    </div>
+    <button id="shortsBackBtn" tabindex="0">← Back</button>
+    <div id="shortsCounter">Loading…</div>
+    <div id="shortsHint"><div class="shorts-arrow up">▼</div><div class="shorts-hint-text">swipe up/down</div><div class="shorts-arrow down">▼</div></div>
     <div id="shortsTransition"></div>
   `;
   shortsPageEl.classList.add("shorts-bloom");
-  const shortsIframe  = document.getElementById("shortsIframe");
+  const shortsIframe = document.getElementById("shortsIframe");
   const shortsCounter = document.getElementById("shortsCounter");
-  const shortsHint    = document.getElementById("shortsHint");
-  const shortsTrans   = document.getElementById("shortsTransition");
-  const backBtn2      = document.getElementById("shortsBackBtn");
-  // === PERSONALIZED SHORTS: subscription channels + keyword interests ===
+  const shortsHint = document.getElementById("shortsHint");
+  const shortsTrans = document.getElementById("shortsTransition");
+  const backBtn2 = document.getElementById("shortsBackBtn");
+
+  // Wire back button immediately before any async work
+  backBtn2.addEventListener("click", () => { shortsIframe.src = ""; shortsPageEl.style.display = "none"; setActiveTab("home"); homeTab.click(); showHUD("Home"); });
+
   const token = await getValidToken();
   let data = { items: [] };
   const pool = [];
+  let persistentSeenIds = new Set();
+  try { persistentSeenIds = new Set(JSON.parse(localStorage.getItem("shortsSeenHistory") || "[]")); } catch(e) {}
+  function isNew(id) { return !persistentSeenIds.has(id) && !shortsSeenIds.has(id); }
 
-  // SOURCE 1: Shorts from YOUR subscribed channels (UUSH playlists, 1 unit each)
+  // SOURCE 1: Newest from subscribed channels (UUSH, sorted by videoPublishedAt)
   if (token) {
     try {
-      const subsRes = await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=30&order=relevance", {
-        headers: { Authorization: "Bearer " + token }
-      });
+      const subsRes = await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=50&order=relevance", { headers: { Authorization: "Bearer " + token } });
       const subsData = await subsRes.json();
-      const channelIds = (subsData.items || []).map(s => s.snippet.resourceId.channelId);
-      // Construct UUSH shorts playlist IDs (replace "UC" prefix with "UUSH")
-      const shortsPlIds = channelIds.filter(id => id.startsWith("UC")).map(id => "UUSH" + id.slice(2));
-      // Fetch shorts from top 10 subscribed channels in parallel
-      const subShortsFetches = shortsPlIds.slice(0, 10).map(pid =>
-        fetchYouTube("playlistItems", { part: "snippet", playlistId: pid, maxResults: 5, _: Date.now() })
-      );
-      const subShortsResults = await Promise.allSettled(subShortsFetches);
-      subShortsResults.forEach(r => {
-        if (r.status === "fulfilled") {
-          (r.value.items || []).forEach(it => {
-            const vid = it.snippet?.resourceId?.videoId;
-            if (vid) pool.push({ id: vid, snippet: it.snippet });
-          });
+      let channelIds = (subsData.items || []).map(s => s.snippet.resourceId.channelId);
+      for (let i = channelIds.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [channelIds[i],channelIds[j]]=[channelIds[j],channelIds[i]]; }
+      const plIds = channelIds.filter(id=>id.startsWith("UC")).map(id=>"UUSH"+id.slice(2));
+      const fetches = plIds.slice(0,15).map(pid => fetchYouTube("playlistItems",{part:"snippet,contentDetails",playlistId:pid,maxResults:15,_:Date.now()}));
+      const results = await Promise.allSettled(fetches);
+      results.forEach(r => {
+        if (r.status==="fulfilled") {
+          const sorted = (r.value.items||[]).sort((a,b)=>new Date(b.contentDetails?.videoPublishedAt||b.snippet?.publishedAt||0)-new Date(a.contentDetails?.videoPublishedAt||a.snippet?.publishedAt||0));
+          sorted.slice(0,5).forEach(it => { const vid=it.snippet?.resourceId?.videoId; if (vid&&isNew(vid)) pool.push({id:vid,snippet:{...it.snippet,publishedAt:it.contentDetails?.videoPublishedAt||it.snippet?.publishedAt}}); });
         }
       });
     } catch(e) {}
   }
 
-  // SOURCE 2: Shorts matching your keyword interests
-  const topKW = getTopKeywords(3);
-  if (topKW.length > 0) {
-    const kwQuery = topKW.slice(0, 2).join(" ") + " #shorts";
-    const kwData = await fetchYouTube("search", { part: "snippet", q: kwQuery, type: "video", videoDuration: "short", videoEmbeddable: "true", maxResults: 10, _: Date.now() });
-    (kwData.items || []).filter(v => v.id && v.id.videoId).forEach(v => pool.push({ id: v.id.videoId, snippet: v.snippet }));
+  // SOURCE 2: Taste keywords/bigrams
+  const topKW=getTopKeywords(6), topBI=getTopBigrams(4);
+  const sKW=[...topKW].sort(()=>Math.random()-0.5), sBI=[...topBI].sort(()=>Math.random()-0.5);
+  const kwQ = [];
+  if (sBI.length>0) kwQ.push(sBI[0]+" shorts");
+  if (sBI.length>1) kwQ.push(sBI[1]+" #shorts");
+  if (sKW.length>0) kwQ.push(sKW.slice(0,2).join(" ")+" shorts");
+  for (const q of kwQ) {
+    const d = await fetchYouTube("search",{part:"snippet",q,type:"video",videoDuration:"short",videoEmbeddable:"true",maxResults:10,_:Date.now()});
+    (d.items||[]).filter(v=>v.id&&v.id.videoId&&isNew(v.id.videoId)).forEach(v=>pool.push({id:v.id.videoId,snippet:v.snippet}));
   }
 
-  // SOURCE 3: Generic shorts queries (fills gaps)
-  if (pool.length < 10) {
-    for (let attempt = 0; attempt < SHORT_QUERIES.length; attempt++) {
-      const shortsQ = SHORT_QUERIES[shortQIdx % SHORT_QUERIES.length]; shortQIdx++;
-      data = await fetchYouTube("search", { part: "snippet", q: shortsQ, type: "video", videoDuration: "short", videoEmbeddable: "true", regionCode: "US", maxResults: 20, _: Date.now() });
-      if (data.items && data.items.length) {
-        data.items.filter(v => v.id && v.id.videoId).forEach(v => pool.push({ id: v.id.videoId, snippet: v.snippet }));
-        break;
-      }
-    }
+  // SOURCE 3: Generic with random rotation
+  shortQIdx = Math.floor(Math.random()*SHORT_QUERIES.length);
+  for (let attempt=0; attempt<SHORT_QUERIES.length; attempt++) {
+    const q = SHORT_QUERIES[shortQIdx%SHORT_QUERIES.length]; shortQIdx++;
+    data = await fetchYouTube("search",{part:"snippet",q,type:"video",videoDuration:"short",videoEmbeddable:"true",regionCode:"US",maxResults:20,_:Date.now()});
+    if (data.items&&data.items.length) { data.items.filter(v=>v.id&&v.id.videoId&&isNew(v.id.videoId)).forEach(v=>pool.push({id:v.id.videoId,snippet:v.snippet})); break; }
   }
 
-  // FALLBACK: popular channels' UUSH shorts (quota-friendly)
-  if (pool.length < 5) {
-    const SHORTS_PLAYLISTS = [
-      "UUSHX6OQ3DkcsbYNE6H8uQQuVA","UUSHq8DICunczvLuJJq414110A",
-      "UUSHRijo3ddMTht_IHyNSNXpNQ","UUSHJ5v_MCY6GNUBTO8-D3XoAg",
-      "UUSHpEhnqL0y41EpW2TvWAHD7Q","UUSH-lHJZR3Gqxm24_Vd_AJ5Yw"
-    ];
-    const plFetches = SHORTS_PLAYLISTS.map(pid =>
-      fetchYouTube("playlistItems", { part: "snippet", playlistId: pid, maxResults: 10, _: Date.now() })
-    );
-    const plResults = await Promise.allSettled(plFetches);
-    plResults.forEach(r => {
-      if (r.status === "fulfilled") {
-        (r.value.items || []).forEach(it => {
-          const vid = it.snippet?.resourceId?.videoId;
-          if (vid) pool.push({ id: vid, snippet: it.snippet });
-        });
-      }
-    });
+  // FALLBACK
+  if (pool.length<5) {
+    const FBP=["UUSHX6OQ3DkcsbYNE6H8uQQuVA","UUSHq8DICunczvLuJJq414110A","UUSHRijo3ddMTht_IHyNSNXpNQ","UUSHJ5v_MCY6GNUBTO8-D3XoAg","UUSHpEhnqL0y41EpW2TvWAHD7Q","UUSH-lHJZR3Gqxm24_Vd_AJ5Yw"];
+    const pr = await Promise.allSettled(FBP.sort(()=>Math.random()-0.5).map(pid=>fetchYouTube("playlistItems",{part:"snippet",playlistId:pid,maxResults:10,_:Date.now()})));
+    pr.forEach(r=>{ if (r.status==="fulfilled") (r.value.items||[]).forEach(it=>{ const vid=it.snippet?.resourceId?.videoId; if(vid&&isNew(vid)) pool.push({id:vid,snippet:it.snippet}); }); });
   }
 
-  // Dedupe and shuffle
-  const seen = new Set();
-  shortsItems = pool.filter(v => { if (seen.has(v.id)) return false; seen.add(v.id); return true; });
-  for (let i = shortsItems.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shortsItems[i], shortsItems[j]] = [shortsItems[j], shortsItems[i]];
-  }
-  shortsIndex = 0;
-  shortsSeenIds = new Set(shortsItems.map(v => v.id));
+  const seen=new Set();
+  shortsItems = pool.filter(v=>{ if(seen.has(v.id))return false; seen.add(v.id); return true; });
+  for (let i=shortsItems.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [shortsItems[i],shortsItems[j]]=[shortsItems[j],shortsItems[i]]; }
+  shortsIndex=0;
+  shortsSeenIds = new Set(shortsItems.map(v=>v.id));
+  try { localStorage.setItem("shortsSeenHistory",JSON.stringify([...shortsSeenIds,...persistentSeenIds].slice(0,300))); } catch(e) {}
 
-  // Always seed a nextPageToken for infinite scroll, even if the pool came
-  // from subscriptions/keywords (which don't return a token themselves)
-  if (data.nextPageToken) {
-    nextPageToken = data.nextPageToken;
-  } else {
-    const seedQ = SHORT_QUERIES[shortQIdx % SHORT_QUERIES.length]; shortQIdx++;
-    const seed = await fetchYouTube("search", { part: "snippet", q: seedQ, type: "video", videoDuration: "short", videoEmbeddable: "true", regionCode: "US", maxResults: 1, _: Date.now() });
-    nextPageToken = seed.nextPageToken || "seed";
-  }
+  if (data.nextPageToken) nextPageToken=data.nextPageToken;
+  else { const seed=await fetchYouTube("search",{part:"snippet",q:SHORT_QUERIES[shortQIdx%SHORT_QUERIES.length],type:"video",videoDuration:"short",videoEmbeddable:"true",regionCode:"US",maxResults:1,_:Date.now()}); nextPageToken=seed.nextPageToken||"seed"; }
 
-  if (!shortsItems.length) {
-    shortsCounter.textContent = "No shorts — tap Back and retry";
-  }
-  function updateCounter() { shortsCounter.textContent = `${shortsIndex + 1} / ${shortsItems.length}`; }
+  if (!shortsItems.length) { shortsCounter.textContent="No shorts — tap Back"; return; }
+
+  function updateCounter() { shortsCounter.textContent=`${shortsIndex+1} / ${shortsItems.length}`; }
   function playShort(index) {
-    const item = shortsItems[index]; if (!item) return;
-    shortsIframe.src = `https://www.youtube.com/embed/${item.id}?autoplay=1&playsinline=1&rel=0&modestbranding=1&origin=${location.origin}`;
+    const item=shortsItems[index]; if(!item) return;
+    shortsIframe.src=`https://www.youtube.com/embed/${item.id}?autoplay=1&playsinline=1&rel=0&modestbranding=1&origin=${location.origin}`;
     updateCounter();
-    if (index >= shortsItems.length - 6 && !shortsLoadingMore) loadMoreShorts();
+    if (index>=shortsItems.length-6&&!shortsLoadingMore) loadMoreShorts();
   }
-  let shortsLoadingMore = false;
+  let shortsLoadingMore=false;
   async function loadMoreShorts() {
-    if (shortsLoadingMore) return;
-    shortsLoadingMore = true;
+    if (shortsLoadingMore) return; shortsLoadingMore=true;
     try {
-      // Rotate through queries each batch so it doesn't just repeat "#shorts"
-      const q = SHORT_QUERIES[shortQIdx % SHORT_QUERIES.length]; shortQIdx++;
-      const validToken = nextPageToken && nextPageToken !== "seed" ? nextPageToken : undefined;
-      const more = await fetchYouTube("search", { part: "snippet", q, type: "video", videoDuration: "short", videoEmbeddable: "true", maxResults: 20, pageToken: validToken, _: Date.now() });
-      nextPageToken = more.nextPageToken || "seed"; // keep a truthy token so we keep trying different queries
-      const fresh = (more.items || []).filter(v => v.id && v.id.videoId && !shortsSeenIds.has(v.id.videoId));
-      fresh.forEach(v => shortsSeenIds.add(v.id.videoId));
-      shortsItems = shortsItems.concat(fresh.map(v => ({ id: v.id.videoId, snippet: v.snippet })));
+      const q=SHORT_QUERIES[shortQIdx%SHORT_QUERIES.length]; shortQIdx++;
+      const vt=nextPageToken&&nextPageToken!=="seed"?nextPageToken:undefined;
+      const more=await fetchYouTube("search",{part:"snippet",q,type:"video",videoDuration:"short",videoEmbeddable:"true",maxResults:20,pageToken:vt,_:Date.now()});
+      nextPageToken=more.nextPageToken||"seed";
+      const fresh=(more.items||[]).filter(v=>v.id&&v.id.videoId&&!shortsSeenIds.has(v.id.videoId));
+      fresh.forEach(v=>shortsSeenIds.add(v.id.videoId));
+      shortsItems=shortsItems.concat(fresh.map(v=>({id:v.id.videoId,snippet:v.snippet})));
       updateCounter();
-    } finally {
-      shortsLoadingMore = false;
-    }
+    } finally { shortsLoadingMore=false; }
   }
-  // Transition: fully covers iframe while loading, fades after iframe ready
-  let transitioning = false;
-
+  let transitioning=false;
   function transitionTo(index) {
-    if (transitioning || index < 0 || index >= shortsItems.length) return;
-    transitioning = true;
-    shortsTrans.style.transition = "opacity 0.12s ease";
-    shortsTrans.style.opacity = "1";
-    setTimeout(() => {
-      shortsIndex = index;
-      playShort(shortsIndex);
-      setTimeout(() => {
-        shortsTrans.style.transition = "opacity 0.35s ease";
-        shortsTrans.style.opacity = "0";
-        transitioning = false;
-      }, 500);
-    }, 150);
+    if (transitioning||index<0||index>=shortsItems.length) return;
+    transitioning=true; shortsTrans.style.transition="opacity 0.12s ease"; shortsTrans.style.opacity="1";
+    setTimeout(()=>{ shortsIndex=index; playShort(shortsIndex); setTimeout(()=>{ shortsTrans.style.transition="opacity 0.35s ease"; shortsTrans.style.opacity="0"; transitioning=false; },500); },150);
   }
-
-  function goNext() { transitionTo(shortsIndex + 1); }
-  function goPrev() { transitionTo(shortsIndex - 1); }
-
+  function goNext() { transitionTo(shortsIndex+1); }
+  function goPrev() { transitionTo(shortsIndex-1); }
   playShort(0);
-  shortsHint.classList.add("visible");
-  setTimeout(() => shortsHint.classList.remove("visible"), 2800);
-  backBtn2.addEventListener("click", () => { shortsIframe.src = ""; setActiveTab("home"); shortsPageEl.style.display = "none"; homeTab.click(); showHUD("Home"); });
-
-  // --- SWIPE DETECTION (simplified & reliable) ---
-  let swStartY = 0, swStartTime = 0;
-
-  shortsPageEl.addEventListener("touchstart", (e) => {
-    if (transitioning) return;
-    swStartY = e.touches[0].clientY;
-    swStartTime = Date.now();
-  }, { passive: true });
-
-  shortsPageEl.addEventListener("touchend", (e) => {
-    if (transitioning) return;
-    const endY = e.changedTouches[0].clientY;
-    const dy = swStartY - endY; // positive = finger moved UP on screen
-    const dt = Date.now() - swStartTime;
-    const velocity = Math.abs(dy) / Math.max(dt, 1);
-    const minDist = velocity > 0.3 ? 20 : 50;
-    if (Math.abs(dy) < minDist) return;
-    if (dy > 0) goNext();      // swiped UP = next video
-    else goPrev();              // swiped DOWN = previous video
-  }, { passive: true });
-  let wheelCooldown = false;
-  shortsPageEl.addEventListener("wheel", (e) => { if (wheelCooldown || transitioning) return; wheelCooldown = true; setTimeout(() => wheelCooldown = false, 700); if (e.deltaY > 0) goNext(); else goPrev(); }, { passive: true });
-  function shortsKeyHandler(e) { if (currentTab !== "shorts") return; if (e.key === "ArrowDown") goNext(); if (e.key === "ArrowUp") goPrev(); }
-  document.addEventListener("keydown", shortsKeyHandler);
-  shortsPageEl._cleanup = () => document.removeEventListener("keydown", shortsKeyHandler);
+  shortsHint.classList.add("visible"); setTimeout(()=>shortsHint.classList.remove("visible"),2800);
+  let swY=0,swT=0;
+  shortsPageEl.addEventListener("touchstart",(e)=>{ if(transitioning)return; swY=e.touches[0].clientY; swT=Date.now(); },{passive:true});
+  shortsPageEl.addEventListener("touchend",(e)=>{ if(transitioning)return; const dy=swY-e.changedTouches[0].clientY,dt=Date.now()-swT,v=Math.abs(dy)/Math.max(dt,1); if(Math.abs(dy)<(v>0.3?20:50))return; if(dy>0)goNext(); else goPrev(); },{passive:true});
+  let wc=false; shortsPageEl.addEventListener("wheel",(e)=>{ if(wc||transitioning)return; wc=true; setTimeout(()=>wc=false,700); if(e.deltaY>0)goNext(); else goPrev(); },{passive:true});
+  function skH(e){if(currentTab!=="shorts")return;if(e.key==="ArrowDown")goNext();if(e.key==="ArrowUp")goPrev();}
+  document.addEventListener("keydown",skH); shortsPageEl._cleanup=()=>document.removeEventListener("keydown",skH);
 });
 
+let lastMovieQuery = "";
 moviesTab.addEventListener("click", async () => {
   nextPageToken = null; setActiveTab("movies"); showSkeletons(8);
-  // Try queries until one returns movies (handles quota errors / empty results)
-  let data = { items: [] };
-  for (let attempt = 0; attempt < MOVIE_QUERIES.length; attempt++) {
-    const q = MOVIE_QUERIES[movieQIdx % MOVIE_QUERIES.length]; movieQIdx++;
-    data = await fetchYouTube("search", { part: "snippet", q, type: "video", videoDuration: "long", videoEmbeddable: "true", regionCode: "US", maxResults: 20, _: Date.now() });
-    if (data.items && data.items.length) break;
-  }
-  const items = (data.items || []).filter(v => v.id && v.id.videoId).map(v => ({ id: v.id.videoId, snippet: v.snippet }));
-  nextPageToken = data.nextPageToken || null; renderFeed(items); showHUD("Movies");
+  const allItems=[]; const seen=new Set();
+  let mShown=[]; try { mShown=JSON.parse(localStorage.getItem("moviesShownTimed")||"[]"); } catch(e) {}
+  const sixAgo=Date.now()-6*3600000;
+  const mRecent=new Set(mShown.filter(e=>e.ts>sixAgo).map(e=>e.id));
+  function addU(items){ (items||[]).forEach(item=>{ const id=item.id?.videoId||item.id; if(!id||seen.has(id)||mRecent.has(id))return; seen.add(id); allItems.push(item); }); }
+  movieQIdx=Math.floor(Math.random()*MOVIE_QUERIES.length);
+  const usedQ=MOVIE_QUERIES[movieQIdx%MOVIE_QUERIES.length]; movieQIdx++;
+  const q2=MOVIE_QUERIES[movieQIdx%MOVIE_QUERIES.length]; movieQIdx++;
+  lastMovieQuery=usedQ;
+  const fetches=[
+    fetchYouTube("search",{part:"snippet",q:usedQ,type:"video",videoDuration:"long",videoEmbeddable:"true",regionCode:"US",maxResults:15,order:"date",_:Date.now()}),
+    fetchYouTube("search",{part:"snippet",q:q2,type:"video",videoDuration:"long",videoEmbeddable:"true",regionCode:"US",maxResults:10,order:"date",_:Date.now()})
+  ];
+  const topKW=getTopKeywords(6),topBI=getTopBigrams(3);
+  const sKW=[...topKW].sort(()=>Math.random()-0.5),sBI=[...topBI].sort(()=>Math.random()-0.5);
+  if (sKW.length>=2) fetches.push(fetchYouTube("search",{part:"snippet",q:sKW.slice(0,2).join(" ")+" full movie",type:"video",videoDuration:"long",videoEmbeddable:"true",maxResults:8,_:Date.now()}));
+  if (sBI.length>0) fetches.push(fetchYouTube("search",{part:"snippet",q:sBI[0]+" full movie",type:"video",videoDuration:"long",videoEmbeddable:"true",maxResults:8,_:Date.now()}));
+  const results=await Promise.allSettled(fetches);
+  results.forEach(r=>{ if(r.status==="fulfilled") addU(r.value.items||[]); });
+  for (let i=allItems.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [allItems[i],allItems[j]]=[allItems[j],allItems[i]]; }
+  const items=allItems.filter(v=>v.id?.videoId||v.id).map(v=>({id:v.id?.videoId||v.id,snippet:v.snippet}));
+  try { localStorage.setItem("moviesShownTimed",JSON.stringify([...items.map(v=>({id:v.id,ts:Date.now()})),...mShown].filter(e=>e.ts>sixAgo).slice(0,200))); } catch(e) {}
+  const seed=await fetchYouTube("search",{part:"snippet",q:usedQ,type:"video",videoDuration:"long",videoEmbeddable:"true",regionCode:"US",maxResults:20,_:Date.now()});
+  nextPageToken=seed.nextPageToken||"seed";
+  renderFeed(items); showHUD("Movies");
 });
 
-historyTab.addEventListener("click", async () => {
-  setActiveTab("history"); nextPageToken = null;
-  feedEl.innerHTML = "";
-  showHUD("Loading history…");
-
-  const now = Date.now();
-  const DAY = 86400000;
-  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-  const yesterdayStart = new Date(todayStart.getTime() - DAY);
-  const weekStart = new Date(todayStart.getTime() - 6 * DAY);
-
-  // Group local history by date
-  const today = [], yesterday = [], thisWeek = [], earlier = [];
-  historyList.forEach(h => {
-    const t = h.watchedAt || 0;
-    if (t >= todayStart.getTime()) today.push(h);
-    else if (t >= yesterdayStart.getTime()) yesterday.push(h);
-    else if (t >= weekStart.getTime()) thisWeek.push(h);
-    else earlier.push(h);
-  });
-
-  function addSectionHeader(title, icon) {
-    const hdr = document.createElement("div");
-    hdr.style.cssText = "font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:14px 4px 6px; opacity:0.7; color:var(--accent); display:flex; align-items:center; gap:6px;";
-    hdr.textContent = (icon || "") + " " + title;
-    feedEl.appendChild(hdr);
-  }
-
-  function addHistoryCards(items) {
-    items.forEach(h => {
-      const snippet = h.snippet || {};
-      const card = document.createElement("div");
-      card.className = "video-card parallax";
-      card.dataset.videoid = h.id;
-      const timeAgo = getTimeAgo(h.watchedAt);
-      card.innerHTML = '<div class="video-thumb"><img src="' + (snippet.thumbnails?.medium?.url || snippet.thumbnails?.default?.url || "") + '" loading="lazy"></div><div class="video-info"><div class="video-title">' + (snippet.title || "Untitled") + '</div><div class="video-channel">' + (snippet.channelTitle || "") + '</div><div class="video-meta">Watched ' + timeAgo + '</div></div>';
-      card.onclick = function() { setPlayerVideo(h.id, snippet); showHUD("Playing: " + (snippet.title || "")); };
-      feedEl.appendChild(card);
-    });
-  }
-
-  function getTimeAgo(ts) {
-    if (!ts) return "";
-    const diff = now - ts;
-    if (diff < 3600000) return Math.floor(diff / 60000) + "m ago";
-    if (diff < DAY) return Math.floor(diff / 3600000) + "h ago";
-    if (diff < 2 * DAY) return "yesterday";
-    if (diff < 7 * DAY) return Math.floor(diff / DAY) + "d ago";
-    return new Date(ts).toLocaleDateString();
-  }
-
-  // Render date-grouped local history
-  if (today.length) { addSectionHeader("Today", "▸"); addHistoryCards(today); }
-  if (yesterday.length) { addSectionHeader("Yesterday", "▸"); addHistoryCards(yesterday); }
-  if (thisWeek.length) { addSectionHeader("This Week", "▸"); addHistoryCards(thisWeek); }
-  if (earlier.length) { addSectionHeader("Earlier", "▸"); addHistoryCards(earlier.slice(0, 30)); }
-
-  if (!historyList.length) {
-    feedEl.innerHTML = '<div style="padding:20px;text-align:center;font-size:13px;opacity:0.7;">No watch history yet. Videos you watch will appear here.</div>';
-  }
-
-  // Fetch Liked Videos and Watch Later if logged in
-  const token = await getValidToken();
-  if (token) {
-    // Liked Videos (LL playlist)
-    try {
-      const llRes = await fetch("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=LL&maxResults=20", {
-        headers: { Authorization: "Bearer " + token }
-      });
-      const llData = await llRes.json();
-      if (llData.items && llData.items.length) {
-        addSectionHeader("Liked Videos", "♥");
-        llData.items.forEach(it => {
-          const snippet = it.snippet || {};
-          const videoId = snippet.resourceId?.videoId;
-          if (!videoId) return;
-          const card = document.createElement("div");
-          card.className = "video-card parallax";
-          card.dataset.videoid = videoId;
-          card.innerHTML = '<div class="video-thumb"><img src="' + (snippet.thumbnails?.medium?.url || snippet.thumbnails?.default?.url || "") + '" loading="lazy"></div><div class="video-info"><div class="video-title">' + (snippet.title || "") + '</div><div class="video-channel">' + (snippet.videoOwnerChannelTitle || snippet.channelTitle || "") + '</div><div class="video-meta">Liked</div></div>';
-          card.onclick = function() { setPlayerVideo(videoId, snippet); showHUD("Playing: " + (snippet.title || "")); };
-          feedEl.appendChild(card);
-        });
-      }
-    } catch(e) {}
-
-    // Watch Later (WL playlist)
-    try {
-      const wlRes = await fetch("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=WL&maxResults=20", {
-        headers: { Authorization: "Bearer " + token }
-      });
-      const wlData = await wlRes.json();
-      if (wlData.items && wlData.items.length) {
-        addSectionHeader("Watch Later", "⏱");
-        wlData.items.forEach(it => {
-          const snippet = it.snippet || {};
-          const videoId = snippet.resourceId?.videoId;
-          if (!videoId) return;
-          const card = document.createElement("div");
-          card.className = "video-card parallax";
-          card.dataset.videoid = videoId;
-          card.innerHTML = '<div class="video-thumb"><img src="' + (snippet.thumbnails?.medium?.url || snippet.thumbnails?.default?.url || "") + '" loading="lazy"></div><div class="video-info"><div class="video-title">' + (snippet.title || "") + '</div><div class="video-channel">' + (snippet.videoOwnerChannelTitle || snippet.channelTitle || "") + '</div><div class="video-meta">Watch Later</div></div>';
-          card.onclick = function() { setPlayerVideo(videoId, snippet); showHUD("Playing: " + (snippet.title || "")); };
-          feedEl.appendChild(card);
-        });
-      }
-    } catch(e) {}
-  }
-
-  showHUD(token ? "History ✦" : "History");
+historyTab.addEventListener("click", () => {
+  setActiveTab("history");
+  const items = historyList.slice(0, 50).map(h => ({ id: h.id, snippet: h.snippet, statistics: { viewCount: "watched" } }));
+  nextPageToken = null; renderFeed(items); showHUD("History");
 });
 
 channelTab.addEventListener("click", () => loadChannelPage(currentChannelId));
 
 subsTab.addEventListener("click", async () => {
   setActiveTab("subs"); showHUD("Subscriptions");
+  document.getElementById("subsLoginPanel").style.display = "block";
   const token = await getValidToken();
-  if (token) loadSubscriptions();
+  if (token) { deviceLoginStatusEl.textContent = "Logged in ✓"; loadSubscriptions(); }
   else deviceLoginStatusEl.textContent = "Login required to load subscriptions.";
 });
 
@@ -1843,6 +1582,12 @@ const OAUTH_CLIENT_ID = "153049037088-10qnschnsie4mqpdsdscd0uk2auqogdt.apps.goog
 const OAUTH_CLIENT_SECRET = "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";
 
 startLoginBtn.addEventListener("click", () => startDeviceLogin("subs"));
+document.getElementById("reloginBtn").addEventListener("click", () => {
+  clearTokens();
+  deviceUserCodeEl.textContent = "";
+  deviceLoginStatusEl.textContent = "Tokens cleared — tap Login to YouTube";
+  showHUD("Ready to re-login");
+});
 
 async function startDeviceLogin(source) {
   showHUD("Requesting login code…");
@@ -1989,13 +1734,18 @@ let subsNextPageToken = null;
 async function loadMoreVideos() {
   if (!nextPageToken) return;
   let data;
-  if (currentTab === "home")     data = await fetchYouTube("videos",        { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
-  if (currentTab === "movies")   data = await fetchYouTube("search",        { part: "snippet", q: "full movie", type: "video", videoDuration: "long", videoEmbeddable: "true", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
-  if (currentTab === "trending") data = await fetchYouTube("videos",        { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: getTopCategoryId() || undefined, maxResults: 20, pageToken: nextPageToken, _: Date.now() });
-  if (currentTab === "search")   data = await fetchYouTube("search",        { part: "snippet", q: lastSearchQuery, type: "video", maxResults: 20, pageToken: nextPageToken, _: Date.now() });
-  if (currentTab === "channel")  data = await fetchYouTube("playlistItems", { part: "snippet", playlistId: channelUploadsId, maxResults: 20, pageToken: nextPageToken, _: Date.now() });
+  const vt = nextPageToken !== "seed" ? nextPageToken : undefined;
+  if (currentTab === "home") data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, pageToken: vt, _: Date.now() });
+  if (currentTab === "movies") {
+    data = vt ? await fetchYouTube("search", { part: "snippet", q: lastMovieQuery||"full movie", type: "video", videoDuration: "long", videoEmbeddable: "true", maxResults: 20, pageToken: vt, _: Date.now() }) : { items: [] };
+    if (!data||!data.items||!data.items.length) { const q=MOVIE_QUERIES[movieQIdx%MOVIE_QUERIES.length]; movieQIdx++; lastMovieQuery=q; data=await fetchYouTube("search",{part:"snippet",q,type:"video",videoDuration:"long",videoEmbeddable:"true",regionCode:"US",maxResults:20,_:Date.now()}); if(!data.nextPageToken) data.nextPageToken="seed"; }
+    if (data&&data.items) data.items=data.items.filter(v=>v.id&&v.id.videoId).map(v=>({id:v.id.videoId,snippet:v.snippet}));
+  }
+  if (currentTab === "trending") { data=await fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:getTopCategoryId()||undefined,maxResults:20,pageToken:vt,_:Date.now()}); }
+  if (currentTab === "search") data = await fetchYouTube("search", { part: "snippet", q: lastSearchQuery, type: "video", maxResults: 20, pageToken: vt, _: Date.now() });
+  if (currentTab === "channel") data = await fetchYouTube("playlistItems", { part: "snippet", playlistId: channelUploadsId, maxResults: 20, pageToken: nextPageToken, _: Date.now() });
   if (!data) return;
-  nextPageToken = data.nextPageToken || null;
+  nextPageToken = data.nextPageToken || (["home","trending","movies"].includes(currentTab) ? "seed" : null);
   if (currentTab === "channel") {
     (data.items || []).forEach(item => {
       const snippet = item.snippet; const videoId = snippet.resourceId?.videoId; if (!videoId) return;
@@ -2032,39 +1782,13 @@ scrollTopBtn.addEventListener("click", () => {
   }
 });
 
-/* === GLASSES SCROLL DIRECTION LOCK ===
-   Prevents left/right/diagonal swipes from causing vertical scroll.
-   Locks direction after first 10px of movement. */
-(function() {
-  window.addEventListener("wheel", function(e) {
-    if (currentTab === "shorts") return;
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 0.5) { e.preventDefault(); }
-  }, { passive: false });
-
-  var tStartX = 0, tStartY = 0, dirLock = null;
-  document.addEventListener("touchstart", function(e) {
-    if (currentTab === "shorts") return;
-    tStartX = e.touches[0].clientX; tStartY = e.touches[0].clientY; dirLock = null;
-  }, { passive: true });
-  document.addEventListener("touchmove", function(e) {
-    if (currentTab === "shorts") return;
-    if (!dirLock) {
-      var dx = Math.abs(e.touches[0].clientX - tStartX);
-      var dy = Math.abs(e.touches[0].clientY - tStartY);
-      if (dx + dy > 10) dirLock = dx > dy ? "h" : "v";
-    }
-    if (dirLock === "h") e.preventDefault();
-  }, { passive: false });
-})();
-
-let scrollCooldown = false;
 window.addEventListener("scroll", async () => {
+  // Show/hide scroll-to-top button
   scrollTopBtn.classList.toggle("visible", window.scrollY > 600);
-  if (isLoadingMore || scrollCooldown) return;
+  if (isLoadingMore) return;
   const scrollPos = window.innerHeight + window.scrollY;
-  const bottom = document.body.offsetHeight - 200;
+  const bottom = document.body.offsetHeight - 500;
   if (scrollPos < bottom) return;
-  scrollCooldown = true; setTimeout(() => { scrollCooldown = false; }, 2000);
   if (currentTab === "subs" && subsNextPageToken) { isLoadingMore = true; await loadMoreSubs(); isLoadingMore = false; return; }
   if (nextPageToken) { isLoadingMore = true; await loadMoreVideos(); isLoadingMore = false; }
 });
@@ -2187,12 +1911,18 @@ function applyDepthGlow(x, y, isFullscreen) {
 document.addEventListener("mousemove", (e) => {
   const x = (e.clientX / window.innerWidth) * 2 - 1;
   const y = (e.clientY / window.innerHeight) * 2 - 1;
-  const inFullscreen = playerSection.classList.contains("player-fullscreen");
-  if (!inFullscreen) {
+  if (!playerSection.classList.contains("player-fullscreen")) {
     document.querySelectorAll(".parallax").forEach(el => { el.style.transform = `translate(${x*8}px, ${y*8}px)`; });
     document.querySelectorAll(".parallax-tab").forEach(el => { el.style.transform = `translate(${x*4}px, ${y*4}px)`; });
   }
-  applyDepthGlow(x, y, inFullscreen);
+  applyDepthGlow(x, y, playerSection.classList.contains("player-fullscreen"));
+  document.querySelectorAll(".video-card").forEach(card => {
+    const isHover = card.matches(":hover"); const boost = isHover ? 1.6 : 1;
+    card.style.transform = `perspective(1100px) rotateX(${y*-8*boost}deg) rotateY(${x*8*boost}deg) translateX(${x*12}px) translateY(${y*12}px) translateZ(${isHover?18:0}px)`;
+    card.style.setProperty("--shadow-x", `${x*14}px`); card.style.setProperty("--shadow-y", `${y*14}px`);
+    card.style.setProperty("--shadow-blur", `${isHover?28:18}px`); card.style.setProperty("--shadow-opacity", isHover?0.75:0.55);
+    card.style.setProperty("--ao-opacity", isHover?0.22:0.35); card.style.setProperty("--ao-blur", `${isHover?32:22}px`);
+  });
   applyChroma(x, y);
 });
 
@@ -2215,8 +1945,7 @@ function initGyroscope() {
     const x = Math.max(-1, Math.min(1, gamma / 30));
     const y = Math.max(-1, Math.min(1, (beta - 45) / 30)); // 45° = neutral holding angle
 
-    // Depth-layered parallax — topbar and tabs only (cards excluded for performance)
-    // Skipped in fullscreen so nothing peeks out from behind the player on head tilt
+    // Stop parallax in fullscreen so nothing bleeds behind player
     if (!playerSection.classList.contains("player-fullscreen")) {
       document.querySelectorAll(".parallax").forEach(el => {
         el.style.transform = `translate(${x * 12}px, ${y * 12}px)`;
@@ -2225,6 +1954,11 @@ function initGyroscope() {
         el.style.transform = `translate(${x * 6}px, ${y * 6}px)`;
       });
     }
+
+    // Cards get full 3D rotation from head tilt
+    document.querySelectorAll(".video-card").forEach(card => {
+      card.style.transform = `perspective(1100px) rotateX(${y * -10}deg) rotateY(${x * 10}deg) translateX(${x * 14}px) translateY(${y * 14}px)`;
+    });
 
     applyDepthGlow(x, y, playerSection.classList.contains("player-fullscreen"));
     applyChroma(x, y);
@@ -2378,115 +2112,147 @@ initAmbientLighting();
 themeToggle.addEventListener("click", () => { isLight = !isLight; document.body.classList.toggle("light", isLight); showHUD(isLight ? "Light Mode" : "Dark Mode"); });
 
 /* CHANGE: init uses personalized feed when history exists; seeds nextPageToken for infinite scroll */
+
 /* ================================================================
-   ADD TO PLAYLIST — picker overlay + YouTube API insert
+   ADD TO PLAYLIST
 ================================================================ */
+const addToPlaylistBtn = document.getElementById("addToPlaylistBtn");
+const playlistPickerPage = document.getElementById("playlistPickerPage");
+const plPickerList = document.getElementById("plPickerList");
+const plPickerStatus = document.getElementById("plPickerStatus");
 let pickerPrevState = null;
 function openPicker() {
   pickerPrevState = { feed: feedEl.style.display, channel: channelPageEl.style.display, subs: subsPageEl.style.display, playlist: playlistPageEl.style.display };
-  feedEl.style.display = "none"; channelPageEl.style.display = "none"; subsPageEl.style.display = "none"; playlistPageEl.style.display = "none";
-  playlistPickerPage.style.display = "block";
+  feedEl.style.display="none"; channelPageEl.style.display="none"; subsPageEl.style.display="none"; playlistPageEl.style.display="none";
+  playlistPickerPage.style.display="block";
 }
 function closePicker() {
-  playlistPickerPage.style.display = "none";
-  if (pickerPrevState) { feedEl.style.display = pickerPrevState.feed; channelPageEl.style.display = pickerPrevState.channel; subsPageEl.style.display = pickerPrevState.subs; playlistPageEl.style.display = pickerPrevState.playlist; }
+  playlistPickerPage.style.display="none";
+  if (pickerPrevState) { feedEl.style.display=pickerPrevState.feed; channelPageEl.style.display=pickerPrevState.channel; subsPageEl.style.display=pickerPrevState.subs; playlistPageEl.style.display=pickerPrevState.playlist; }
   showHUD("Cancelled");
 }
 document.getElementById("plPickerClose").onclick = function() { closePicker(); };
-
 async function startWriteLogin() {
-  plPickerList.innerHTML = '<div class="pl-pick-msg">Requesting login code…</div>';
-  plPickerStatus.style.display = "none";
+  plPickerList.innerHTML='<div class="pl-pick-msg">Requesting login code…</div>';
+  plPickerStatus.style.display="none";
   try {
-    const res = await fetch("https://oauth2.googleapis.com/device/code", {
-      method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ client_id: OAUTH_CLIENT_ID, scope: "https://www.googleapis.com/auth/youtube" })
-    });
-    const data = await res.json();
-    plPickerList.innerHTML = '<div class="pl-pick-msg"><div style="font-size:13px;font-weight:600;margin-bottom:8px;">Grant write access</div><div>Go to: <b>' + data.verification_url + '</b></div><div style="margin-top:6px;">Code: <b style="color:#3cf2ff;font-size:16px;letter-spacing:0.1em;">' + data.user_code + '</b></div><div class="pl-pick-code" style="font-size:11px;opacity:0.8;margin-top:6px;">Waiting for authorization…</div></div>';
-    const interval = data.interval || 5;
-    let authorized = false;
+    const res=await fetch("https://oauth2.googleapis.com/device/code",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({client_id:OAUTH_CLIENT_ID,scope:"https://www.googleapis.com/auth/youtube"})});
+    const data=await res.json();
+    plPickerList.innerHTML='<div class="pl-pick-msg"><div style="font-size:13px;font-weight:600;margin-bottom:8px;">Grant write access</div><div>Go to: <b>'+data.verification_url+'</b></div><div style="margin-top:6px;">Code: <b style="color:#3cf2ff;font-size:16px;letter-spacing:0.1em;">'+data.user_code+'</b></div></div>';
+    const interval=data.interval||5; let authorized=false;
     while (!authorized) {
-      await new Promise(r => setTimeout(r, interval * 1000));
-      const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
-        method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ client_id: OAUTH_CLIENT_ID, client_secret: OAUTH_CLIENT_SECRET, device_code: data.device_code, grant_type: "urn:ietf:params:oauth:grant-type:device_code" })
-      });
-      const tokenData = await tokenRes.json();
-      if (tokenData.error) { if (tokenData.error === "authorization_pending") continue; plPickerList.innerHTML = '<div class="pl-pick-msg">Error: ' + tokenData.error + '</div>'; return null; }
-      authorized = true;
-      saveTokens(tokenData);
-      showHUD("Write access granted ✓");
-      return tokenData.access_token;
+      await new Promise(r=>setTimeout(r,interval*1000));
+      const tr=await fetch("https://oauth2.googleapis.com/token",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({client_id:OAUTH_CLIENT_ID,client_secret:OAUTH_CLIENT_SECRET,device_code:data.device_code,grant_type:"urn:ietf:params:oauth:grant-type:device_code"})});
+      const td=await tr.json();
+      if (td.error) { if(td.error==="authorization_pending")continue; plPickerList.innerHTML='<div class="pl-pick-msg">Error: '+td.error+'</div>'; return null; }
+      authorized=true; saveTokens(td); showHUD("Write access granted ✓"); return td.access_token;
     }
-  } catch (e) { plPickerList.innerHTML = '<div class="pl-pick-msg">Login error. Try again.</div>'; return null; }
+  } catch(e) { plPickerList.innerHTML='<div class="pl-pick-msg">Login error. Try again.</div>'; return null; }
 }
-
 async function openPickerWithToken(token) {
-  plPickerList.innerHTML = '<div class="pl-pick-msg">Loading playlists…</div>';
+  plPickerList.innerHTML='<div class="pl-pick-msg">Loading playlists…</div>';
   try {
-    const res = await fetch("https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50", { headers: { Authorization: "Bearer " + token } });
-    const data = await res.json();
-    if (data.error) {
-      if (data.error.code === 401 || data.error.code === 403) {
-        clearTokens();
-        plPickerList.innerHTML = '<div class="pl-pick-msg"><div>Session expired or permissions needed.</div><button class="pl-pick-login-btn" id="plPickerReloginBtn">Re-login</button></div>';
-        document.getElementById("plPickerReloginBtn").addEventListener("click", async function() { const t = await startWriteLogin(); if (t) openPickerWithToken(t); });
-        return;
-      }
-      plPickerList.innerHTML = '<div class="pl-pick-msg">Error loading playlists.</div>'; return;
-    }
-    if (!data.items || !data.items.length) { plPickerList.innerHTML = '<div class="pl-pick-msg">No playlists found.</div>'; return; }
-    plPickerList.innerHTML = "";
-    data.items.forEach(function(pl) {
-      var s = pl.snippet, count = (pl.contentDetails && pl.contentDetails.itemCount) || 0;
-      var thumb = (s.thumbnails && (s.thumbnails.default && s.thumbnails.default.url || s.thumbnails.medium && s.thumbnails.medium.url)) || "";
-      var item = document.createElement("button"); item.className = "pl-pick-item"; item.type = "button";
-      item.innerHTML = '<div class="pl-pick-thumb">' + (thumb ? '<img src="' + thumb + '">' : '') + '</div><div class="pl-pick-info"><div class="pl-pick-title">' + s.title + '</div><div class="pl-pick-count">' + count + ' video' + (count !== 1 ? 's' : '') + '</div></div>';
-      item.onclick = (function(pid, ptitle, tok) { return function() { insertVideoToPlaylist(pid, ptitle, tok); }; })(pl.id, s.title, token);
+    const res=await fetch("https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50",{headers:{Authorization:"Bearer "+token}});
+    const data=await res.json();
+    if (data.error) { clearTokens(); plPickerList.innerHTML='<div class="pl-pick-msg"><div>Session expired.</div><button id="plPickerReloginBtn" class="topbar-btn" style="margin-top:8px;">Re-login</button></div>'; document.getElementById("plPickerReloginBtn").addEventListener("click",async function(){const t=await startWriteLogin();if(t)openPickerWithToken(t);}); return; }
+    if (!data.items||!data.items.length){plPickerList.innerHTML='<div class="pl-pick-msg">No playlists found.</div>';return;}
+    plPickerList.innerHTML="";
+    data.items.forEach(function(pl){
+      var s=pl.snippet,count=(pl.contentDetails&&pl.contentDetails.itemCount)||0;
+      var thumb=(s.thumbnails&&(s.thumbnails.medium&&s.thumbnails.medium.url||s.thumbnails.default&&s.thumbnails.default.url))||"";
+      var item=document.createElement("button");item.className="pl-pick-item";item.type="button";
+      item.innerHTML='<div class="pl-pick-thumb">'+(thumb?'<img src="'+thumb+'">':"")+'</div><div class="pl-pick-info"><div class="pl-pick-title">'+s.title+'</div><div class="pl-pick-count">'+count+' video'+(count!==1?'s':'')+'</div></div>';
+      item.onclick=(function(pid,ptitle,tok){return function(){insertVideoToPlaylist(pid,ptitle,tok);};})(pl.id,s.title,token);
       plPickerList.appendChild(item);
     });
-  } catch (e) { plPickerList.innerHTML = '<div class="pl-pick-msg">Network error. Try again.</div>'; }
+  } catch(e){plPickerList.innerHTML='<div class="pl-pick-msg">Network error. Try again.</div>';}
 }
-
-async function insertVideoToPlaylist(playlistId, playlistTitle, token) {
-  plPickerStatus.style.display = "block"; plPickerStatus.className = ""; plPickerStatus.textContent = "Adding…";
+async function insertVideoToPlaylist(playlistId,playlistTitle,token) {
+  plPickerStatus.style.display="block";plPickerStatus.className="";plPickerStatus.textContent="Adding…";
   try {
-    var res = await fetch("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet", {
-      method: "POST",
-      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
-      body: JSON.stringify({ snippet: { playlistId: playlistId, resourceId: { kind: "youtube#video", videoId: currentVideoId } } })
-    });
-    var data = await res.json();
-    if (data.error) {
-      if (data.error.code === 403) {
-        plPickerStatus.className = "error"; plPickerStatus.textContent = "";
-        plPickerList.innerHTML = '<div class="pl-pick-msg"><div style="margin-bottom:8px;">Write permission needed.</div><div style="font-size:11px;opacity:0.7;">Re-login to grant write access.</div><button class="pl-pick-login-btn" id="plPickerUpgradeBtn">Upgrade Access</button></div>';
-        document.getElementById("plPickerUpgradeBtn").addEventListener("click", async function() { clearTokens(); var t = await startWriteLogin(); if (t) insertVideoToPlaylist(playlistId, playlistTitle, t); });
-        return;
-      }
-      if (data.error.code === 409 || (data.error.errors && data.error.errors[0] && data.error.errors[0].reason === "videoAlreadyInPlaylist")) { plPickerStatus.className = ""; plPickerStatus.textContent = "Already in this playlist."; return; }
-      plPickerStatus.className = "error"; plPickerStatus.textContent = "Error: " + (data.error.message || "Unknown error"); return;
+    var res=await fetch("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet",{method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({snippet:{playlistId:playlistId,resourceId:{kind:"youtube#video",videoId:currentVideoId}}})});
+    var data=await res.json();
+    if (data.error){
+      if(data.error.code===403){plPickerList.innerHTML='<div class="pl-pick-msg"><div>Write permission needed.</div><button id="plPickerUpgradeBtn" class="topbar-btn" style="margin-top:8px;">Upgrade Access</button></div>';document.getElementById("plPickerUpgradeBtn").addEventListener("click",async function(){clearTokens();var t=await startWriteLogin();if(t)insertVideoToPlaylist(playlistId,playlistTitle,t);});return;}
+      if(data.error.code===409||(data.error.errors&&data.error.errors[0]&&data.error.errors[0].reason==="videoAlreadyInPlaylist")){plPickerStatus.textContent="Already in this playlist.";return;}
+      plPickerStatus.className="error";plPickerStatus.textContent="Error: "+(data.error.message||"Unknown error");return;
     }
-    plPickerStatus.className = "success"; plPickerStatus.textContent = "\u2713 Added to " + playlistTitle;
-    showHUD("Added to " + playlistTitle);
-    setTimeout(function() { playlistPickerPage.style.display = "none"; if (pickerPrevState) { feedEl.style.display = pickerPrevState.feed; channelPageEl.style.display = pickerPrevState.channel; subsPageEl.style.display = pickerPrevState.subs; playlistPageEl.style.display = pickerPrevState.playlist; } }, 1200);
-  } catch (e) { plPickerStatus.className = "error"; plPickerStatus.textContent = "Network error. Try again."; }
+    plPickerStatus.className="success";plPickerStatus.textContent="✓ Added to "+playlistTitle;
+    showHUD("Added to "+playlistTitle);
+    setTimeout(function(){closePicker();},1200);
+  } catch(e){plPickerStatus.className="error";plPickerStatus.textContent="Network error. Try again.";}
 }
-
 addToPlaylistBtn.addEventListener("click", async function() {
-  if (!currentVideoId) { showHUD("No video playing"); return; }
-  openPicker();
-  plPickerStatus.style.display = "none";
-  plPickerList.innerHTML = '<div class="pl-pick-msg">Loading playlists…</div>';
-  const token = await getValidToken();
-  if (!token) {
-    plPickerList.innerHTML = '<div class="pl-pick-msg"><div>Login to add videos to playlists.</div><button class="pl-pick-login-btn" id="plPickerLoginBtn">Login to YouTube</button></div>';
-    document.getElementById("plPickerLoginBtn").addEventListener("click", async function() { const t = await startWriteLogin(); if (t) openPickerWithToken(t); });
+  if (!currentVideoId){showHUD("No video playing");return;}
+  openPicker(); plPickerStatus.style.display="none";
+  plPickerList.innerHTML='<div class="pl-pick-msg">Loading playlists…</div>';
+  const token=await getValidToken();
+  if (!token){
+    plPickerList.innerHTML='<div class="pl-pick-msg"><div>Login to add videos to playlists.</div><button id="plPickerLoginBtn" class="topbar-btn" style="margin-top:8px;">Login to YouTube</button></div>';
+    document.getElementById("plPickerLoginBtn").addEventListener("click",async function(){const t=await startWriteLogin();if(t)openPickerWithToken(t);});
     return;
   }
   openPickerWithToken(token);
 });
+
+
+/* ================================================================
+   SYNC FROM YOUTUBE
+================================================================ */
+const syncBtn = document.getElementById("syncBtn");
+const syncOverlay = document.getElementById("syncOverlay");
+const syncBox = document.getElementById("syncBox");
+const syncStatus = document.getElementById("syncStatus");
+const syncProgress = document.getElementById("syncProgress");
+const syncProgressFill = document.getElementById("syncProgressFill");
+const syncStartBtn = document.getElementById("syncStartBtn");
+const syncCloseBtn = document.getElementById("syncCloseBtn");
+syncBtn.onclick=function(){syncOverlay.style.display="flex";syncStatus.textContent="";syncProgressFill.style.width="0%";syncProgress.style.display="none";syncStartBtn.textContent="Start Sync";syncStartBtn.disabled=false;};
+syncCloseBtn.onclick=function(){syncOverlay.style.display="none";};
+syncOverlay.onclick=function(e){if(e.target===syncOverlay)syncOverlay.style.display="none";};
+syncBox.onclick=function(e){e.stopPropagation();};
+function buildExtract(profile){
+  const sw=new Set(["the","a","an","and","or","of","to","in","is","on","for","with","how","why","what","this","that","i","my","we","you","it","at","be","are","was","were","by","from","as","but","not","have","has","he","she","they","do","did","new","vs","ep","ft","official","video","full","2024","2025","2026","part","episode"]);
+  return function(title,chId,chTitle,w){
+    w=w||1;
+    if(chId){profile.channels[chId]=profile.channels[chId]||{title:chTitle,weight:0,lastWatch:0,watches:[]};profile.channels[chId].weight+=w;if(chTitle)profile.channels[chId].title=chTitle;if(!profile.channels[chId].lastWatch)profile.channels[chId].lastWatch=Date.now();}
+    if(title){const words=title.toLowerCase().replace(/[^a-z0-9\s]/g,"").split(/\s+/).filter(w=>w.length>2&&!sw.has(w));words.forEach(w=>{profile.keywords[w]=(profile.keywords[w]||0)+w;});for(let i=0;i<words.length-1;i++){const bi=words[i]+" "+words[i+1];profile.bigrams[bi]=(profile.bigrams[bi]||0)+w;}}
+  };
+}
+syncStartBtn.onclick=async function(){
+  const token=await getValidToken();
+  if(!token){syncStatus.textContent="Not logged in — login via Subscriptions first.";return;}
+  syncStartBtn.disabled=true;syncStartBtn.textContent="Syncing…";syncProgress.style.display="block";
+  const profile=getTasteProfile();
+  profile.channels=profile.channels||{};profile.categories=profile.categories||{};profile.keywords=profile.keywords||{};profile.bigrams=profile.bigrams||{};profile.recentVideoIds=profile.recentVideoIds||[];
+  const extract=buildExtract(profile);
+  const isFirst=!profile.syncedAt;
+  let total=0;
+  function sp(pct,msg){syncProgressFill.style.width=pct+"%";syncStatus.textContent=msg;}
+  sp(5,isFirst?"Deep syncing liked videos (up to 500)…":"Reading liked videos…");
+  try{let pt="",pages=0,max=isFirst?25:10;while(pages<max){const url="https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=LL&maxResults=20"+(pt?"&pageToken="+pt:"");const r=await fetch(url,{headers:{Authorization:"Bearer "+token}});const d=await r.json();if(d.error||!d.items)break;d.items.forEach(it=>{const s=it.snippet||{};extract(s.title,s.videoOwnerChannelId,s.videoOwnerChannelTitle,3);const vid=s.resourceId?.videoId;if(vid&&!profile.recentVideoIds.includes(vid))profile.recentVideoIds.push(vid);total++;});pt=d.nextPageToken||"";pages++;if(!pt)break;sp(5+Math.round((pages/max)*15),"Liked: "+total+" so far…");}sp(20,"Liked videos: "+total+" signals");}catch(e){}
+  sp(22,"Reading Watch Later…");try{const r=await fetch("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=WL&maxResults=50",{headers:{Authorization:"Bearer "+token}});const d=await r.json();(d.items||[]).forEach(it=>{const s=it.snippet||{};extract(s.title,s.videoOwnerChannelId,s.videoOwnerChannelTitle,2);total++;});sp(30,"Watch Later: "+total+" signals");}catch(e){}
+  sp(32,"Reading playlists…");try{const pr=await fetch("https://www.googleapis.com/youtube/v3/playlists?part=snippet&mine=true&maxResults=50",{headers:{Authorization:"Bearer "+token}});const pd=await pr.json();const plLimit=isFirst?(pd.items||[]).length:8,iPerPl=isFirst?20:10;for(const pl of(pd.items||[]).slice(0,plLimit)){try{const ir=await fetchYouTube("playlistItems",{part:"snippet",playlistId:pl.id,maxResults:iPerPl,_:Date.now()});(ir.items||[]).forEach(it=>{const s=it.snippet||{};extract(s.title,s.videoOwnerChannelId,s.videoOwnerChannelTitle,2);total++;});}catch(e){}}sp(50,"Playlists: "+total+" signals");}catch(e){}
+  sp(52,"Reading subscriptions…");try{const sr=await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=50",{headers:{Authorization:"Bearer "+token}});const sd=await sr.json();const cids=(sd.items||[]).map(s=>{extract(null,s.snippet.resourceId.channelId,s.snippet.title,1);return s.snippet.resourceId.channelId;});if(cids.length){const cr=await fetchYouTube("channels",{part:"contentDetails",id:cids.slice(0,50).join(",")});const ups=(cr.items||[]).map(ch=>ch.contentDetails?.relatedPlaylists?.uploads).filter(Boolean);const sc=isFirst?20:5;for(const plId of ups.sort(()=>Math.random()-0.5).slice(0,sc)){try{const ur=await fetchYouTube("playlistItems",{part:"snippet",playlistId:plId,maxResults:8,_:Date.now()});(ur.items||[]).forEach(it=>{extract(it.snippet?.title,null,null,1);total++;});}catch(e){}}}sp(75,"Subscriptions: "+total+" signals");}catch(e){}
+  sp(77,"Reading activity…");try{const ar=await fetch("https://www.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&mine=true&maxResults=50",{headers:{Authorization:"Bearer "+token}});const ad=await ar.json();(ad.items||[]).forEach(it=>{const s=it.snippet||{};extract(s.title,s.channelId,s.channelTitle,2);const vid=it.contentDetails?.upload?.videoId;if(vid&&!profile.recentVideoIds.includes(vid))profile.recentVideoIds.push(vid);total++;});sp(90,"Activity: "+total+" signals");}catch(e){}
+  profile.recentVideoIds=profile.recentVideoIds.slice(0,50);profile.syncedAt=Date.now();
+  localStorage.setItem("tasteProfile",JSON.stringify(profile));
+  sp(100,"✓ Sync complete — "+total+" signals");
+  syncStartBtn.textContent="Sync Again";syncStartBtn.disabled=false;showHUD("YouTube synced ✦");
+  setTimeout(()=>{syncOverlay.style.display="none";homeTab.click();},1500);
+};
+async function silentSync(token){
+  const profile=getTasteProfile();
+  profile.channels=profile.channels||{};profile.categories=profile.categories||{};profile.keywords=profile.keywords||{};profile.bigrams=profile.bigrams||{};profile.recentVideoIds=profile.recentVideoIds||[];
+  const extract=buildExtract(profile);
+  const isFirst=!profile.syncedAt,maxPages=isFirst?10:5;
+  try{let pt="";for(let p=0;p<maxPages;p++){const url="https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=LL&maxResults=20"+(pt?"&pageToken="+pt:"");const r=await fetch(url,{headers:{Authorization:"Bearer "+token}});const d=await r.json();if(d.error||!d.items)break;d.items.forEach(it=>{const s=it.snippet||{};extract(s.title,s.videoOwnerChannelId,s.videoOwnerChannelTitle,3);const vid=s.resourceId?.videoId;if(vid&&!profile.recentVideoIds.includes(vid))profile.recentVideoIds.push(vid);});pt=d.nextPageToken||"";if(!pt)break;}}catch(e){}
+  try{const r=await fetch("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=WL&maxResults=50",{headers:{Authorization:"Bearer "+token}});const d=await r.json();(d.items||[]).forEach(it=>{const s=it.snippet||{};extract(s.title,s.videoOwnerChannelId,s.videoOwnerChannelTitle,2);});}catch(e){}
+  try{const sr=await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=50",{headers:{Authorization:"Bearer "+token}});const sd=await sr.json();const cids=(sd.items||[]).map(s=>{extract(null,s.snippet.resourceId.channelId,s.snippet.title,1);return s.snippet.resourceId.channelId;});if(cids.length){const cr=await fetchYouTube("channels",{part:"contentDetails",id:cids.slice(0,50).join(",")});const ups=(cr.items||[]).map(ch=>ch.contentDetails?.relatedPlaylists?.uploads).filter(Boolean);for(const plId of ups.sort(()=>Math.random()-0.5).slice(0,isFirst?15:5)){try{const ur=await fetchYouTube("playlistItems",{part:"snippet",playlistId:plId,maxResults:8,_:Date.now()});(ur.items||[]).forEach(it=>{extract(it.snippet?.title,null,null,1);});}catch(e){}}}}catch(e){}
+  try{const ar=await fetch("https://www.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&mine=true&maxResults=50",{headers:{Authorization:"Bearer "+token}});const ad=await ar.json();(ad.items||[]).forEach(it=>{const s=it.snippet||{};extract(s.title,s.channelId,s.channelTitle,2);const vid=it.contentDetails?.upload?.videoId;if(vid&&!profile.recentVideoIds.includes(vid))profile.recentVideoIds.push(vid);});}catch(e){}
+  profile.recentVideoIds=profile.recentVideoIds.slice(0,50);profile.syncedAt=Date.now();
+  localStorage.setItem("tasteProfile",JSON.stringify(profile));
+}
 
 (async function init() {
   // Dismiss boot splash after loading bar completes
@@ -2497,17 +2263,24 @@ addToPlaylistBtn.addEventListener("click", async function() {
   showSkeletons(8);
   const hasRefresh = localStorage.getItem("yt_refresh_token");
   if (hasRefresh) { const ok = await refreshAccessToken(); if (ok) showHUD("Signed in ✓"); }
-  if (hasEnoughHistory()) {
-    const items = await fetchPersonalizedFeed();
-    renderFeed(items);
-    showHUD("For You ✦");
-    const seed = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, _: Date.now() });
-    nextPageToken = seed.nextPageToken || null;
-  } else {
-    const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, _: Date.now() });
-    nextPageToken = data.nextPageToken || null;
-    renderFeed(data.items || []);
+  try {
+    if (hasEnoughHistory()) {
+      const items = await fetchPersonalizedFeed();
+      renderFeed(items);
+      showHUD("For You ✦");
+      const seed = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, _: Date.now() });
+      nextPageToken = seed.nextPageToken || null;
+    } else {
+      const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, _: Date.now() });
+      nextPageToken = data.nextPageToken || null;
+      renderFeed(data.items || []);
+    }
+  } catch(e) {
+    try { const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, _: Date.now() }); nextPageToken = data.nextPageToken || null; renderFeed(data.items || []); } catch(e2) {}
   }
+  // Silent background sync every 6 hours
+  const tkn = await getValidToken();
+  if (tkn) { const p = getTasteProfile(); if (Date.now() - (p.syncedAt||0) > 21600000) { silentSync(tkn).then(()=>showHUD("Feed updated ✦")).catch(()=>{}); } }
 })();
 </script>
 </body>
