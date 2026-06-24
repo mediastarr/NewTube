@@ -373,7 +373,8 @@ body.fullscreen-active .exit-full-btn { display: block; }
 body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer-events: none; transition: opacity 0.3s ease; }
 #playerSection.ui-hidden #hideUIBtn { opacity: 0.22; }
 #playerSection.ui-hidden #hideUIBtn:hover, #playerSection.ui-hidden #hideUIBtn:active { opacity: 1; }
-#resBtn { display: none; }
+#resBtn { display: inline-block; }
+#playerSection.player-mini #resBtn { display: none; }
 #playerSection.player-fullscreen #resBtn { display: inline-block; }
 #playerSection.player-fullscreen .player-controls { bottom: 48px; }
 #playerSection.player-fullscreen .player-controls button { padding: 3px 7px; font-size: 9px; min-height: 22px; min-width: 22px; }
@@ -422,14 +423,14 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
 
 /* Scroll to top button */
 #scrollTopBtn {
-  position: fixed; right: 16px; bottom: 80px; z-index: 50;
+  position: fixed; right: 16px; bottom: 90px; z-index: 200;
   width: 44px; height: 44px; border-radius: 999px;
-  border: 1px solid rgba(60,242,255,0.5);
-  background: radial-gradient(circle at 0% 0%, rgba(60,242,255,0.3), rgba(10,12,20,0.92));
+  border: 1px solid rgba(60,242,255,0.6);
+  background: radial-gradient(circle at 0% 0%, rgba(60,242,255,0.4), rgba(10,12,20,0.95));
   color: #f5f7ff; font-size: 18px; cursor: pointer;
   display: none; align-items: center; justify-content: center;
   touch-action: manipulation; -webkit-tap-highlight-color: rgba(60,242,255,0.25);
-  box-shadow: 0 0 18px rgba(60,242,255,0.35);
+  box-shadow: 0 0 22px rgba(60,242,255,0.5), 0 2px 8px rgba(0,0,0,0.6);
   transition: opacity 0.25s ease, transform 0.2s ease;
 }
 #scrollTopBtn:active { transform: scale(0.92); }
@@ -524,7 +525,7 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
     <button id="closeMini">✕</button>
   </div>
   <button id="exitFullBtn" class="exit-full-btn">Back</button>
-  <button id="scrollTopBtn">▲</button>
+  <button id="scrollTopBtn" tabindex="0">▲</button>
   <div id="hud"></div>
   <div id="syncOverlay" style="display:none; position:fixed; inset:0; z-index:100001; background:rgba(0,0,0,0.88); align-items:center; justify-content:center;">
     <div id="syncBox" style="width:90%; max-width:380px; border-radius:22px; background:linear-gradient(135deg,rgba(10,12,20,0.98),rgba(20,24,40,0.98)); border:1px solid rgba(60,242,255,0.35); box-shadow:0 0 40px rgba(60,242,255,0.2); padding:20px;">
@@ -746,7 +747,7 @@ let currentTab = "home";
 let currentVideoId = null;
 let miniActive = false;
 let isLight = false;
-let currentChannelId = "AddChannelIDhere";
+let currentChannelId = "AdddChannelIDHere";
 let channelNextPageToken = null;
 let channelUploadsId = null;
 let historyList = JSON.parse(localStorage.getItem("historyList") || "[]");
@@ -1321,17 +1322,48 @@ resBtn.addEventListener("click", () => {
   currentQuality = QUALITY_CYCLE[qualityIndex];
   resBtn.textContent = QUALITY_LABELS[currentQuality];
   showHUD(QUALITY_LABELS[currentQuality]);
-  // No destroy/recreate — just call setPlaybackQuality directly (instant, no black flash)
+
+  const resumeTime = Math.floor(ytPlayer.getCurrentTime() || 0);
+
+  if (currentQuality === "auto") {
+    // Auto: reload without vq so YouTube ABR takes over
+    ytPlayer.loadVideoById({ videoId: currentVideoId, startSeconds: resumeTime });
+    showHUD("Auto ✦");
+    return;
+  }
+
+  // Forced quality: must reload with vq — setPlaybackQuality() was deprecated in 2021
+  // Use loadVideoById with suggested quality (most reliable method still working)
   try {
-    if (currentQuality === "auto") {
-      // Return to ABR — YouTube will pick quality automatically
-      ytPlayer.setPlaybackQualityRange("tiny", "hd1440");
-      showHUD("Auto ✦");
-    } else {
-      ytPlayer.setPlaybackQuality(currentQuality);
-      if (ytPlayer.setPlaybackQualityRange) ytPlayer.setPlaybackQualityRange(currentQuality, currentQuality);
-    }
-  } catch(e) {}
+    ytPlayer.loadVideoById({
+      videoId: currentVideoId,
+      startSeconds: resumeTime,
+      suggestedQuality: currentQuality
+    });
+    // Also try setPlaybackQuality as belt-and-suspenders
+    setTimeout(() => {
+      try { ytPlayer.setPlaybackQuality(currentQuality); } catch(e) {}
+    }, 500);
+  } catch(e) {
+    // Final fallback: recreate player with vq param
+    const start = resumeTime;
+    try { ytPlayer.destroy(); } catch(e2) {} ytPlayer = null;
+    const container = document.getElementById("playerSection");
+    let div = document.getElementById("playerFrame");
+    if (!div) { div = document.createElement("div"); div.id = "playerFrame"; container.insertBefore(div, container.firstChild); }
+    ytPlayer = new YT.Player("playerFrame", {
+      videoId: currentVideoId,
+      playerVars: { autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1, enablejsapi: 1, origin: location.origin, vq: currentQuality, start },
+      events: {
+        onReady: (e) => { e.target.setPlaybackQuality(currentQuality); playPauseBtn.textContent = "Pause"; },
+        onStateChange: (e) => {
+          if (e.data === YT.PlayerState.PLAYING) playPauseBtn.textContent = "Pause";
+          if (e.data === YT.PlayerState.PAUSED)  playPauseBtn.textContent = "Play";
+          if (e.data === YT.PlayerState.ENDED && currentVideoId) clearResumePosition(currentVideoId);
+        }
+      }
+    });
+  }
 });
 
 let uiHidden = false;
@@ -2491,7 +2523,7 @@ async function silentSync(token){
 
   // Silent background sync every 6 hours
   const tkn = await getValidToken();
-  if (tkn) { const p = getTasteProfile(); if (Date.now() - (p.syncedAt||0) > 21600000) { silentSync(tkn).then(()=>showHUD("Feed updated ✦")).catch(()=>{}); } }
+  if (tkn) { const p = getTasteProfile(); if (Date.now() - (p.syncedAt||0) > 7200000) { silentSync(tkn).then(()=>showHUD("Feed updated ✦")).catch(()=>{}); } }
 })();
 </script>
 </body>
