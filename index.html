@@ -285,6 +285,18 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
 .pl-pick-item:active { transform:scale(0.97); box-shadow:0 0 18px rgba(60,242,255,0.4); }
 .pl-pick-item:hover { box-shadow:0 0 16px rgba(60,242,255,0.25); border-color:rgba(60,242,255,0.35); }
 .pl-pick-item:focus { box-shadow:0 0 18px rgba(60,242,255,0.5); border-color:rgba(60,242,255,0.6); outline:none; }
+.pl-pick-item.pl-nav-focus { box-shadow:0 0 20px rgba(60,242,255,0.7); border-color:#00d4ff; outline:none; background:radial-gradient(circle at 0% 0%,rgba(60,242,255,0.18),rgba(8,10,16,0.96)); }
+
+.vip-action-btn {
+  border-radius:999px; border:1px solid rgba(120,130,160,0.5);
+  padding:8px 14px; font-size:12px; font-weight:500;
+  background:radial-gradient(circle at 0% 0%,rgba(60,242,255,0.1),rgba(10,12,20,0.9));
+  color:#f5f7ff; cursor:pointer; white-space:nowrap;
+  touch-action:manipulation; -webkit-tap-highlight-color:rgba(60,242,255,0.25);
+  flex-shrink:0;
+}
+.vip-action-btn:active { background:radial-gradient(circle at 0% 0%,rgba(60,242,255,0.3),rgba(10,12,20,0.9)); transform:scale(0.95); }
+.vip-action-btn.active { border-color:var(--accent); color:var(--accent); box-shadow:0 0 12px rgba(60,242,255,0.4); }
 .pl-pick-thumb { width:48px; height:36px; border-radius:8px; overflow:hidden; background:#11131c; flex-shrink:0; }
 .pl-pick-thumb img { width:100%; height:100%; object-fit:cover; }
 .pl-pick-info { flex:1; min-width:0; }
@@ -594,13 +606,16 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
       </div>
     </div>
   </div>
-  <div id="playlistPickerPage" style="display:none; margin-top:16px; position:relative; z-index:10;">
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-      <button id="plPickerClose" class="topbar-btn" tabindex="0" style="flex:0 0 auto;">← Cancel</button>
-      <div style="font-size:14px; font-weight:600; letter-spacing:0.04em; flex:1;">Add to Playlist</div>
+  <div id="plOverlay" style="display:none; position:fixed; inset:0; z-index:100002; background:rgba(0,0,0,0.88); align-items:flex-start; justify-content:center; padding:16px 12px; overflow:hidden;">
+    <div id="plBox" style="width:100%; max-width:340px; border-radius:18px; background:linear-gradient(135deg,rgba(10,12,20,0.98),rgba(20,24,40,0.98)); border:1px solid rgba(60,242,255,0.35); box-shadow:0 0 30px rgba(60,242,255,0.2); padding:16px; max-height:calc(100vh - 32px); display:flex; flex-direction:column;">
+      <div style="font-size:13px; font-weight:700; letter-spacing:0.05em; margin-bottom:4px; color:#f5f7ff; flex-shrink:0;">+ Add to Playlist</div>
+      <div style="font-size:10px; opacity:0.65; margin-bottom:12px; line-height:1.4; flex-shrink:0;">Choose a playlist to add this video to.</div>
+      <div id="plPickerList" style="overflow-y:auto; flex:1; -webkit-overflow-scrolling:touch; touch-action:pan-y;"></div>
+      <div id="plPickerStatus" style="display:none; padding:8px; text-align:center; font-size:12px; border-radius:12px; margin-top:8px; flex-shrink:0;"></div>
+      <div style="display:flex; gap:8px; margin-top:12px; flex-shrink:0;">
+        <button id="plPickerClose" class="topbar-btn" tabindex="0" style="flex:1; font-size:11px; padding:6px 10px; min-height:32px; background:radial-gradient(circle at 0% 0%,rgba(255,80,80,0.2),rgba(10,12,20,0.9));">Cancel</button>
+      </div>
     </div>
-    <div id="plPickerList"></div>
-    <div id="plPickerStatus" style="display:none; padding:10px; text-align:center; font-size:12px; border-radius:12px; margin-top:8px;"></div>
   </div>
   <div id="searchPanel">
     <div class="search-input-bar">
@@ -627,6 +642,34 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
     <div id="suggestions"></div>
   </div>
   <div id="feed"></div>
+
+  <!-- Video info panel — shown below medium player -->
+  <div id="videoInfoPanel" style="display:none; margin-top:12px; position:relative; z-index:10;">
+    <!-- Title -->
+    <div id="vipTitle" style="font-size:15px; font-weight:600; line-height:1.35; padding:0 2px 8px; color:#f5f7ff;"></div>
+    <!-- Stats row: views · likes · age -->
+    <div id="vipStats" style="font-size:12px; opacity:0.7; padding-bottom:10px; border-bottom:1px solid rgba(60,242,255,0.12);"></div>
+    <!-- Channel row + Subscribe -->
+    <div id="vipChannel" style="display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(60,242,255,0.12);">
+      <div id="vipAvatar" style="width:36px; height:36px; border-radius:999px; background:rgba(60,242,255,0.2); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:16px;">📺</div>
+      <div style="flex:1; min-width:0;">
+        <div id="vipChannelName" style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+        <div id="vipSubs" style="font-size:11px; opacity:0.6; margin-top:1px;"></div>
+      </div>
+      <button id="vipSubscribeBtn" style="border-radius:999px; border:none; padding:8px 14px; font-size:12px; font-weight:600; background:#f5f7ff; color:#000; cursor:pointer; touch-action:manipulation; flex-shrink:0;">Subscribe</button>
+    </div>
+    <!-- Action buttons: Like · Dislike · Share · Save -->
+    <div style="display:flex; gap:6px; padding:10px 0; border-bottom:1px solid rgba(60,242,255,0.12); overflow-x:auto; -webkit-overflow-scrolling:touch;">
+      <button id="vipLikeBtn" class="vip-action-btn">👍 <span id="vipLikeCount"></span></button>
+      <button id="vipDislikeBtn" class="vip-action-btn">👎</button>
+      <button id="vipShareBtn" class="vip-action-btn">↗ Share</button>
+      <button id="vipSaveBtn" class="vip-action-btn">🔖 Save</button>
+    </div>
+    <!-- Suggested videos label -->
+    <div style="font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:rgba(60,242,255,0.7); padding:10px 2px 6px;">Up Next</div>
+    <!-- Suggested feed -->
+    <div id="suggestedFeed"></div>
+  </div>
   <div id="channelPage"></div>
   <div id="subsPage" style="display:none; margin-top:16px; position:relative; z-index:10;">
     <div class="channel-banner">
@@ -774,7 +817,11 @@ const API_KEYS = [
   "AIzaSyDkmFEOre2r1rcpUKvLkm3Siw5FDORXbNY","AIzaSyBwjcpX9eyHEDtJ5JwgEUb8EOF3YCePCMw",
   "AIzaSyCfZpn1YBNdEXopAM-lOv5hoEvHoCKNo30","AIzaSyCLydlFt2Hl3qDD0DFkAaALLEcn-5JjTqQ",
   "AIzaSyDUcS13prh73HQB8Cl8GKvhbRi0AGofMDQ","AIzaSyCHp3NvAXwjRRtYkw0t6Kj3TvIn3Izfx0o",
-  "AIzaSyASan345SwgI0lcXKNK-DSW9-lhm4NqqGs","AIzaSyArTrelF7wIG3RYDWLP7BzUkoN2qxcM-HY"
+  "AIzaSyASan345SwgI0lcXKNK-DSW9-lhm4NqqGs","AIzaSyArTrelF7wIG3RYDWLP7BzUkoN2qxcM-HY",
+  "AIzaSyBBDbaKVgzQ5ETh37MN6qeLHVap1RPKU4s","AIzaSyDO3RiiR_DeO1a_3A_2Ll71uusRrnswgIM",
+  "AIzaSyAvIf8brzBEbdGnpGoPkIaSF2ApObzihnM","AIzaSyCSgQatlbI6edL894VVO-PtMCMbLAqccR4",
+  "AIzaSyDqw37aGo1JfO_Qjj6aeOQq3r6MEY5srs4","AIzaSyAl97Urwh3SmWUpfLhwHXmN6iB_PxySoXU",
+  "AIzaSyAMnR9igJ7CAZk4fgGfXZnuAXcUSTQe9k0","AIzaSyAJpWpFiLLrRJIBxnPZ8qDsU8DMNUOa1sY"
 ];
 
 let keyIndex = 0;
@@ -804,7 +851,7 @@ let currentTab = "home";
 let currentVideoId = null;
 let miniActive = false;
 let isLight = false;
-let currentChannelId = "AddChannelIDhere";
+let currentChannelId = "AddChannelIdHere";
 let channelNextPageToken = null;
 let channelUploadsId = null;
 let historyList = JSON.parse(localStorage.getItem("historyList") || "[]");
@@ -1152,6 +1199,7 @@ function hideUIForVideo() {
   keyboardEl.style.display = "none";
   suggestionsEl.style.display = "none";
   playlistPageEl.style.display = "none";
+  document.getElementById("videoInfoPanel").style.display = "none";
 }
 
 function showUIWithMiniPlayer() {
@@ -1163,6 +1211,7 @@ function showUIWithMiniPlayer() {
   subsPageEl.style.display = "none";
   playlistPageEl.style.display = "none";
   shortsPageEl.style.display = "none";
+  document.getElementById("videoInfoPanel").style.display = "none";
   if (currentTab === "channel") channelPageEl.style.display = "block";
   else if (currentTab === "subs") subsPageEl.style.display = "block";
   else if (currentTab === "playlists") playlistPageEl.style.display = "block";
@@ -1260,7 +1309,42 @@ setInterval(() => {
 }, 150);
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { playerSection.classList.remove("player-fullscreen"); document.body.classList.remove("fullscreen-active"); disableCinemaMode(); showUIWithMiniPlayer(); showHUD("Exited Fullscreen"); }
+  if (e.key === "Escape") {
+    // Close playlist overlay if open
+    if (plOverlay && plOverlay.style.display === "flex") { closePicker(); return; }
+    playerSection.classList.remove("player-fullscreen"); document.body.classList.remove("fullscreen-active"); disableCinemaMode(); showUIWithMiniPlayer(); showHUD("Exited Fullscreen");
+  }
+  // When playlist overlay is open, arrow keys navigate the list
+  if (plOverlay && plOverlay.style.display === "flex") {
+    const list = document.getElementById("plPickerList");
+    const items = list ? list.querySelectorAll(".pl-pick-item") : [];
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      // Find currently highlighted item
+      let cur = -1;
+      items.forEach((item, i) => { if (item.classList.contains("pl-nav-focus")) cur = i; });
+      // Remove highlight from current
+      items.forEach(item => item.classList.remove("pl-nav-focus"));
+      // Move to next/prev
+      let next = e.key === "ArrowDown" ? cur + 1 : cur - 1;
+      if (next < 0) next = 0;
+      if (next >= items.length) {
+        // At end of list — focus Cancel button
+        document.getElementById("plPickerClose").focus();
+        return;
+      }
+      items[next].classList.add("pl-nav-focus");
+      items[next].scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // Activate highlighted item or focused button
+      const focused = list ? list.querySelector(".pl-nav-focus") : null;
+      if (focused) { focused.click(); return; }
+      if (document.activeElement && document.activeElement !== document.body) document.activeElement.click();
+    }
+    return; // block all other keys from reaching page handlers
+  }
 });
 
 let ytPlayer = null;
@@ -1355,14 +1439,172 @@ function setPlayerVideo(videoId, snippet, startSeconds) {
   playerSection.classList.remove("player-mini", "player-fullscreen");
   saveToHistory({ id: videoId, snippet });
   hideUIForVideo();
+  // Show info panel below medium player
+  loadVideoInfoPanel(videoId, snippet);
   playPauseBtn.textContent = "Pause";
   initAudioGlow();
-  // Use provided startSeconds, or check for saved resume position
   const resumeAt = startSeconds || getResumePosition(videoId);
   if (ytReady) createYTPlayer(videoId, resumeAt);
   else { pendingVideoId = videoId; pendingStartSeconds = resumeAt; }
 }
 
+async function loadVideoInfoPanel(videoId, snippet) {
+  const panel = document.getElementById("videoInfoPanel");
+  const sugFeed = document.getElementById("suggestedFeed");
+  panel.style.display = "block";
+  sugFeed.innerHTML = "";
+  window.scrollTo({ top: 0, behavior: "instant" });
+
+  // Fill from snippet immediately (fast)
+  const title = snippet.title || "";
+  const channel = snippet.channelTitle || "";
+  const channelId = snippet.channelId || "";
+  const publishedAt = snippet.publishedAt || "";
+
+  document.getElementById("vipTitle").textContent = title;
+  document.getElementById("vipChannelName").textContent = channel;
+  document.getElementById("vipStats").textContent = timeAgo(publishedAt);
+  document.getElementById("vipSubs").textContent = "";
+
+  // Fetch full video details (stats + channel info) in parallel with suggested
+
+  const [videoData, channelData] = await Promise.allSettled([
+    fetchYouTube("videos", { part: "snippet,statistics", id: videoId, _: Date.now() }),
+    channelId ? fetchYouTube("channels", { part: "snippet,statistics", id: channelId, _: Date.now() }) : Promise.resolve(null),
+  ]);
+
+  // Video stats
+  if (videoData.status === "fulfilled" && videoData.value.items?.[0]) {
+    const v = videoData.value.items[0];
+    const stats = v.statistics || {};
+    const views = formatViews(stats.viewCount);
+    const likes = formatViews(stats.likeCount);
+    const ago = timeAgo(v.snippet?.publishedAt || publishedAt);
+    document.getElementById("vipStats").textContent = [views && views + " views", likes && likes + " likes", ago].filter(Boolean).join("  ·  ");
+    document.getElementById("vipLikeCount").textContent = likes || "";
+  }
+
+  // Channel info + avatar
+  if (channelData.status === "fulfilled" && channelData.value?.items?.[0]) {
+    const ch = channelData.value.items[0];
+    const subs = formatViews(ch.statistics?.subscriberCount);
+    document.getElementById("vipSubs").textContent = subs ? subs + " subscribers" : "";
+    const avatarUrl = ch.snippet?.thumbnails?.default?.url;
+    const avatarEl = document.getElementById("vipAvatar");
+    if (avatarUrl) avatarEl.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+  }
+
+  // Subscribe button
+  const subBtn = document.getElementById("vipSubscribeBtn");
+  let subscribed = false;
+  subBtn.onclick = async () => {
+    subscribed = !subscribed;
+    subBtn.textContent = subscribed ? "Subscribed ✓" : "Subscribe";
+    subBtn.style.background = subscribed ? "rgba(60,242,255,0.2)" : "#f5f7ff";
+    subBtn.style.color = subscribed ? "#3cf2ff" : "#000";
+    showHUD(subscribed ? "Subscribed ✓" : "Unsubscribed");
+  };
+
+  // Like / Dislike
+  let liked = false, disliked = false;
+  document.getElementById("vipLikeBtn").onclick = () => {
+    liked = !liked; disliked = false;
+    document.getElementById("vipLikeBtn").classList.toggle("active", liked);
+    document.getElementById("vipDislikeBtn").classList.remove("active");
+    showHUD(liked ? "👍 Liked!" : "Like removed");
+  };
+  document.getElementById("vipDislikeBtn").onclick = () => {
+    disliked = !disliked; liked = false;
+    document.getElementById("vipDislikeBtn").classList.toggle("active", disliked);
+    document.getElementById("vipLikeBtn").classList.remove("active");
+    showHUD(disliked ? "👎 Noted" : "Dislike removed");
+  };
+  document.getElementById("vipShareBtn").onclick = () => {
+    const url = `https://www.youtube.com/watch?v=${videoId}`;
+    if (navigator.share) navigator.share({ title, url }).catch(() => {});
+    else navigator.clipboard?.writeText(url).then(() => showHUD("Link copied!")).catch(() => showHUD("youtube.com/watch?v=" + videoId));
+  };
+  document.getElementById("vipSaveBtn").onclick = () => {
+    if (!currentVideoId) { showHUD("No video playing"); return; }
+    openPicker();
+    plPickerStatus.style.display = "none";
+    plPickerList.innerHTML = '<div class="pl-pick-msg">Loading playlists…</div>';
+    getValidToken().then(token => {
+      if (!token) {
+        plPickerList.innerHTML = '<div class="pl-pick-msg"><div>Login to save videos to playlists.</div><button id="plPickerLoginBtn" class="topbar-btn" style="margin-top:8px;">Login to YouTube</button></div>';
+        document.getElementById("plPickerLoginBtn").addEventListener("click", async () => { const t = await startWriteLogin(); if (t) openPickerWithToken(t); });
+      } else openPickerWithToken(token);
+    });
+  };
+
+  // Suggested videos — show skeletons while loading
+  sugFeed.innerHTML = Array(4).fill('<div class="skeleton"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>').join("");
+
+  // Build queries from multiple signals
+  const stopwords = new Set(["the","a","an","and","or","of","to","in","is","on","for","with","how","why","what","i","my","we","you","it","at","be","are","was","were","by","from","as","but","not","||","ft","ep","m/v","official","video","full"]);
+  const titleWords = title.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(w => w.length > 2 && !stopwords.has(w)).slice(0, 4);
+  const topKW  = getTopKeywords(3);
+  const topBI  = getTopBigrams(2);
+  const topCat = getTopCategoryId();
+
+  const seen = new Set([videoId]);
+  const allItems = [];
+
+  function addItems(items) {
+    (items || []).forEach(item => {
+      // Handle both search results (id.videoId) and videos endpoint (id as string)
+      const vid = (typeof item.id === "string") ? item.id : item.id?.videoId;
+      if (!vid || seen.has(vid)) return;
+      seen.add(vid);
+      allItems.push({ ...item, _vid: vid });
+    });
+  }
+
+  // Run all fetches — guaranteed at least trending will work
+  const fetches = [];
+  // 1. Channel's other videos
+  if (channelId) fetches.push(fetchYouTube("search", { part: "snippet", channelId, type: "video", order: "date", maxResults: 8, _: Date.now() }));
+  // 2. Title keywords
+  if (titleWords.length) fetches.push(fetchYouTube("search", { part: "snippet", type: "video", q: titleWords.join(" "), maxResults: 10, _: Date.now() }));
+  // 3. Taste keywords from watch history
+  if (topKW.length) fetches.push(fetchYouTube("search", { part: "snippet", type: "video", q: topKW.slice(0,3).join(" "), maxResults: 8, _: Date.now() }));
+  // 4. Taste bigram
+  if (topBI.length) fetches.push(fetchYouTube("search", { part: "snippet", type: "video", q: topBI[0], maxResults: 8, _: Date.now() }));
+  // 5. Trending in your top category — always works, no search quota
+  fetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: topCat || "0", maxResults: 15, _: Date.now() }));
+  // 6. General trending — ultimate fallback
+  fetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 15, _: Date.now() }));
+
+  const results = await Promise.allSettled(fetches);
+  results.forEach(r => { if (r.status === "fulfilled") addItems(r.value.items); });
+
+  sugFeed.innerHTML = "";
+
+  if (!allItems.length) {
+    sugFeed.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;opacity:0.6;">No suggestions — check connection.</div>';
+    return;
+  }
+  allItems.forEach(item => {
+    const s = item.snippet || {};
+    const vid = item._vid || item.id?.videoId || item.id;
+    if (!vid) return;
+    const thumb = s.thumbnails?.medium?.url || s.thumbnails?.high?.url || s.thumbnails?.default?.url || "";
+    const views = item.statistics ? formatViews(item.statistics.viewCount) : "";
+    const ago = timeAgo(s.publishedAt);
+    const meta = [views, ago].filter(Boolean).join(" · ");
+    const card = document.createElement("div");
+    card.className = "video-card parallax";
+    card.dataset.videoid = vid;
+    card.innerHTML = `<div class="video-thumb"><img src="${thumb}" loading="lazy"></div><div class="video-info"><div class="video-title">${s.title || ""}</div><div class="video-channel">${s.channelTitle || ""}</div><div class="video-meta">${meta}</div></div>`;
+    card.onclick = async () => {
+      const short = await checkIsShort(vid, s);
+      if (short) openAsShort(vid, s);
+      else { setPlayerVideo(vid, s); showHUD("Playing: " + (s.title || "")); }
+    };
+    sugFeed.appendChild(card);
+  });
+
+}
 function postToPlayer(cmd) {
   const frame = document.querySelector("#playerFrame iframe");
   if (frame && frame.contentWindow) frame.contentWindow.postMessage(JSON.stringify(cmd), "*");
@@ -1536,17 +1778,29 @@ async function checkIsShort(videoId, snippet) {
   try {
     const details = await fetchContentDetails([videoId]);
     const cd = details[videoId];
-    if (!cd) { _shortsCache[videoId] = false; return false; }
-
-    const secs = parseDuration(cd.duration);
-    // YouTube Short = 60 seconds or less
-    const result = secs !== null && secs > 0 && secs <= 60;
+    if (cd) {
+      const secs = parseDuration(cd.duration);
+      const result = secs !== null && secs > 0 && secs <= 60;
+      _shortsCache[videoId] = result;
+      return result;
+    }
+    // API didn't return this video — fall back to metadata
+    const result = isShortByMetadata(videoId, snippet);
     _shortsCache[videoId] = result;
     return result;
   } catch(e) {
-    _shortsCache[videoId] = false;
-    return false;
+    // Network/quota failure — fall back to metadata signals
+    const result = isShortByMetadata(videoId, snippet);
+    _shortsCache[videoId] = result;
+    return result;
   }
+}
+
+// Sync check — only true if already confirmed. Used for badge display.
+function isShort(videoId, snippet) {
+  if (_shortsCache[videoId] !== undefined) return _shortsCache[videoId];
+  if (snippet && snippet._isShort) return true;
+  return isShortByMetadata(videoId, snippet);
 }
 
 // Pre-check a batch of videos in one API call and populate cache.
@@ -1557,21 +1811,49 @@ async function preCacheShorts(items) {
     .filter(id => id && _shortsCache[id] === undefined);
   if (!uncached.length) return;
 
+  // Also build a metadata map for fallback (no API call needed)
+  const metaMap = {};
+  items.forEach(item => {
+    const id = item.id?.videoId || item.id;
+    if (id) metaMap[id] = item.snippet || {};
+  });
+
   try {
     const details = await fetchContentDetails(uncached);
+    const apiReturned = Object.keys(details).length > 0;
+
     uncached.forEach(id => {
       const cd = details[id];
-      if (!cd) { _shortsCache[id] = false; return; }
-      const secs = parseDuration(cd.duration);
-      _shortsCache[id] = secs !== null && secs > 0 && secs <= 60;
+      if (cd) {
+        // API returned contentDetails — use duration
+        const secs = parseDuration(cd.duration);
+        _shortsCache[id] = secs !== null && secs > 0 && secs <= 60;
+      } else if (!apiReturned) {
+        // API returned nothing (quota/error) — fall back to metadata signals
+        _shortsCache[id] = isShortByMetadata(id, metaMap[id]);
+      } else {
+        // API returned results but this video wasn't in them — not a short
+        _shortsCache[id] = false;
+      }
     });
-  } catch(e) {}
+  } catch(e) {
+    // Complete failure — fall back to metadata for all
+    uncached.forEach(id => {
+      _shortsCache[id] = isShortByMetadata(id, metaMap[id]);
+    });
+  }
 }
 
-// Sync check — only true if already confirmed by API. Used for badge display.
-function isShort(videoId, snippet) {
-  if (_shortsCache[videoId] !== undefined) return _shortsCache[videoId];
-  if (snippet && snippet._isShort) return true;
+// Metadata-only fallback — used when API is unavailable
+function isShortByMetadata(videoId, snippet) {
+  if (!snippet) return false;
+  if (snippet._isShort) return true;
+  const title = snippet.title || "";
+  const desc  = snippet.description || "";
+  if (/#\w+/.test(title) || /#\w+/.test(desc)) return true;
+  if (/@\w+/.test(title) || /@\w+/.test(desc)) return true;
+  if (/[\u{1F300}-\u{1FFFF}\u{2600}-\u{27FF}]/u.test(title)) return true;
+  if (desc.includes("youtube.com/hashtag/")) return true;
   return false;
 }
 
@@ -2031,7 +2313,7 @@ historyTab.addEventListener("click", async () => {
       const resumeT = getResumePosition(h.id);
       const resumeLabel = resumeT > 5 ? " ▶ "+Math.floor(resumeT/60)+":"+(String(Math.floor(resumeT%60)).padStart(2,"0")) : "";
       card.querySelector(".video-meta").textContent = "Watched "+ago+resumeLabel;
-      card.onclick = () => { setPlayerVideo(h.id, snippet, resumeT); showHUD(resumeT > 5 ? "Resuming ▶" : "Playing: "+(snippet.title||"")); };
+      card.onclick = async () => { const short = await checkIsShort(h.id, snippet); if (short) openAsShort(h.id, snippet); else { setPlayerVideo(h.id, snippet, resumeT); showHUD(resumeT > 5 ? "Resuming ▶" : "Playing: "+(snippet.title||"")); } };
       feedEl.appendChild(card);
     });
   }
@@ -2052,7 +2334,7 @@ historyTab.addEventListener("click", async () => {
           const snippet = it.snippet || {}; const videoId = snippet.resourceId?.videoId; if (!videoId) return;
           const card = document.createElement("div"); card.className = "video-card parallax focusable"; card.dataset.videoid = videoId;
           card.innerHTML = '<div class="video-thumb"><img src="'+(snippet.thumbnails?.medium?.url||snippet.thumbnails?.default?.url||"")+'" loading="lazy"></div><div class="video-info"><div class="video-title">'+(snippet.title||"")+'</div><div class="video-channel">'+(snippet.videoOwnerChannelTitle||snippet.channelTitle||"")+'</div><div class="video-meta">Liked</div></div>';
-          card.onclick = () => { setPlayerVideo(videoId, snippet); showHUD("Playing: "+(snippet.title||"")); };
+          card.onclick = async () => { const short = await checkIsShort(videoId, snippet); if (short) openAsShort(videoId, snippet); else { setPlayerVideo(videoId, snippet); showHUD("Playing: "+(snippet.title||"")); } };
           feedEl.appendChild(card);
         });
       }
@@ -2066,7 +2348,7 @@ historyTab.addEventListener("click", async () => {
           const snippet = it.snippet || {}; const videoId = snippet.resourceId?.videoId; if (!videoId) return;
           const card = document.createElement("div"); card.className = "video-card parallax focusable"; card.dataset.videoid = videoId;
           card.innerHTML = '<div class="video-thumb"><img src="'+(snippet.thumbnails?.medium?.url||snippet.thumbnails?.default?.url||"")+'" loading="lazy"></div><div class="video-info"><div class="video-title">'+(snippet.title||"")+'</div><div class="video-channel">'+(snippet.videoOwnerChannelTitle||snippet.channelTitle||"")+'</div><div class="video-meta">Watch Later</div></div>';
-          card.onclick = () => { setPlayerVideo(videoId, snippet); showHUD("Playing: "+(snippet.title||"")); };
+          card.onclick = async () => { const short = await checkIsShort(videoId, snippet); if (short) openAsShort(videoId, snippet); else { setPlayerVideo(videoId, snippet); showHUD("Playing: "+(snippet.title||"")); } };
           feedEl.appendChild(card);
         });
       }
@@ -2232,7 +2514,7 @@ async function openPlaylist(playlistId, title) {
       const thumb = snippet.thumbnails?.medium?.url || snippet.thumbnails?.default?.url || "";
       const card = document.createElement("div"); card.className = "video-card parallax focusable";
       card.innerHTML = `<div class="video-thumb"><img src="${thumb}"></div><div class="video-info"><div class="video-title">${snippet.title}</div><div class="video-channel">${snippet.videoOwnerChannelTitle || snippet.channelTitle || ""}</div><div class="video-meta">#${i + 1} in playlist</div></div>`;
-      card.onclick = () => { setPlayerVideo(videoId, snippet); showHUD("Playing: " + snippet.title); };
+      card.onclick = async () => { const short = await checkIsShort(videoId, snippet); if (short) openAsShort(videoId, snippet); else { setPlayerVideo(videoId, snippet); showHUD("Playing: " + snippet.title); } };
       playlistItemsList.appendChild(card); rendered++;
     });
     if (rendered === 0) playlistItemsList.innerHTML = `<div style="font-size:12px;opacity:0.6;padding:8px 0;">This playlist is empty.</div>`;
@@ -2270,7 +2552,7 @@ async function loadMoreVideos() {
       const snippet = item.snippet; const videoId = snippet.resourceId?.videoId; if (!videoId) return;
       const card = document.createElement("div"); card.className = "video-card parallax focusable";
       card.innerHTML = `<div class="video-thumb"><img src="${snippet.thumbnails?.medium?.url || ""}" loading="lazy"></div><div class="video-info"><div class="video-title">${snippet.title}</div><div class="video-channel">${snippet.channelTitle || ""}</div></div>`;
-      card.onclick = () => setPlayerVideo(videoId, snippet); channelPageEl.appendChild(card);
+      card.onclick = async () => { const short = await checkIsShort(videoId, snippet); if (short) openAsShort(videoId, snippet); else setPlayerVideo(videoId, snippet); }; channelPageEl.appendChild(card);
     });
   } else { appendFeed(data.items || []); }
 }
@@ -2306,9 +2588,15 @@ scrollTopBtn.addEventListener("click", () => {
    Prevents horizontal/diagonal swipes from triggering vertical scroll.
    On glasses, swiping left/right or at an angle often reads as scroll-down. */
 (function() {
+  function isInfoPanelOpen() {
+    var p = document.getElementById("videoInfoPanel");
+    return p && p.style.display !== "none";
+  }
+
   // Wheel: block horizontal component
   window.addEventListener("wheel", function(e) {
     if (currentTab === "shorts") return;
+    if (isInfoPanelOpen()) return;
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 0.5) { e.preventDefault(); }
   }, { passive: false });
 
@@ -2316,12 +2604,14 @@ scrollTopBtn.addEventListener("click", () => {
   var tStartX = 0, tStartY = 0, dirLock = null;
   document.addEventListener("touchstart", function(e) {
     if (currentTab === "shorts") return;
+    if (isInfoPanelOpen()) return;
     tStartX = e.touches[0].clientX;
     tStartY = e.touches[0].clientY;
     dirLock = null;
   }, { passive: true });
   document.addEventListener("touchmove", function(e) {
     if (currentTab === "shorts") return;
+    if (isInfoPanelOpen()) return;
     if (!dirLock) {
       var dx = Math.abs(e.touches[0].clientX - tStartX);
       var dy = Math.abs(e.touches[0].clientY - tStartY);
@@ -2362,7 +2652,7 @@ async function loadChannelPage(channelId) {
     const snippet = item.snippet; const videoId = snippet.resourceId.videoId;
     const card = document.createElement("div"); card.className = "video-card parallax focusable";
     card.innerHTML = `<div class="video-thumb"><img src="${snippet.thumbnails.medium.url}"></div><div class="video-info"><div class="video-title">${snippet.title}</div><div class="video-channel">${snippet.channelTitle}</div></div>`;
-    card.onclick = () => setPlayerVideo(videoId, snippet); channelPageEl.appendChild(card);
+    card.onclick = async () => { const short = await checkIsShort(videoId, snippet); if (short) openAsShort(videoId, snippet); else setPlayerVideo(videoId, snippet); }; channelPageEl.appendChild(card);
   });
   showHUD("Channel Loaded");
 }
@@ -2674,21 +2964,36 @@ themeToggle.addEventListener("click", () => { isLight = !isLight; document.body.
    ADD TO PLAYLIST
 ================================================================ */
 const addToPlaylistBtn = document.getElementById("addToPlaylistBtn");
-const playlistPickerPage = document.getElementById("playlistPickerPage");
+const plOverlay = document.getElementById("plOverlay");
 const plPickerList = document.getElementById("plPickerList");
 const plPickerStatus = document.getElementById("plPickerStatus");
-let pickerPrevState = null;
 function openPicker() {
-  pickerPrevState = { feed: feedEl.style.display, channel: channelPageEl.style.display, subs: subsPageEl.style.display, playlist: playlistPageEl.style.display };
-  feedEl.style.display="none"; channelPageEl.style.display="none"; subsPageEl.style.display="none"; playlistPageEl.style.display="none";
-  playlistPickerPage.style.display="block";
+  plOverlay.style.display="flex";
+  const list = document.getElementById("plPickerList");
+  if (list) {
+    list.scrollTop = 0;
+    // Clear any previous highlight
+    list.querySelectorAll(".pl-nav-focus").forEach(el => el.classList.remove("pl-nav-focus"));
+    // Highlight first item
+    const first = list.querySelector(".pl-pick-item");
+    if (first) first.classList.add("pl-nav-focus");
+  }
 }
 function closePicker() {
-  playlistPickerPage.style.display="none";
-  if (pickerPrevState) { feedEl.style.display=pickerPrevState.feed; channelPageEl.style.display=pickerPrevState.channel; subsPageEl.style.display=pickerPrevState.subs; playlistPageEl.style.display=pickerPrevState.playlist; }
+  plOverlay.style.display="none";
   showHUD("Cancelled");
 }
 document.getElementById("plPickerClose").onclick = function() { closePicker(); };
+plOverlay.onclick = function(e) { if (e.target === plOverlay) closePicker(); };
+// Block ALL touch events from reaching page-level handlers (scroll lock, swipe detectors)
+// passive:false on touchmove so we can preventDefault and stop direction-lock interference
+['touchstart','touchend'].forEach(ev => {
+  document.getElementById("plBox").addEventListener(ev, e => e.stopPropagation(), { passive: true });
+  document.getElementById("plPickerList").addEventListener(ev, e => e.stopPropagation(), { passive: true });
+});
+document.getElementById("plBox").addEventListener("touchmove", e => { e.stopPropagation(); e.preventDefault(); }, { passive: false });
+// plPickerList scrolls internally — stopPropagation only, no preventDefault
+document.getElementById("plPickerList").addEventListener("touchmove", e => { e.stopPropagation(); }, { passive: false });
 async function startWriteLogin() {
   plPickerList.innerHTML='<div class="pl-pick-msg">Requesting login code…</div>';
   plPickerStatus.style.display="none";
@@ -2722,6 +3027,9 @@ async function openPickerWithToken(token) {
       item.onclick=(function(pid,ptitle,tok){return function(){insertVideoToPlaylist(pid,ptitle,tok);};})(pl.id,s.title,token);
       plPickerList.appendChild(item);
     });
+    // Highlight first item for Neural Band navigation
+    const firstItem = plPickerList.querySelector(".pl-pick-item");
+    if (firstItem) firstItem.classList.add("pl-nav-focus");
   } catch(e){plPickerList.innerHTML='<div class="pl-pick-msg">Network error. Try again.</div>';}
 }
 async function insertVideoToPlaylist(playlistId,playlistTitle,token) {
