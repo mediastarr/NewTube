@@ -730,111 +730,192 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
 
 <script>
 const API_KEYS = [
-  "AIzaSyCx0wjIv9VdzaI3oyz34zwkkFgTDj7LgEw","AIzaSyCNKebUdj8bTiRvLoSv28YqGdNoDn53Tk4",
-  "AIzaSyCJY-gccqPtgmqSnPRoo4W2vQp1chFCLHY","AIzaSyDarRcD3PDP6gqVIx2vMzGSMj0mAljiFmU",
-  "AIzaSyAK2AHBbe5wzgcsWzHR_YX6qyxjD1hbyec","AIzaSyDG3EzP0usjMQYRA0BXCT7WmNUEfJ3PkzY",
-  "AIzaSyCR_jLrkrDQoAmT_5XOmeWvZriugTA36KQ","AIzaSyAMMN_DAvsRqDDf2w66WUVFSnj_jCud-vo",
-  "AIzaSyD4tP4THh9ZeDcVW041l_JCjJztZA2zJCA","AIzaSyCuSia-HGhKHwfTFWNsJIAp-8Q38_7e4dg",
-  "AIzaSyBKcKeVWaq_AVca-W3iEGnoQCVb7u0bvUk","AIzaSyDLl8aAik8w2a9CqoQDUcN6rv_cfckDSYg",
-  "AIzaSyA2glQivSu01moNJnBr7fqs31E4Zz7K1hs","AIzaSyAvHMZmzEG-ibFKRpRIZUw--7xNSstbmYg",
-  "AIzaSyBBhb74OgptZl6MuKxFZZhwBW3WF1PEoS8","AIzaSyAxFZPU9JU9pVBUYat0Emidq1T-halZl7g",
-  "AIzaSyDwIOQ1vUPiSSdnXDsCLSSpKw0iJhNSq2Q","AIzaSyA8C0Zvavj5NvS8DG4mWiznxmlR1knfWDY",
-  "AIzaSyBR_sU9r1Mo54Mu14jINl8mucfdGmUah4g","AIzaSyAH0tTfPpID0ZZCwMb_MYBAcIyfzzCSNGk",
-  "AIzaSyDp1vo7FcVtv8jwucExrjhlmmCoqvcjzZo","AIzaSyCUEZU2myLSXROR8y07aVSGfTA3rXfBc2w",
-  "AIzaSyBdzXWI8Rf3hiZJcmnMjmeD1HCGL0yt3M4","AIzaSyAgolv-EsBdBecdfL8BDuOiWKkFC85U9mc",
-  "AIzaSyDFW7lzp07iP8sJH16E0OYo6TOIMza3xF0","AIzaSyBlLAJmjYeWjVPlGxGQ5Oh7gIZdD6W7mOM",
-  "AIzaSyB1CjeraEYGWbzhsa3vbdpLen9pnodEDIY","AIzaSyA8w3wy8azWbI9eqmfEhjjmO-6nfwCQ7Ic",
-  "AIzaSyBtbd-LojMkkkaVgT_Av4yK4xVzasfzuV0","AIzaSyCiQPGZAvQLdpfRTrjP_Vg_d3poEoDuapk",
-  "AIzaSyCcps1pDfH1jO8nr7EhAiuqDHKySSnlz54","AIzaSyDpzL3t3dz5KOVcbX35NmJg5q3nk37Xy2A",
-  "AIzaSyBrexuOL6CvUUt4ZN2p7NJ9IcGsNK__Ykk","AIzaSyB6MhVJKunfoT6cHIRQFYSbiz6xmY2nt38",
-  "AIzaSyAstACkdoCO_qv6f5bSU2M1UtSxSUvACdo","AIzaSyADtKlLaH0JJ30n5dkVhZ9evF2FZvc2_Mc",
-  "AIzaSyCxyK9dFKRi98vNkpUjXtKZkWSgfuX-e8Y","AIzaSyAuSRLjd2l7af5VEJRKvVmocVq1nMBiqGk",
-  "AIzaSyBlDHyLe6pdlAieC4KMXR5X5OkAoZfFv98","AIzaSyA7iqN8H1R3b15urhl8Z_ywLw5_PvRaqfs",
-  "AIzaSyAX3Zhid-j1yC82-eY-kOY7n717sBTNoxs","AIzaSyCpWPsXdc9V9whBM09cMuiR3dSUzD4oj9w",
-  "AIzaSyCREh_Jkfelq-xhs74eDEKMX0UmSANCmgc","AIzaSyCfezvfQdwcIal-J95kTadI_C3l_8DPNyQ",
-  "AIzaSyBzMfP7pb8ElXOKw15Bkq_UZl70IGOyW60","AIzaSyBTcuCT4lJVGZjt5zWE-aNpODIUUzqdRKA",
-  "AIzaSyANiBbMpulLju8bd1GXlEntyZT6p-p9JJE","AIzaSyCPY56vV6npb4TQxhCezhNtxgv6azNYfGs",
-  "AIzaSyDNaTzdbxfWD5B_wLWcfDfyX4YUiIPvFek","AIzaSyDvBKboWImQcErI75-7si8NeO_Nyc3IrjU",
-  "AIzaSyA3pZ4T1frGgAVJ-AsWLZ-GG9De6NiZw4I","AIzaSyD9xE5H3jbID9GRMnDbNd2aTo2YLoQFpjA",
-  "AIzaSyCNyZw102C5tKe8snKbkYQnf0VL9LEol2k","AIzaSyBrQr7qNm02b-Hg1pZnm4_lv660VPcNz-M",
-  "AIzaSyDwZobEvLGX7kKEMO1IbVjVstiIbe-sg7E","AIzaSyBt57smlSuTwGWpJ-zvvS4ViHhmsZ_KgRk",
-  "AIzaSyB7J43Wgv5bWnppisatVNjr_JcTOk6fCgE","AIzaSyCXJNqsKpax8u_JaffKyVeHc6G7M-OLXGo",
-  "AIzaSyBc3UQfL7QLs1AfyepSMQN4czBKeCmr5xs","AIzaSyBFQbbs_sIZtVxhgcYRitx7VERco44davE",
-  "AIzaSyBLLDdz4RWjFtjYLXPeX4drs1OomkDvoaE","AIzaSyAf00dqj-JI7r4NefyzEpYqHZZvv0Dhh8U",
-  "AIzaSyB_MooQA2zN_Pxu1yiX3UmmQFZ88NPC4Sc","AIzaSyCNKHUZDe3Ku-o788_QuqSy_OmPTg1wWNU",
-  "AIzaSyCtXGuTRHg5uhaQLv7aVUSPtAxxvwP-VRk","AIzaSyCTEF9kn3c-9YD3vNTbYuxrbJqmmYYHDfE",
-  "AIzaSyBtAjCHLUqzrxo8ShrW0dVKfyC4W7Yj2IA","AIzaSyD77ub12hPKZZTxJBr72PqEaQ9ykUwVtig",
-  "AIzaSyAsC6kZKAUhW4KMN04s8JJS9Hu4fFsgy04","AIzaSyBCBZCfKfVg5kMUPjxmRq41uqrbrnmpu-I",
-  "AIzaSyBk_q3XUQyI3rtUVCc46kjKJPh5Pm7u9QQ","AIzaSyCAsV7vK_lzvjYtJj5mPtz1l1WXIVhG9zc",
-  "AIzaSyCjtkvZkimDox2hmGONrBcXM6dc8wUXqUM","AIzaSyBUEcTe3RpAQNL7VMxVH8MwmiHtq5djwfQ",
-  "AIzaSyCMWhjouMK_SrXrOmjOKwC2MdO4MYBxDEc","AIzaSyDpvbC2kXAcW6WoL5a8OlmT4Ld_uuAU8Vg",
-  "AIzaSyB55qfInWL_BBpHW6Wi66TIhL9h9pi-K30","AIzaSyAP8uHEPn3ozzkiMIWySKvFWLZUeP6HMX0",
-  "AIzaSyDWZbjQ2UOmg0p45L1zOUKb4vU8tuYWGCI","AIzaSyD0g2F-yVKVyNO19MrUl4fruckJjy-9NKo",
-  "AIzaSyANJ9UEEVQCRN_lRW0oVGlFn03bcilJCuo","AIzaSyAWRPsDaF6JGlyglLc4HQ3rr_4-U6jdP8w",
-  "AIzaSyBZ49ddV9n6xyXr87ZIb2vgC7Xf9ohnWOA","AIzaSyC_QyZGFk55eZBcyTjPVAZTn6RjxqFSoAk",
-  "AIzaSyD5hwArDxl6N5d-xRo9J4Bgd-HmEGsIrbI","AIzaSyDBvMx0atv2BQvNu7ceOdbMIjGuH9G2z8Q",
-  "AIzaSyAb1fVxPccGzWsv2AW6R3Xh3w4nOT5d8HQ","AIzaSyBO1ONzJ8hCW7yY6Isvr6PGNATWqKFU0MM",
-  "AIzaSyAB9YHScMMMyg79vkBOCkZSdK-Vx-OUlY8","AIzaSyAeUdLwPkeD12fszv-KyKdOI6pEauw4J7g",
-  "AIzaSyDyNeIx93TJDz9YFA-R88CErhuFAh1ijUo","AIzaSyDCKn3sDfb_CC9IlI-FwUk6JVMizQGMuZg",
-  "AIzaSyDcA7t_l8aLzzy9qKsO0IO2s4sYq-Yf298","AIzaSyDmPt-uyosMqf7o3vJDGPV7NbGIS0tIW_Q",
-  "AIzaSyBDPqZqa6R-t8ew-0NTDKaldSeqwJZYR9A","AIzaSyBl0rtZxn-bZ1qlCYMP6oJa1G6SjIsVm40",
-  "AIzaSyB2sQ6_DbFlP0XAYNoVrFbRCvRwqdWrJWE","AIzaSyAuh8OosLonjV89zmcgJf-u8bLHCS0JWvE",
-  "AIzaSyBg9MS7t91cCcFa3uozbqrTzmi81pgWWes","AIzaSyBVb2iCUcavlbatNOUqPJ8kx2L-NxOFOLY",
-  "AIzaSyBvomylflCgl8WnqwNjOttYVnkL4w8B-wU","AIzaSyC94o0WeQcKJN46yG76b-xaZMFCpcMBZ68",
-  "AIzaSyDrOFS8dO-4D-cdLKM0SwpJkQrjwHqt15k","AIzaSyBZUkwEqJSJMyzn4e47F8N4UyOBgVe3E0s",
-  "AIzaSyBq_gJ-UaLq0WTipPYDCdwLIrBQBNQ4Flc","AIzaSyAQzw9Nt0ziciPRn-QgeyWzlNtYACdgOX8",
-  "AIzaSyBABTlx52ZqeMKRg_MbNdSkqTXgZ0NnA-g","AIzaSyA77fmqMpaQNVC_pu3yS1EWt-Yt47tDizk",
-  "AIzaSyCMGT7QsoI26qOmNG1MkHY9EwieETucy3k","AIzaSyB_k_m3vIPOrBXh-_BLYSqRX90BvsKNCbI",
-  "AIzaSyAwaWxHaXQPK9tHV5DNbypYffONEZy_YmY","AIzaSyAZTvWUm_6CeAPsoydNK6mEpupTDNrLDIk",
-  "AIzaSyAAn6aXFtNx_paqOwv_ReYCxxSAkhqOXtI","AIzaSyDrd1L_moWz3oL7OVKwE70PIjjCFIDFMlE",
-  "AIzaSyBycbrQauplffluJ1ucxGH5tXL623Iys-s","AIzaSyB3uLrlycJokw8BhpTius1u6qzFl95V388",
-  "AIzaSyA8vy-qnnW-D4dYkCWj_1yPcDvBWaHhccM","AIzaSyAoPa7xuUhnkEJ7-hRp0siXMc0fHcaUrRg",
-  "AIzaSyCAM-BEIynJUz3dkhRWOCrs3cdh5KJbbro","AIzaSyBO717pJHi6l3x1fMxvjoV9Qi1yNYTqJ5M",
-  "AIzaSyAFBJRSmLYveDga_kMdWLSBUWmVAQUsim4","AIzaSyBcW3TMMFe7x9sIxGeB-Ykeh_9lG9TGwi4",
-  "AIzaSyAiG74ZYcjR4K78NPfUe3sQGeJLnoBIXYU","AIzaSyDxN7QAVMNo6n6UiF0vwNKaFW4vHldAMao",
-  "AIzaSyAYMawk2KDutvl77rHRUW7Ke6sVsQLbv4k","AIzaSyBsH67_sjdDxOiPakGaf0PS0LN72ldl2gQ",
-  "AIzaSyBOBfqmbQ7TEZLBKoYBbFMHiLrsQwTHs-Q","AIzaSyDw6IUNvuDz100eGn-vObZ0tAa8a1jSu9U",
-  "AIzaSyDvEbhT-7Pze6cD8FMjYVfJ04SENWoWeAU","AIzaSyALuvJQ49ybXqKS3lfx0E-mKxfDmofsJKs",
-  "AIzaSyApSKe33X6lcyqMo4WJoav-Jzda-2b7Sp4","AIzaSyDPTNRYM0ePk3y17ZgePY0RP0OIBOCxE28",
-  "AIzaSyB5EsdA2VRInBZ8z6iy4KMOZ7-_r384QcM","AIzaSyA9mPjquYawB-dV97IvnWxp_HVUCVaJY08",
-  "AIzaSyBYL4YoQmKcG004BKTZxsZWj8RLJ8gGoVc","AIzaSyB54D3saEQVuEpT9UltMLBQ2pQIfel6rZE",
-  "AIzaSyCOPM0Lhfc8_eWt5G9XnMn-VqWONOGDdlI","AIzaSyD5MFjvs7uijShvYxqwJfm6_HcKSf1kg5M",
-  "AIzaSyD-fHmIX5xWWBhimAAppT0MjpSj7kZeL3k","AIzaSyDwC5M_sI5GFU28amUzoMH6LADOczhjtnU",
-  "AIzaSyCn1W60JG2bBLhfcmdf_4IO4DwbPcSUamw","AIzaSyDtbk2O00EOh3wcZL3zI-2xHw_B4cz4kU0",
-  "AIzaSyCTBtxW_yAJod-az7pGyWEvjLOBEZoyKTk","AIzaSyC8iihsKNeQbeCm_IMJzc7nu1RyhZeRLC8",
-  "AIzaSyB8MwIt7xiBXFpyj2AUjPE7VRB0MqqY8G8","AIzaSyCkq9rnLzqpfnr-LHUg-1AuIDb-GkWukPM",
-  "AIzaSyAzClMaJKl0IYwmI6gcAA9JU82T9CKpkIY","AIzaSyDTbRmYLb0BZ95XSexmvviM9movGqQdnpM",
-  "AIzaSyD-l8BkA618b_s-gdA7PdGicX4_7m381Nw","AIzaSyAb1msw18FjkWQ9eTC1FLBCOCshTT2biY0",
-  "AIzaSyAnonwBzHe_B1ZQENw_h_tTe1mc8028lN0","AIzaSyAFbQeij52ZNdw71_3YM29JbVBzdA6j2bk",
-  "AIzaSyC-66qDbGqKdEfQyGFeQPgYpRCjg802eLQ","AIzaSyD0OpYzLo49Bzwj5lLg8JPiBLD8te7xjNQ",
-  "AIzaSyDjluVd8lCtMlCUKxD4J6YLs1n86jZdA-8","AIzaSyDNz0FwRrW1aJyNsJCuyDBtHABf5PJB4NA",
-  "AIzaSyDJk296nOcAkhbcTDAaj1AcfkJLrADXO8A","AIzaSyDRA6Tij7ZdMAOGbK8bn6X3JEtTTKgO2ik",
-  "AIzaSyBE_TgXpbeBMrkZhEGeEI3nZ5xC_BbbSd0","AIzaSyDqKaX9dypHZOky60_wNba3sLO0Gm6rs5Q",
-  "AIzaSyAo-sasBmE6POcUWeLG_LJZHC1AIn0ptCQ","AIzaSyDBH0yil9RS4rLg3H2gVUOoxnojdEy9NYk",
-  "AIzaSyDVDUackHINzULJ6qasLLKDZUIBBxTORTI","AIzaSyA72atzyYdbE7bMVGkKW3TVYJkOxo4zqGY",
-  "AIzaSyDXugJlNG12ObzxV5WGjgNVob5OhfF6moM","AIzaSyA2aSVuBFCbNdraBsX07qMGmEzmLLrgKD0",
-  "AIzaSyD903GIIkzLZyeOvqMrVW3q3wJy4jcHO7E","AIzaSyCWlw8qpBueGgjvTF4BZ54syzQkTevM_8g",
-  "AIzaSyDF7DasyCt4U2nle8U6fPZm7QnOwbg_VKg","AIzaSyBkaog-TrCWGhT2pe9cVQ3aVNwyxvO-vpc",
-  "AIzaSyCiEMfafGEgqpZ94b9ENjAg0UaIku0NRE8","AIzaSyA_lsaX7dRjRsaYb2cwxD2mB7U5t6iYdM0",
-  "AIzaSyDI3sl7QYBrXOgAwCyjwJ23pV1nbjUMVL0","AIzaSyDiisGuMjbilWyxKAFpTPu4am8d5yQagJI",
-  "AIzaSyCpAzwCaG2I8gEusAsDKnkoxVMdkPg1Vpk","AIzaSyCJ2cLDhXE-e_KYbnfS7DmrT-gtbL9yxCY",
-  "AIzaSyA2DSf373Pmv26YLpcv2gnUMeZd0bGgNug","AIzaSyCzjoJptOBNzhkaxnNrkDZRP4SzsmTgTKQ",
-  "AIzaSyA0prh1a0eN4fZ6MA_eB4MPJ0UH4LPsIAc","AIzaSyD_Jfk_5wuEdVhDEsQX9uy3BW2Fio7xe0s",
-  "AIzaSyBt2YQ-X408_Ep3EYV4B70SgXeeADe_L08","AIzaSyCQsQnRJB6KgGKnSpGD66v6HNwikLUdFQ8",
-  "AIzaSyC6qu4BiEbQJ1uoy49GcvAy9_QxHKUE6Go","AIzaSyAtk1KIeZ9kFLNfhrqgNhmPzU4VJqTPeR8",
-  "AIzaSyDIjQgEy4VmFN2OxUkJisqVFw9repJcTF8","AIzaSyCb6lnHEoOXWd0TWfJK71T_mOiM8O2kfrI",
-  "AIzaSyD6aEVz7iaTGJShyDDBZT4C27YG1vEc1_M","AIzaSyAGKeySf2F3BskBrZNylOSGJuHQRX_Rp5E",
-  "AIzaSyBBgj7-tN6VBAG3ziJQKCQL7EJZR4wUW-k","AIzaSyAJbkJYrguKWmBl7Vyd6ObPXZf0zu8-p3E",
-  "AIzaSyCUmBro68VHtC6_OsqlpssTVasHk2NmBLc","AIzaSyCz8qs_I_hbgfLZXZj9QMX1sO74hF5k84Q",
-  "AIzaSyBsq-CNj2VFfgaQkaGFCQJCzIc28OzuFuw","AIzaSyBq-q38IF6iVxgo7EeQLtkB7V25n6WcGYo",
-  "AIzaSyA9c7WYaPVU_kvlTfOvLfxcFZY8TIc5nwo","AIzaSyCqFHwn3azAH2eOSZK8Ch4tZivl3GKb_Zs",
-  "AIzaSyBTUdLTpyYG0-fuOUP1OkeX9tf06S-rVkY","AIzaSyDblb5nF7wjMPJR7DtBTRseyTr64rjXn7E",
-  "AIzaSyA772yWhSkiwVgIFymHk9txl2UotHBksgI","AIzaSyBYKzKQShGsifFIZZ0yV-9quqM50pmuCQk",
-  "AIzaSyAjREsAJQWVX1Q4optfjBKjQzKQvVGYUIM","AIzaSyAqKWwYEh1QFxT69Nh4htYAkQXlC6vAjwo",
-  "AIzaSyBsgRu97z8s_477NEKKQop46sndfe8ZdBE","AIzaSyApAIjVvwL8DQMe5-B5z815hdJtpj3YLDg",
-  "AIzaSyB7FKzBZCxfl4nwi6elI6wj-JCVXXtmA40","AIzaSyAUKic3SobVT3S60-H9fWmdHZJVgdOzRPg",
-  "AIzaSyAQUxDKTdrQyCEXHBirQrEZ5pb9JaWibus","AIzaSyCK-FLtaBwhWcBiTWvUv7HhS34Z3O9LLvA",
-  "AIzaSyDkmFEOre2r1rcpUKvLkm3Siw5FDORXbNY","AIzaSyBwjcpX9eyHEDtJ5JwgEUb8EOF3YCePCMw"
+  "AIzaSyCx0wjIv9VdzaI3oyz34zwkkFgTDj7LgEw",
+  "AIzaSyCNKebUdj8bTiRvLoSv28YqGdNoDn53Tk4",
+  "AIzaSyCJY-gccqPtgmqSnPRoo4W2vQp1chFCLHY",
+  "AIzaSyDarRcD3PDP6gqVIx2vMzGSMj0mAljiFmU",
+  "AIzaSyAK2AHBbe5wzgcsWzHR_YX6qyxjD1hbyec",
+  "AIzaSyDG3EzP0usjMQYRA0BXCT7WmNUEfJ3PkzY",
+  "AIzaSyCR_jLrkrDQoAmT_5XOmeWvZriugTA36KQ",
+  "AIzaSyAMMN_DAvsRqDDf2w66WUVFSnj_jCud-vo",
+  "AIzaSyD4tP4THh9ZeDcVW041l_JCjJztZA2zJCA",
+  "AIzaSyCuSia-HGhKHwfTFWNsJIAp-8Q38_7e4dg",
+  "AIzaSyBKcKeVWaq_AVca-W3iEGnoQCVb7u0bvUk",
+  "AIzaSyDLl8aAik8w2a9CqoQDUcN6rv_cfckDSYg",
+  "AIzaSyA2glQivSu01moNJnBr7fqs31E4Zz7K1hs",
+  "AIzaSyAvHMZmzEG-ibFKRpRIZUw--7xNSstbmYg",
+  "AIzaSyBBhb74OgptZl6MuKxFZZhwBW3WF1PEoS8",
+  "AIzaSyAxFZPU9JU9pVBUYat0Emidq1T-halZl7g",
+  "AIzaSyDwIOQ1vUPiSSdnXDsCLSSpKw0iJhNSq2Q",
+  "AIzaSyA8C0Zvavj5NvS8DG4mWiznxmlR1knfWDY",
+  "AIzaSyBR_sU9r1Mo54Mu14jINl8mucfdGmUah4g",
+  "AIzaSyAH0tTfPpID0ZZCwMb_MYBAcIyfzzCSNGk",
+  "AIzaSyDp1vo7FcVtv8jwucExrjhlmmCoqvcjzZo",
+  "AIzaSyCUEZU2myLSXROR8y07aVSGfTA3rXfBc2w",
+  "AIzaSyBdzXWI8Rf3hiZJcmnMjmeD1HCGL0yt3M4",
+  "AIzaSyAgolv-EsBdBecdfL8BDuOiWKkFC85U9mc",
+  "AIzaSyDFW7lzp07iP8sJH16E0OYo6TOIMza3xF0",
+  "AIzaSyBlLAJmjYeWjVPlGxGQ5Oh7gIZdD6W7mOM",
+  "AIzaSyB1CjeraEYGWbzhsa3vbdpLen9pnodEDIY",
+  "AIzaSyA8w3wy8azWbI9eqmfEhjjmO-6nfwCQ7Ic",
+  "AIzaSyBtbd-LojMkkkaVgT_Av4yK4xVzasfzuV0",
+  "AIzaSyCiQPGZAvQLdpfRTrjP_Vg_d3poEoDuapk",
+  "AIzaSyCcps1pDfH1jO8nr7EhAiuqDHKySSnlz54",
+  "AIzaSyDpzL3t3dz5KOVcbX35NmJg5q3nk37Xy2A",
+  "AIzaSyBrexuOL6CvUUt4ZN2p7NJ9IcGsNK__Ykk",
+  "AIzaSyB6MhVJKunfoT6cHIRQFYSbiz6xmY2nt38",
+  "AIzaSyAstACkdoCO_qv6f5bSU2M1UtSxSUvACdo",
+  "AIzaSyADtKlLaH0JJ30n5dkVhZ9evF2FZvc2_Mc",
+  "AIzaSyCxyK9dFKRi98vNkpUjXtKZkWSgfuX-e8Y",
+  "AIzaSyAuSRLjd2l7af5VEJRKvVmocVq1nMBiqGk",
+  "AIzaSyBlDHyLe6pdlAieC4KMXR5X5OkAoZfFv98",
+  "AIzaSyA7iqN8H1R3b15urhl8Z_ywLw5_PvRaqfs",
+  "AIzaSyAX3Zhid-j1yC82-eY-kOY7n717sBTNoxs",
+  "AIzaSyCpWPsXdc9V9whBM09cMuiR3dSUzD4oj9w",
+  "AIzaSyCREh_Jkfelq-xhs74eDEKMX0UmSANCmgc",
+  "AIzaSyCfezvfQdwcIal-J95kTadI_C3l_8DPNyQ",
+  "AIzaSyBzMfP7pb8ElXOKw15Bkq_UZl70IGOyW60",
+  "AIzaSyBTcuCT4lJVGZjt5zWE-aNpODIUUzqdRKA",
+  "AIzaSyANiBbMpulLju8bd1GXlEntyZT6p-p9JJE",
+  "AIzaSyCPY56vV6npb4TQxhCezhNtxgv6azNYfGs",
+  "AIzaSyDNaTzdbxfWD5B_wLWcfDfyX4YUiIPvFek",
+  "AIzaSyDvBKboWImQcErI75-7si8NeO_Nyc3IrjU",
+  "AIzaSyA3pZ4T1frGgAVJ-AsWLZ-GG9De6NiZw4I",
+  "AIzaSyD9xE5H3jbID9GRMnDbNd2aTo2YLoQFpjA",
+  "AIzaSyCNyZw102C5tKe8snKbkYQnf0VL9LEol2k",
+  "AIzaSyBrQr7qNm02b-Hg1pZnm4_lv660VPcNz-M",
+  "AIzaSyDwZobEvLGX7kKEMO1IbVjVstiIbe-sg7E",
+  "AIzaSyBt57smlSuTwGWpJ-zvvS4ViHhmsZ_KgRk",
+  "AIzaSyB7J43Wgv5bWnppisatVNjr_JcTOk6fCgE",
+  "AIzaSyCXJNqsKpax8u_JaffKyVeHc6G7M-OLXGo",
+  "AIzaSyBc3UQfL7QLs1AfyepSMQN4czBKeCmr5xs",
+  "AIzaSyBFQbbs_sIZtVxhgcYRitx7VERco44davE",
+  "AIzaSyBLLDdz4RWjFtjYLXPeX4drs1OomkDvoaE",
+  "AIzaSyAf00dqj-JI7r4NefyzEpYqHZZvv0Dhh8U",
+  "AIzaSyB_MooQA2zN_Pxu1yiX3UmmQFZ88NPC4Sc",
+  "AIzaSyCNKHUZDe3Ku-o788_QuqSy_OmPTg1wWNU",
+  "AIzaSyCtXGuTRHg5uhaQLv7aVUSPtAxxvwP-VRk",
+  "AIzaSyCTEF9kn3c-9YD3vNTbYuxrbJqmmYYHDfE",
+  "AIzaSyBtAjCHLUqzrxo8ShrW0dVKfyC4W7Yj2IA",
+  "AIzaSyD77ub12hPKZZTxJBr72PqEaQ9ykUwVtig",
+  "AIzaSyAsC6kZKAUhW4KMN04s8JJS9Hu4fFsgy04",
+  "AIzaSyBCBZCfKfVg5kMUPjxmRq41uqrbrnmpu-I",
+  "AIzaSyBk_q3XUQyI3rtUVCc46kjKJPh5Pm7u9QQ",
+  "AIzaSyCAsV7vK_lzvjYtJj5mPtz1l1WXIVhG9zc",
+  "AIzaSyCjtkvZkimDox2hmGONrBcXM6dc8wUXqUM",
+  "AIzaSyBUEcTe3RpAQNL7VMxVH8MwmiHtq5djwfQ",
+  "AIzaSyCMWhjouMK_SrXrOmjOKwC2MdO4MYBxDEc",
+  "AIzaSyDpvbC2kXAcW6WoL5a8OlmT4Ld_uuAU8Vg",
+  "AIzaSyB55qfInWL_BBpHW6Wi66TIhL9h9pi-K30",
+  "AIzaSyAP8uHEPn3ozzkiMIWySKvFWLZUeP6HMX0",
+  "AIzaSyDWZbjQ2UOmg0p45L1zOUKb4vU8tuYWGCI",
+  "AIzaSyD0g2F-yVKVyNO19MrUl4fruckJjy-9NKo",
+  "AIzaSyANJ9UEEVQCRN_lRW0oVGlFn03bcilJCuo",
+  "AIzaSyAWRPsDaF6JGlyglLc4HQ3rr_4-U6jdP8w",
+  "AIzaSyBZ49ddV9n6xyXr87ZIb2vgC7Xf9ohnWOA",
+  "AIzaSyC_QyZGFk55eZBcyTjPVAZTn6RjxqFSoAk",
+  "AIzaSyD5hwArDxl6N5d-xRo9J4Bgd-HmEGsIrbI",
+  "AIzaSyDBvMx0atv2BQvNu7ceOdbMIjGuH9G2z8Q",
+  "AIzaSyAb1fVxPccGzWsv2AW6R3Xh3w4nOT5d8HQ",
+  "AIzaSyBO1ONzJ8hCW7yY6Isvr6PGNATWqKFU0MM",
+  "AIzaSyAB9YHScMMMyg79vkBOCkZSdK-Vx-OUlY8",
+  "AIzaSyAeUdLwPkeD12fszv-KyKdOI6pEauw4J7g",
+  "AIzaSyDyNeIx93TJDz9YFA-R88CErhuFAh1ijUo",
+  "AIzaSyDCKn3sDfb_CC9IlI-FwUk6JVMizQGMuZg",
+  "AIzaSyDcA7t_l8aLzzy9qKsO0IO2s4sYq-Yf298",
+  "AIzaSyDmPt-uyosMqf7o3vJDGPV7NbGIS0tIW_Q",
+  "AIzaSyBDPqZqa6R-t8ew-0NTDKaldSeqwJZYR9A",
+  "AIzaSyBl0rtZxn-bZ1qlCYMP6oJa1G6SjIsVm40",
+  "AIzaSyB2sQ6_DbFlP0XAYNoVrFbRCvRwqdWrJWE",
+  "AIzaSyAuh8OosLonjV89zmcgJf-u8bLHCS0JWvE",
+  "AIzaSyBg9MS7t91cCcFa3uozbqrTzmi81pgWWes",
+  "AIzaSyBVb2iCUcavlbatNOUqPJ8kx2L-NxOFOLY",
+  "AIzaSyBvomylflCgl8WnqwNjOttYVnkL4w8B-wU",
+  "AIzaSyC94o0WeQcKJN46yG76b-xaZMFCpcMBZ68",
+  "AIzaSyDrOFS8dO-4D-cdLKM0SwpJkQrjwHqt15k",
+  "AIzaSyBZUkwEqJSJMyzn4e47F8N4UyOBgVe3E0s",
+  "AIzaSyBq_gJ-UaLq0WTipPYDCdwLIrBQBNQ4Flc",
+  "AIzaSyAQzw9Nt0ziciPRn-QgeyWzlNtYACdgOX8",
+  "AIzaSyBABTlx52ZqeMKRg_MbNdSkqTXgZ0NnA-g",
+  "AIzaSyA77fmqMpaQNVC_pu3yS1EWt-Yt47tDizk",
+  "AIzaSyCMGT7QsoI26qOmNG1MkHY9EwieETucy3k",
+  "AIzaSyB_k_m3vIPOrBXh-_BLYSqRX90BvsKNCbI",
+  "AIzaSyAwaWxHaXQPK9tHV5DNbypYffONEZy_YmY",
+  "AIzaSyAZTvWUm_6CeAPsoydNK6mEpupTDNrLDIk",
+  "AIzaSyAAn6aXFtNx_paqOwv_ReYCxxSAkhqOXtI",
+  "AIzaSyDrd1L_moWz3oL7OVKwE70PIjjCFIDFMlE",
+  "AIzaSyBycbrQauplffluJ1ucxGH5tXL623Iys-s",
+  "AIzaSyB3uLrlycJokw8BhpTius1u6qzFl95V388",
+  "AIzaSyA8vy-qnnW-D4dYkCWj_1yPcDvBWaHhccM",
+  "AIzaSyAoPa7xuUhnkEJ7-hRp0siXMc0fHcaUrRg",
+  "AIzaSyCAM-BEIynJUz3dkhRWOCrs3cdh5KJbbro",
+  "AIzaSyBO717pJHi6l3x1fMxvjoV9Qi1yNYTqJ5M",
+  "AIzaSyAFBJRSmLYveDga_kMdWLSBUWmVAQUsim4",
+  "AIzaSyBcW3TMMFe7x9sIxGeB-Ykeh_9lG9TGwi4",
+  "AIzaSyAiG74ZYcjR4K78NPfUe3sQGeJLnoBIXYU",
+  "AIzaSyDxN7QAVMNo6n6UiF0vwNKaFW4vHldAMao",
+  "AIzaSyAYMawk2KDutvl77rHRUW7Ke6sVsQLbv4k",
+  "AIzaSyBsH67_sjdDxOiPakGaf0PS0LN72ldl2gQ",
+  "AIzaSyBOBfqmbQ7TEZLBKoYBbFMHiLrsQwTHs-Q",
+  "AIzaSyDw6IUNvuDz100eGn-vObZ0tAa8a1jSu9U",
+  "AIzaSyDvEbhT-7Pze6cD8FMjYVfJ04SENWoWeAU",
+  "AIzaSyALuvJQ49ybXqKS3lfx0E-mKxfDmofsJKs",
+  "AIzaSyApSKe33X6lcyqMo4WJoav-Jzda-2b7Sp4",
+  "AIzaSyDPTNRYM0ePk3y17ZgePY0RP0OIBOCxE28",
+  "AIzaSyB5EsdA2VRInBZ8z6iy4KMOZ7-_r384QcM",
+  "AIzaSyA9mPjquYawB-dV97IvnWxp_HVUCVaJY08",
+  "AIzaSyBYL4YoQmKcG004BKTZxsZWj8RLJ8gGoVc",
+  "AIzaSyB54D3saEQVuEpT9UltMLBQ2pQIfel6rZE",
+  "AIzaSyCOPM0Lhfc8_eWt5G9XnMn-VqWONOGDdlI",
+  "AIzaSyD5MFjvs7uijShvYxqwJfm6_HcKSf1kg5M",
+  "AIzaSyD-fHmIX5xWWBhimAAppT0MjpSj7kZeL3k",
+  "AIzaSyDwC5M_sI5GFU28amUzoMH6LADOczhjtnU",
+  "AIzaSyCn1W60JG2bBLhfcmdf_4IO4DwbPcSUamw",
+  "AIzaSyDtbk2O00EOh3wcZL3zI-2xHw_B4cz4kU0",
+  "AIzaSyCTBtxW_yAJod-az7pGyWEvjLOBEZoyKTk",
+  "AIzaSyC8iihsKNeQbeCm_IMJzc7nu1RyhZeRLC8",
+  "AIzaSyB8MwIt7xiBXFpyj2AUjPE7VRB0MqqY8G8",
+  "AIzaSyCkq9rnLzqpfnr-LHUg-1AuIDb-GkWukPM",
+  "AIzaSyAzClMaJKl0IYwmI6gcAA9JU82T9CKpkIY",
+  "AIzaSyDTbRmYLb0BZ95XSexmvviM9movGqQdnpM",
+  "AIzaSyD-l8BkA618b_s-gdA7PdGicX4_7m381Nw",
+  "AIzaSyAb1msw18FjkWQ9eTC1FLBCOCshTT2biY0",
+  "AIzaSyAnonwBzHe_B1ZQENw_h_tTe1mc8028lN0",
+  "AIzaSyAFbQeij52ZNdw71_3YM29JbVBzdA6j2bk",
+  "AIzaSyC-66qDbGqKdEfQyGFeQPgYpRCjg802eLQ",
+  "AIzaSyD0OpYzLo49Bzwj5lLg8JPiBLD8te7xjNQ",
+  "AIzaSyDjluVd8lCtMlCUKxD4J6YLs1n86jZdA-8",
+  "AIzaSyDNz0FwRrW1aJyNsJCuyDBtHABf5PJB4NA",
+  "AIzaSyDJk296nOcAkhbcTDAaj1AcfkJLrADXO8A",
+  "AIzaSyDRA6Tij7ZdMAOGbK8bn6X3JEtTTKgO2ik",
+  "AIzaSyBE_TgXpbeBMrkZhEGeEI3nZ5xC_BbbSd0",
+  "AIzaSyDqKaX9dypHZOky60_wNba3sLO0Gm6rs5Q",
+  "AIzaSyAo-sasBmE6POcUWeLG_LJZHC1AIn0ptCQ",
+  "AIzaSyDBH0yil9RS4rLg3H2gVUOoxnojdEy9NYk",
+  "AIzaSyDVDUackHINzULJ6qasLLKDZUIBBxTORTI",
+  "AIzaSyA72atzyYdbE7bMVGkKW3TVYJkOxo4zqGY",
+  "AIzaSyDXugJlNG12ObzxV5WGjgNVob5OhfF6moM",
+  "AIzaSyA2aSVuBFCbNdraBsX07qMGmEzmLLrgKD0",
+  "AIzaSyD903GIIkzLZyeOvqMrVW3q3wJy4jcHO7E",
+  "AIzaSyCWlw8qpBueGgjvTF4BZ54syzQkTevM_8g",
+  "AIzaSyDF7DasyCt4U2nle8U6fPZm7QnOwbg_VKg",
+  "AIzaSyBkaog-TrCWGhT2pe9cVQ3aVNwyxvO-vpc",
+  "AIzaSyCiEMfafGEgqpZ94b9ENjAg0UaIku0NRE8",
+  "AIzaSyA_lsaX7dRjRsaYb2cwxD2mB7U5t6iYdM0",
+  "AIzaSyDI3sl7QYBrXOgAwCyjwJ23pV1nbjUMVL0",
+  "AIzaSyDiisGuMjbilWyxKAFpTPu4am8d5yQagJI",
+  "AIzaSyCpAzwCaG2I8gEusAsDKnkoxVMdkPg1Vpk",
+  "AIzaSyCJ2cLDhXE-e_KYbnfS7DmrT-gtbL9yxCY",
+  "AIzaSyA2DSf373Pmv26YLpcv2gnUMeZd0bGgNug",
+  "AIzaSyCzjoJptOBNzhkaxnNrkDZRP4SzsmTgTKQ",
+  "AIzaSyA0prh1a0eN4fZ6MA_eB4MPJ0UH4LPsIAc",
+  "AIzaSyD_Jfk_5wuEdVhDEsQX9uy3BW2Fio7xe0s",
+  "AIzaSyBt2YQ-X408_Ep3EYV4B70SgXeeADe_L08",
+  "AIzaSyCQsQnRJB6KgGKnSpGD66v6HNwikLUdFQ8",
+  "AIzaSyC6qu4BiEbQJ1uoy49GcvAy9_QxHKUE6Go",
+  "AIzaSyAtk1KIeZ9kFLNfhrqgNhmPzU4VJqTPeR8",
+  "AIzaSyDIjQgEy4VmFN2OxUkJisqVFw9repJcTF8",
+  "AIzaSyCb6lnHEoOXWd0TWfJK71T_mOiM8O2kfrI"
 ];
 
 let keyIndex = 0;
@@ -1140,8 +1221,11 @@ async function fetchPersonalizedFeed() {
         const uploadResults = await Promise.allSettled(uploadFetches);
         uploadResults.forEach(r => {
           if (r.status === "fulfilled") {
-            const sorted = (r.value.items || []).sort((a, b) => new Date(b.contentDetails?.videoPublishedAt || b.snippet?.publishedAt || 0) - new Date(a.contentDetails?.videoPublishedAt || a.snippet?.publishedAt || 0));
-            addItems(sorted.slice(0, 4).map(it => ({ id: it.snippet?.resourceId?.videoId, snippet: { ...it.snippet, publishedAt: it.contentDetails?.videoPublishedAt || it.snippet?.publishedAt } })), 6);
+            const pf48h = Date.now() - 172800000;
+        const sorted = (r.value.items || []).sort((a, b) => new Date(b.contentDetails?.videoPublishedAt || b.snippet?.publishedAt || 0) - new Date(a.contentDetails?.videoPublishedAt || a.snippet?.publishedAt || 0));
+        const fresh = sorted.filter(it => new Date(it.contentDetails?.videoPublishedAt || it.snippet?.publishedAt || 0).getTime() > pf48h);
+        const toAdd = fresh.length > 0 ? fresh : sorted; // fallback to all if nothing in 48h
+            addItems(toAdd.slice(0, 4).map(it => ({ id: it.snippet?.resourceId?.videoId, snippet: { ...it.snippet, publishedAt: it.contentDetails?.videoPublishedAt || it.snippet?.publishedAt } })), 6);
           }
         });
       }
@@ -1510,15 +1594,9 @@ async function loadVideoInfoPanel(videoId, snippet) {
   // Subscribe button
   const subBtn = document.getElementById("vipSubscribeBtn");
   let subscribed = false;
-  let subscriptionId = null;
+  let subscriptionId = null; // needed to delete (unsubscribe)
 
-  // Reset button to unsubscribed state immediately — never assume subscribed
-  subBtn.textContent = "Subscribe";
-  subBtn.style.background = "#f5f7ff";
-  subBtn.style.color = "#000";
-  subBtn.disabled = false;
-
-  // Then check actual subscription status via API
+  // Check if already subscribed on load
   if (channelId) {
     getValidToken().then(async token => {
       if (!token) return;
@@ -1535,7 +1613,6 @@ async function loadVideoInfoPanel(videoId, snippet) {
           subBtn.style.background = "rgba(60,242,255,0.2)";
           subBtn.style.color = "#3cf2ff";
         }
-        // If no items — remains "Subscribe" (already set above)
       } catch(e) {}
     });
   }
@@ -1735,10 +1812,11 @@ async function loadVideoInfoPanel(videoId, snippet) {
     card.className = "video-card parallax";
     card.dataset.videoid = vid;
     card.innerHTML = `<div class="video-thumb"><img src="${thumb}" loading="lazy"></div><div class="video-info"><div class="video-title">${s.title || ""}</div><div class="video-channel">${s.channelTitle || ""}</div><div class="video-meta">${meta}</div></div>`;
-    card.onclick = async () => {
-      const short = await checkIsShort(vid, s);
-      if (short) openAsShort(vid, s);
-      else { setPlayerVideo(vid, s); showHUD("Playing: " + (s.title || "")); }
+    card.onclick = () => {
+      // Always open suggested videos in medium player — never route to shorts player
+      // This prevents audio bleed from the medium player when tapping suggestions
+      setPlayerVideo(vid, s);
+      showHUD("Playing: " + (s.title || ""));
     };
     sugFeed.appendChild(card);
   });
@@ -1902,11 +1980,13 @@ async function fetchContentDetails(videoIds) {
 }
 
 // Check if a single video is a Short using YouTube API contentDetails.
-// Duration ≤ 2:44 (164s) = Short. Duration only — thumbnail check removed
-// because YouTube generates landscape thumbnails for many real Shorts.
+// A Short is: duration ≤ 60s AND dimension is "2d" vertical (no dimension check
+// available in API, but duration ≤ 60s is the primary signal YouTube uses).
+// Also accepts explicit _isShort flag set by the Shorts tab pipeline.
 async function checkIsShort(videoId, snippet) {
   if (_shortsCache[videoId] !== undefined) return _shortsCache[videoId];
 
+  // Explicit flag from Shorts tab
   if (snippet && snippet._isShort) {
     _shortsCache[videoId] = true;
     return true;
@@ -1917,19 +1997,21 @@ async function checkIsShort(videoId, snippet) {
     const cd = details[videoId];
     if (cd) {
       const secs = parseDuration(cd.duration);
-      const result = secs !== null && secs > 0 && secs <= 164;
+      const result = secs !== null && secs > 0 && secs <= 180; // YouTube Shorts: up to 3 minutes
       _shortsCache[videoId] = result;
       return result;
     }
+    // Not in API response — not a short
     _shortsCache[videoId] = false;
     return false;
   } catch(e) {
+    // API failed — safe default
     _shortsCache[videoId] = false;
     return false;
   }
 }
 
-// Sync check — only true if API confirmed
+// Sync check — only true if API confirmed ≤60s
 function isShort(videoId, snippet) {
   if (_shortsCache[videoId] !== undefined) return _shortsCache[videoId];
   if (snippet && snippet._isShort) return true;
@@ -1937,6 +2019,7 @@ function isShort(videoId, snippet) {
 }
 
 // Pre-check a batch of videos in one API call and populate cache.
+// Called when a feed page loads so taps are instant (cache already warm).
 async function preCacheShorts(items) {
   const uncached = items
     .map(item => item.id?.videoId || item.id)
@@ -1949,12 +2032,15 @@ async function preCacheShorts(items) {
       const cd = details[id];
       if (cd) {
         const secs = parseDuration(cd.duration);
-        _shortsCache[id] = secs !== null && secs > 0 && secs <= 164;
+        // Only ≤60s videos are Shorts — never guess, never false-positive
+        _shortsCache[id] = secs !== null && secs > 0 && secs <= 180; // YouTube Shorts: up to 3 minutes
       } else {
+        // Not in API response = not a short
         _shortsCache[id] = false;
       }
     });
   } catch(e) {
+    // API failed — safe default: not a short
     uncached.forEach(id => { _shortsCache[id] = false; });
   }
 }
@@ -1979,6 +2065,9 @@ function openAsShort(videoId, snippet) {
     requestAnimationFrame(() => window.scrollTo({ top: returnScrollY, behavior: "instant" }));
     showHUD("Back");
   };
+
+  // Stop medium player audio before opening shorts
+  if (ytPlayer) { try { ytPlayer.pauseVideo(); } catch(e) {} }
 
   // Trigger the real Shorts tab — it has working swipe, infinite scroll, everything
   shortsTab.click();
@@ -2071,15 +2160,25 @@ function setActiveTab(tab) {
 /* CHANGE: home tab uses personalized feed when history exists; seeds nextPageToken for infinite scroll */
 homeTab.addEventListener("click", async () => {
   nextPageToken = null; setActiveTab("home"); showSkeletons(6);
-  if (hasEnoughHistory()) {
+  const token = await getValidToken();
+  const since48h = new Date(Date.now() - 172800000).toISOString();
+  if (token && hasEnoughHistory()) {
+    // Logged in: fetch personalized feed (subscription uploads + taste) filtered to 48h
     const items = await fetchPersonalizedFeed();
     renderFeed(items);
     showHUD("For You ✦");
-    const seed = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: new Date(Date.now()-172800000).toISOString(), _: Date.now() });
+    const seed = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: since48h, _: Date.now() });
     nextPageToken = seed.nextPageToken || null;
   } else {
-    const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: new Date(Date.now()-172800000).toISOString(), _: Date.now() });
-    nextPageToken = data.nextPageToken || null; renderFeed(data.items || []); showHUD("Home");
+    // Not logged in: trending videos from last 48h
+    const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: since48h, _: Date.now() });
+    if (data && data.items && data.items.length) {
+      nextPageToken = data.nextPageToken || null; renderFeed(data.items); showHUD("Home");
+    } else {
+      // Fallback without date filter if 48h returns nothing
+      const data2 = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, _: Date.now() });
+      nextPageToken = data2.nextPageToken || null; renderFeed(data2.items || []); showHUD("Home");
+    }
   }
 });
 
@@ -2094,10 +2193,11 @@ trendingTab.addEventListener("click", async () => {
   const tRecent = hasTaste ? new Set(tShown.filter(e=>e.ts>sixAgo).map(e=>e.id)) : new Set();
   function addU(items) { (items||[]).forEach(item=>{ const id=item.id?.videoId||item.id; if(!id||seen.has(id)||tRecent.has(id))return; seen.add(id); allItems.push(item); }); }
   const fetches = [];
-  if (myCat) fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:myCat,maxResults:15,_:Date.now()+Math.random()}));
+  if (myCat) fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:myCat,maxResults:15,_:Date.now()}));
   if (cats.length>1) fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:cats[1],maxResults:10,_:Date.now()}));
   if (cats.length>2) fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:cats[2],maxResults:8,_:Date.now()}));
-  fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",maxResults:15,_:Date.now()}));
+  const tSince48h = new Date(Date.now()-172800000).toISOString();
+  fetches.push(fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",maxResults:15,publishedAfter:tSince48h,_:Date.now()}));
   if (token) {
     fetches.push((async()=>{ try {
       const sr=await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=30&order=relevance",{headers:{Authorization:"Bearer "+token}});
@@ -2253,7 +2353,7 @@ shortsTab.addEventListener("click", async () => {
       fetchYouTube("search",{part:"snippet",q,type:"video",videoDuration:"short",videoEmbeddable:"true",order,maxResults:8,_:Date.now()})
     ),
     // Generic rotation
-    fetchYouTube("search",{part:"snippet",q:genericQ,type:"video",videoDuration:"short",videoEmbeddable:"true",regionCode:"US",maxResults:10,_:Date.now()}),
+    fetchYouTube("search",{part:"snippet",q:genericQ,type:"video",videoDuration:"short",videoEmbeddable:"true",regionCode:"US",order:"date",maxResults:10,_:Date.now()}),
     // Discovery: trending in your category
     fetchYouTube("videos",{part:"snippet,statistics",chart:"mostPopular",regionCode:"US",videoCategoryId:catToSearch,videoDuration:"short",maxResults:10,_:Date.now()}),
     // Discovery: viral
@@ -2505,21 +2605,53 @@ async function startDeviceLogin(source) {
 async function pollForToken(deviceCode, intervalSeconds, source) {
   const statusEl = source === "playlists" ? playlistLoginStatus : deviceLoginStatusEl;
   let authorized = false;
+  let attempts = 0;
   while (!authorized) {
     await new Promise(r => setTimeout(r, intervalSeconds * 1000));
-    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ client_id: OAUTH_CLIENT_ID, client_secret: OAUTH_CLIENT_SECRET, device_code: deviceCode, grant_type: "urn:ietf:params:oauth:grant-type:device_code" })
-    });
-    const tokenData = await tokenRes.json();
+    attempts++;
+    let tokenData;
+    try {
+      const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ client_id: OAUTH_CLIENT_ID, client_secret: OAUTH_CLIENT_SECRET, device_code: deviceCode, grant_type: "urn:ietf:params:oauth:grant-type:device_code" })
+      });
+      tokenData = await tokenRes.json();
+      // Show full response so we can debug
+      statusEl.textContent = "Attempt " + attempts + ": " + JSON.stringify(tokenData).slice(0, 120);
+    } catch(e) {
+      statusEl.textContent = "Network error: " + e.message;
+      continue;
+    }
     if (tokenData.error) {
-      if (tokenData.error === "authorization_pending") { statusEl.textContent = "Waiting for authorization…"; continue; }
-      else { statusEl.textContent = "Error: " + tokenData.error; showHUD("Login error"); break; }
+      if (tokenData.error === "authorization_pending") {
+        statusEl.textContent = "Waiting… (attempt " + attempts + "). Enter code at google.com/device";
+        continue;
+      } else if (tokenData.error === "slow_down") {
+        intervalSeconds += 5;
+        statusEl.textContent = "Slowing down polling… (" + tokenData.error + ")";
+        continue;
+      } else if (tokenData.error === "expired_token") {
+        statusEl.textContent = "Code expired — tap Login again to get a new code";
+        showHUD("Code expired — retry");
+        break;
+      } else if (tokenData.error === "access_denied") {
+        statusEl.textContent = "Access denied — did you approve on google.com/device?";
+        showHUD("Access denied");
+        break;
+      } else {
+        statusEl.textContent = "Error: " + tokenData.error + " — " + (tokenData.error_description || "");
+        showHUD("Login error: " + tokenData.error);
+        break;
+      }
+    }
+    if (!tokenData.access_token) {
+      statusEl.textContent = "No token received: " + JSON.stringify(tokenData).slice(0, 100);
+      continue;
     }
     authorized = true;
     saveTokens(tokenData);
-    statusEl.textContent = "Logged in!";
-    showHUD("YouTube logged in");
+    statusEl.textContent = "Logged in ✓";
+    showHUD("YouTube logged in ✓");
     if (source === "playlists") loadPlaylists();
     else loadSubscriptions();
   }
@@ -2541,8 +2673,29 @@ async function refreshAccessToken() {
       body: new URLSearchParams({ client_id: OAUTH_CLIENT_ID, client_secret: OAUTH_CLIENT_SECRET, refresh_token: refreshToken, grant_type: "refresh_token" })
     });
     const data = await res.json();
-    if (data.access_token) { saveTokens(data); return true; }
-    clearTokens(); return false;
+    if (data.access_token) {
+      saveTokens(data);
+      // Clear any "needs relogin" flag since we just refreshed successfully
+      localStorage.removeItem("yt_needs_relogin");
+      return true;
+    }
+    // Refresh token expired (7-day testing mode limit hit) or revoked
+    // Don't clear tokens yet — keep the refresh token so we can detect this state
+    // and show a re-login prompt instead of silently failing
+    if (data.error === "invalid_grant" || data.error === "token_expired") {
+      localStorage.setItem("yt_needs_relogin", "1");
+      localStorage.removeItem("yt_access_token");
+      localStorage.removeItem("yt_token_expiry");
+      // Show re-login prompt on subs panel
+      const dls = document.getElementById("deviceLoginStatus");
+      if (dls) dls.textContent = "Session expired (7-day limit) — tap Login to YouTube to reconnect";
+      const pls = document.getElementById("playlistLoginStatus");
+      if (pls) pls.textContent = "Session expired — tap Login to YouTube to reconnect";
+      showHUD("Session expired — please re-login");
+    } else {
+      clearTokens();
+    }
+    return false;
   } catch (e) { return false; }
 }
 function clearTokens() { localStorage.removeItem("yt_access_token"); localStorage.removeItem("yt_refresh_token"); localStorage.removeItem("yt_token_expiry"); }
@@ -2556,10 +2709,18 @@ async function loadSubscriptions() {
   if (!token) { deviceLoginStatusEl.textContent = "Login required."; return; }
   subsFeedEl.innerHTML = ""; subsNextPageToken = null; showHUD("Loading subscriptions…");
   try {
-    const res = await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=20", { headers: { Authorization: "Bearer " + token } });
+    const res = await fetch("https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=50", { headers: { Authorization: "Bearer " + token } });
     const data = await res.json();
+    if (data.error) {
+      subsFeedEl.innerHTML = '<div style="font-size:12px;color:#ff6b6b;">API Error ' + data.error.code + ': ' + data.error.message + '</div>';
+      deviceLoginStatusEl.textContent = "Error: " + data.error.message;
+      return;
+    }
     subsNextPageToken = data.nextPageToken || null;
-    if (!data.items || !data.items.length) { subsFeedEl.innerHTML = `<div style="font-size:12px;opacity:0.8;">No subscriptions found.</div>`; return; }
+    if (!data.items || !data.items.length) {
+      subsFeedEl.innerHTML = '<div style="font-size:12px;opacity:0.8;">No subscriptions found. totalResults=' + (data.pageInfo && data.pageInfo.totalResults) + '</div>';
+      return;
+    }
     data.items.forEach(item => {
       const ch = item.snippet; const channelId = ch.resourceId.channelId;
       const card = document.createElement("div"); card.className = "video-card parallax focusable";
@@ -2579,13 +2740,19 @@ playlistTab.addEventListener("click", async () => {
 playlistLoginBtn.addEventListener("click", () => startDeviceLogin("playlists"));
 
 async function loadPlaylists() {
-  const token = await getValidToken(); if (!token) return;
+  const token = await getValidToken();
+  if (!token) {
+    playlistLoginPanel.style.display = "block";
+    playlistGrid.style.display = "none";
+    playlistItemsView.style.display = "none";
+    return;
+  }
   playlistLoginPanel.style.display = "none"; playlistGrid.style.display = "none"; playlistItemsView.style.display = "none";
   playlistGrid.innerHTML = ""; showHUD("Loading playlists…");
   try {
     const res = await fetch("https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50", { headers: { Authorization: "Bearer " + token } });
     const data = await res.json();
-    if (data.error) { playlistLoginPanel.style.display = "block"; playlistLoginStatus.textContent = "Session expired. Please login again."; clearTokens(); return; }
+    if (data.error) { clearTokens(); playlistLoginPanel.style.display = "block"; playlistLoginStatus.textContent = "Session expired — tap Login to YouTube below to re-login."; return; }
     if (!data.items || !data.items.length) { playlistGrid.innerHTML = `<div style="font-size:12px;opacity:0.8;grid-column:1/-1;">No playlists found.</div>`; playlistGrid.style.display = "grid"; return; }
     data.items.forEach(pl => {
       const snippet = pl.snippet; const count = pl.contentDetails?.itemCount || 0;
@@ -2636,7 +2803,7 @@ async function loadMoreVideos() {
   const vt = nextPageToken !== "seed" ? nextPageToken : undefined;
   if (currentTab === "home") {
     // Rotate categories so every batch feels different — never dead-ends
-    data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: new Date(Date.now()-172800000).toISOString(), _: Date.now() });
+    data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, _: Date.now() });
     if (!data || !data.items || !data.items.length) data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, _: Date.now() });
   }
   if (currentTab === "movies") {
@@ -2690,53 +2857,41 @@ scrollTopBtn.addEventListener("click", () => {
 
 /* === SCROLL DIRECTION LOCK ===
    Prevents horizontal/diagonal swipes from triggering vertical scroll.
-   Completely disabled when info panel is open — user needs free scrolling there.
-   dirLock auto-resets after 20s of inactivity to prevent stuck scroll. */
+   On glasses, swiping left/right or at an angle often reads as scroll-down. */
 (function() {
   function isInfoPanelOpen() {
     var p = document.getElementById("videoInfoPanel");
     return p && p.style.display !== "none";
   }
 
-  // Wheel: block horizontal component (only on home/trending/movies/etc)
+  // Wheel: block horizontal component only — never block vertical
   window.addEventListener("wheel", function(e) {
     if (currentTab === "shorts") return;
     if (isInfoPanelOpen()) return;
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 0.5) { e.preventDefault(); }
   }, { passive: false });
 
-  // Touch direction lock with auto-reset after 20s inactivity
-  var tStartX = 0, tStartY = 0, dirLock = null, lockTimer = null;
-
-  function resetLock() {
-    dirLock = null;
-  }
-
+  // Touch direction lock — completely disabled when info panel is open
+  // so suggested feed scrolls freely in any direction
+  var tStartX = 0, tStartY = 0, dirLock = null;
   document.addEventListener("touchstart", function(e) {
-    if (currentTab === "shorts") return;
-    if (isInfoPanelOpen()) { dirLock = null; return; }
+    // Always reset on new touch — prevents stale lock from previous gesture
+    dirLock = null;
     tStartX = e.touches[0].clientX;
     tStartY = e.touches[0].clientY;
-    dirLock = null;
-    // Reset lock timer on each new touch
-    if (lockTimer) clearTimeout(lockTimer);
   }, { passive: true });
-
-  document.addEventListener("touchend", function(e) {
-    if (isInfoPanelOpen()) return;
-    // Auto-reset dirLock after 20s of no new touches
-    if (lockTimer) clearTimeout(lockTimer);
-    lockTimer = setTimeout(resetLock, 20000);
-  }, { passive: true });
-
   document.addEventListener("touchmove", function(e) {
     if (currentTab === "shorts") return;
-    // When info panel is open — never block any direction
+    // Info panel open = free scroll in all directions, no locking
     if (isInfoPanelOpen()) { dirLock = null; return; }
+    // Player fullscreen = no direction interference
+    var ps = document.getElementById("playerSection");
+    if (ps && ps.classList.contains("player-fullscreen")) return;
     if (!dirLock) {
       var dx = Math.abs(e.touches[0].clientX - tStartX);
       var dy = Math.abs(e.touches[0].clientY - tStartY);
-      if (dx + dy > 10) dirLock = dx > dy ? "h" : "v";
+      // Require stronger horizontal signal (1.5x) before locking — reduces false positives
+      if (dx + dy > 12) dirLock = dx > dy * 1.5 ? "h" : "v";
     }
     if (dirLock === "h") e.preventDefault();
   }, { passive: false });
@@ -3274,36 +3429,44 @@ async function silentSync(token){
   const authPromise = hasRefresh ? refreshAccessToken() : Promise.resolve(false);
 
   // Fetch feed immediately without waiting for auth
+  // Startup: trending videos from last 48h — fast (1 quota unit)
   try {
-    if (hasEnoughHistory()) {
-      const items = await fetchPersonalizedFeed();
-      renderFeed(items);
-      showHUD("For You ✦");
-      const seed = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: new Date(Date.now()-172800000).toISOString(), _: Date.now() });
-      nextPageToken = seed.nextPageToken || null;
-    } else {
-      const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: new Date(Date.now()-172800000).toISOString(), _: Date.now() });
-      nextPageToken = data.nextPageToken || null;
-      renderFeed(data.items || []);
-    }
+    const since48h = new Date(Date.now() - 172800000).toISOString();
+    const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: freshCategory(), maxResults: 20, publishedAfter: since48h, _: Date.now() });
+    if (data && data.items && data.items.length) { nextPageToken = data.nextPageToken || null; renderFeed(data.items); showHUD("Home"); }
+    else throw new Error("empty");
   } catch(e) {
     try { const data = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, _: Date.now() }); nextPageToken = data.nextPageToken || null; renderFeed(data.items || []); } catch(e2) {}
   }
 
   // Wait for auth to complete (was running in parallel)
   const ok = await authPromise;
-  if (ok) showHUD("Signed in ✓");
+  if (ok) {
+    showHUD("Signed in ✓");
+    // Update login status panels so they don't show "Login required" after auto-refresh
+    const autoTkn = await getValidToken();
+    if (autoTkn) {
+      const dls = document.getElementById("deviceLoginStatus");
+      if (dls && !dls.textContent.includes("Logged in")) dls.textContent = "Logged in ✓";
+      const pls = document.getElementById("playlistLoginStatus");
+      if (pls) pls.textContent = "Logged in ✓";
+    }
+  }
 
   // Silent background sync every 6 hours
   const tkn = await getValidToken();
-  // Sync on startup always, then repeat every 5 minutes
-  if (tkn) {
-    silentSync(tkn).then(() => showHUD("Feed updated ✦")).catch(() => {});
-    setInterval(async () => {
-      const t = await getValidToken();
-      if (t) silentSync(t).catch(() => {});
-    }, 300000); // every 5 minutes
-  }
+  if (tkn) { const p = getTasteProfile(); if (Date.now() - (p.syncedAt||0) > 7200000) { silentSync(tkn).then(()=>showHUD("Feed updated ✦")).catch(()=>{}); } }
+
+  // Proactive token refresh every 55 minutes — keeps session alive indefinitely
+  // Access tokens expire in 60 min; this refreshes before they expire
+  setInterval(async () => {
+    const rt = localStorage.getItem("yt_refresh_token");
+    if (!rt) return;
+    const expiry = parseInt(localStorage.getItem("yt_token_expiry") || "0");
+    if (expiry - Date.now() < 600000) { // refresh if expiring within 10 min
+      await refreshAccessToken();
+    }
+  }, 55 * 60 * 1000);
 })();
 </script>
 </body>
