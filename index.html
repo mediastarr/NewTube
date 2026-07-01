@@ -144,7 +144,7 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
 #playerSection {
   margin-top: 16px; border-radius: 22px; overflow: hidden; position: relative; z-index: 30;
   background: radial-gradient(circle at 50% 0%, rgba(60,242,255,0.18), rgba(5,6,12,0.98));
-  height: 260px; display: none;
+  height: 340px; display: none;
 }
 /* CHANGE: top:auto so mini player anchors to bottom-right correctly */
 #playerSection.player-mini { position: fixed; right: 16px; bottom: 16px; top: auto; width: 260px; height: 150px; z-index: 40; }
@@ -155,6 +155,27 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   overflow: hidden;
   transform: none;
   transition: none;
+}
+/* Hide everything behind fullscreen player — prevents swipe hitting topbar buttons */
+body.fullscreen-active #topbarEl,
+body.fullscreen-active #searchTabEl,
+body.fullscreen-active #tabsEl,
+body.fullscreen-active #feedEl,
+body.fullscreen-active #videoInfoPanel,
+body.fullscreen-active .app-shell > *:not(#playerSection):not(#hud):not(#syncOverlay) {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+/* Full screen controls — slightly smaller */
+body.fullscreen-active #playerControls > button {
+  width: 32px !important; height: 32px !important; font-size: 13px !important;
+}
+body.fullscreen-active #playPauseBtn {
+  width: 38px !important; height: 38px !important; font-size: 18px !important;
+}
+body.fullscreen-active #playerControls {
+  gap: 18px !important;
 }
 #playerSection.player-fullscreen iframe { width: 100%; height: 100%; object-fit: contain; background: #000; }
 #playerSection.player-fullscreen #playerFrame { width: 100%; height: 100%; }
@@ -403,21 +424,50 @@ body.cinema-mode #playerSection { transition: transform 0.55s cubic-bezier(0.22,
   100% { transform: scale(1) perspective(900px) rotateX(6deg); opacity: 1; filter: brightness(1); }
 }
 #playerSection.player-fullscreen.cinema.zoom-intro { animation: cinemaZoomIntro 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-body.fullscreen-active .exit-full-btn { display: block; }
-.exit-full-btn {
+body.fullscreen-active .exit-full-btn {
   position: fixed; left: 16px; top: 16px; border-radius: 999px;
-  border: 1px solid rgba(120,130,160,0.7); padding: 3px 8px; font-size: 9px;
-  background: radial-gradient(circle at 0% 0%, rgba(60,242,255,0.35), rgba(10,12,20,0.9));
-  color: #f5f7ff; cursor: pointer; z-index: 999999999 !important; pointer-events: auto; display: none;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border: 1px solid rgba(120,130,160,0.7); padding: 8px 16px; font-size: 13px; font-weight: 600;
+  background: rgba(10,12,20,0.75);
+  color: #f5f7ff; cursor: pointer; z-index: 999999999 !important;
+  display: none; pointer-events: none;
+  transition: box-shadow 0.2s ease, opacity 0.2s ease;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+body.fullscreen-active .exit-full-btn {
+  display: block !important;
+  pointer-events: auto !important;
 }
 .exit-full-btn:hover { box-shadow: 0 0 18px rgba(60,242,255,0.9), 0 0 30px rgba(60,242,255,0.5); transform: scale(1.08); }
-body.fullscreen-active .exit-full-btn { display: block; }
+body#playerControls {
+  display: flex; gap: 18px; padding: 10px 8px;
+  justify-content: center; align-items: center;
+  background: transparent; border: none;
+  position: absolute; bottom: 4px; left: 0; right: 0;
+  z-index: 5;
+}
+#playerControls > button {
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: transparent; color: rgba(255,255,255,0.85);
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  touch-action: manipulation; display: flex;
+  align-items: center; justify-content: center;
+  transition: all 0.15s ease; flex-shrink: 0;
+  padding: 0;
+}
+#playPauseBtn { width: 42px !important; height: 42px !important; font-size: 20px !important; color: #fff !important; }
+#playerControls > button:hover, #playerControls > button:focus {
+  color: #3cf2ff; outline: 2px solid rgba(60,242,255,0.6); outline-offset: 3px;
+  border-radius: 50%; transform: scale(1.15);
+}
+#playerControls > button:active { transform: scale(0.92); opacity: 0.7; }
 #playerControls > button, #closeMini { transition: opacity 0.3s ease; }
 #playerSection.ui-hidden #playerControls > button:not(#hideUIBtn), #playerSection.ui-hidden #closeMini { opacity: 0; pointer-events: none; }
 body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer-events: none; transition: opacity 0.3s ease; }
-#playerSection.ui-hidden #hideUIBtn { opacity: 0.22; }
-#playerSection.ui-hidden #hideUIBtn:hover, #playerSection.ui-hidden #hideUIBtn:active { opacity: 1; }
+#playerSection.ui-hidden #hideUIBtn { opacity: 0.0 !important; }
+#playerSection.ui-hidden #hideUIBtn:hover, #playerSection.ui-hidden #hideUIBtn:focus, #playerSection.ui-hidden #hideUIBtn:active { opacity: 0.35 !important; }
+/* Even when UI visible, hide UI button should be subtle */
+#hideUIBtn { opacity: 0.45; font-size: 10px !important; }
+#hideUIBtn:hover, #hideUIBtn:focus { opacity: 0.9; }
 #resBtn { display: inline-block; }
 #playerSection.player-mini #resBtn { display: none; }
 #playerSection.player-fullscreen #resBtn { display: inline-block; }
@@ -618,17 +668,19 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
   <div id="playerSection" class="player parallax fx-bloom fx-ambient fx-glass fx-chroma fx-audio">
     <div id="playerFrame"></div>
     <div class="player-controls" id="playerControls">
-      <button id="playPauseBtn" tabindex="0">Pause</button>
-      <button id="rewindBtn" tabindex="0">-10s</button>
-      <button id="forwardBtn" tabindex="0">+10s</button>
-      <button id="fullBtn" tabindex="0">Full</button>
-      <button id="hideUIBtn" tabindex="0">Hide UI</button>
-      <button id="resBtn" tabindex="0">Auto</button>
-      <button id="addToPlaylistBtn" tabindex="0">+ List</button>
+      <button id="playPauseBtn" tabindex="0" title="Play/Pause">⏸</button>
+      <button id="rewindBtn" tabindex="0" title="Rewind 10s">⏪10</button>
+      <button id="forwardBtn" tabindex="0" title="Forward 10s">10⏩</button>
+      <button id="ccBtn" tabindex="0" title="Captions">CC</button>
+      <button id="resBtn" tabindex="0" title="Quality">720p</button>
+      <button id="fullBtn" tabindex="0" title="Fullscreen">⛶</button>
+      <button id="hideUIBtn" tabindex="0" title="Hide UI">···</button>
+      <button id="addToPlaylistBtn" tabindex="0" style="display:none;"></button>
+
     </div>
+    <button id="exitFullBtn" class="exit-full-btn">← Back</button>
     <button id="closeMini" tabindex="0">✕</button>
   </div>
-  <button id="exitFullBtn" class="exit-full-btn">Back</button>
   <button id="scrollTopBtn" tabindex="0">▲</button>
   <div id="hud"></div>
   <div id="syncOverlay" style="display:none; position:fixed; inset:0; z-index:100001; background:rgba(0,0,0,0.88); align-items:flex-start; justify-content:center; overflow-y:auto; padding:16px 12px;">
@@ -1258,6 +1310,14 @@ backBtn.addEventListener("click", () => {
   showHUD("Mini-player");
 });
 
+// When focus is on closeMini (X) and user swipes down → go to play button
+closeMini.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" || e.key === "Tab") {
+    e.preventDefault();
+    document.getElementById("playPauseBtn").focus();
+  }
+});
+
 closeMini.addEventListener("click", () => {
   // Save resume position before closing
   if (ytPlayer && currentVideoId) {
@@ -1303,14 +1363,25 @@ exitFullBtn.addEventListener("click", () => {
   playerSection.classList.remove("player-fullscreen");
   document.body.classList.remove("fullscreen-active");
   disableCinemaMode();
-  if (miniActive) playerSection.classList.add("player-mini");
+  // Always return to medium player (not mini) with suggestions visible
+  playerSection.classList.remove("player-mini");
+  miniActive = false;
   playerSection.classList.remove("settled");
   uiHidden = false;
   playerSection.classList.remove("ui-hidden");
   document.body.classList.remove("ui-hidden");
-  hideUIBtn.textContent = "Hide UI";
-  showUIWithMiniPlayer();
-  showHUD("Exited Fullscreen");
+  hideUIBtn.textContent = "···";
+  // Restore exactly the state shown in medium player view (picture 2):
+  // topbar visible, player visible, feed hidden, info panel visible
+  topbarEl.style.display = "flex";
+  searchTabEl.style.display = "none"; // hide search bar — not shown in medium player view
+  tabsEl.style.display = "none"; // hide tab bar — not shown in medium player view
+  feedEl.style.display = "none";
+  playerSection.style.display = "block";
+  const vip = document.getElementById("videoInfoPanel");
+  if (vip) vip.style.display = "block";
+  window.scrollTo({ top: 0, behavior: "instant" });
+  showHUD("← Back");
 });
 
 setInterval(() => {
@@ -1395,8 +1466,8 @@ window.onYouTubeIframeAPIReady = function () {
       events: {
         onReady: () => { isPlayerReady = true; },
         onStateChange: (e) => {
-          if (e.data === YT.PlayerState.PLAYING) playPauseBtn.textContent = "Pause";
-          if (e.data === YT.PlayerState.PAUSED)  playPauseBtn.textContent = "Play";
+          if (e.data === YT.PlayerState.PLAYING) playPauseBtn.textContent = "⏸";
+          if (e.data === YT.PlayerState.PAUSED)  playPauseBtn.textContent = "▶";
           if (e.data === YT.PlayerState.ENDED && currentVideoId) {
             clearResumePosition(currentVideoId);
             // Record full watch — video completed
@@ -1427,7 +1498,7 @@ function createYTPlayer(videoId, startSeconds) {
         ytPlayer.loadVideoById(videoId);
       }
       if (currentQuality !== "auto") { try { ytPlayer.setPlaybackQuality(currentQuality); } catch(e) {} }
-      playPauseBtn.textContent = "Pause";
+      playPauseBtn.textContent = "⏸";
       return;
     } catch(e) {
       try { ytPlayer.destroy(); } catch(e2) {}
@@ -1448,12 +1519,24 @@ function createYTPlayer(videoId, startSeconds) {
     events: {
       onReady: (e) => {
         isPlayerReady = true;
-        if (currentQuality !== "auto") e.target.setPlaybackQuality(currentQuality);
-        playPauseBtn.textContent = "Pause";
+        // Auto-detect best available quality for this specific video
+        try {
+          const available = e.target.getAvailableQualityLevels() || [];
+          const preferred = ["hd1440", "hd1080", "hd720", "large", "medium"];
+          const best = preferred.find(q => available.includes(q));
+          if (best) {
+            currentQuality = best;
+            qualityIndex = QUALITY_CYCLE.indexOf(best);
+            if (resBtn) resBtn.textContent = QUALITY_LABELS[best] || best;
+            try { e.target.setPlaybackQuality(best); } catch(err) {}
+            try { e.target.setPlaybackQualityRange(best, best); } catch(err) {}
+          }
+        } catch(err) {}
+        playPauseBtn.textContent = "⏸";
       },
       onStateChange: (e) => {
-        if (e.data === YT.PlayerState.PLAYING) playPauseBtn.textContent = "Pause";
-        if (e.data === YT.PlayerState.PAUSED)  playPauseBtn.textContent = "Play";
+        if (e.data === YT.PlayerState.PLAYING) playPauseBtn.textContent = "⏸";
+        if (e.data === YT.PlayerState.PAUSED)  playPauseBtn.textContent = "▶";
         if (e.data === YT.PlayerState.ENDED && currentVideoId) clearResumePosition(currentVideoId);
         },
         onError: (e) => {
@@ -1467,6 +1550,31 @@ function createYTPlayer(videoId, startSeconds) {
 function setPlayerVideo(videoId, snippet, startSeconds) {
   savedScrollY = window.scrollY;
   currentVideoId = videoId;
+  // Reset quality to auto for each new video — onReady will detect best quality
+  currentQuality = "auto";
+  qualityIndex = 0;
+  resBtn.textContent = "Auto";
+  // Mark as seen in hubSeenIds so it never shows as new again
+  try {
+    const seenHub = JSON.parse(localStorage.getItem("hubSeenIds") || "[]");
+    if (!seenHub.includes(videoId)) {
+      seenHub.push(videoId);
+      localStorage.setItem("hubSeenIds", JSON.stringify(seenHub.slice(-500)));
+    }
+    // Remove red border from ALL cards with this videoId immediately
+    document.querySelectorAll('[data-videoid="' + videoId + '"]').forEach(card => {
+      card.style.border = "";
+      card.style.boxShadow = "";
+      card.dataset.hubvideo = "";
+      card.style.removeProperty("border");
+      card.style.removeProperty("box-shadow");
+      const meta = card.querySelector('.video-meta');
+      if (meta && meta.textContent.includes("🔴 New")) {
+        meta.style.color = "";
+        meta.textContent = meta.textContent.replace("🔴 New · ", "");
+      }
+    });
+  } catch(e) {}
   playerSection.style.display = "block";
   playerSection.classList.remove("player-mini", "player-fullscreen");
   saveToHistory({ id: videoId, snippet });
@@ -1476,7 +1584,7 @@ function setPlayerVideo(videoId, snippet, startSeconds) {
   window.scrollTo({ top: 0, behavior: "instant" });
   // Show info panel below medium player
   loadVideoInfoPanel(videoId, snippet);
-  playPauseBtn.textContent = "Pause";
+  playPauseBtn.textContent = "⏸";
   initAudioGlow();
   const resumeAt = startSeconds || getResumePosition(videoId);
   if (ytReady) createYTPlayer(videoId, resumeAt);
@@ -1811,10 +1919,24 @@ function postToPlayer(cmd) {
   if (frame && frame.contentWindow) frame.contentWindow.postMessage(JSON.stringify(cmd), "*");
 }
 
+// When on playPauseBtn, swipe up → go to closeMini (X)
+playPauseBtn.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowUp") {
+    e.preventDefault();
+    closeMini.focus();
+  }
+});
+
 playPauseBtn.addEventListener("click", () => {
   if (!ytPlayer) return;
-  if (playPauseBtn.textContent === "Pause") { ytPlayer.pauseVideo(); playPauseBtn.textContent = "Play"; }
-  else { ytPlayer.playVideo(); playPauseBtn.textContent = "Pause"; }
+  const state = ytPlayer.getPlayerState();
+  if (state === YT.PlayerState.PLAYING) {
+    ytPlayer.pauseVideo();
+    playPauseBtn.textContent = "▶";
+  } else {
+    ytPlayer.playVideo();
+    playPauseBtn.textContent = "⏸";
+  }
 });
 forwardBtn.addEventListener("click", () => { if (!ytPlayer) return; ytPlayer.seekTo(ytPlayer.getCurrentTime() + 10, true); });
 rewindBtn.addEventListener("click", () => { if (!ytPlayer) return; ytPlayer.seekTo(Math.max(0, ytPlayer.getCurrentTime() - 10), true); });
@@ -1828,10 +1950,10 @@ resBtn.addEventListener("click", () => {
   showHUD(QUALITY_LABELS[currentQuality]);
 
   const resumeTime = ytPlayer ? Math.floor(ytPlayer.getCurrentTime() || 0) : 0;
+  const _wasPlaying = ytPlayer ? ytPlayer.getPlayerState() === YT.PlayerState.PLAYING : true;
+  const _resumePos = resumeTime; // capture before destroy
 
-  // The only reliable way to force quality in the YT IFrame API is to
-  // destroy the player and rebuild with vq= in the embed URL
-  // setPlaybackQuality() was fully deprecated and ignored since 2021
+  // Rebuild player with new quality (setPlaybackQuality deprecated since 2021)
   try { if (ytPlayer) { ytPlayer.stopVideo(); ytPlayer.destroy(); } } catch(e) {}
   ytPlayer = null; isPlayerReady = false;
 
@@ -1841,7 +1963,7 @@ resBtn.addEventListener("click", () => {
 
   const pv = { autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1, enablejsapi: 1, origin: location.origin };
   if (currentQuality !== "auto") pv.vq = currentQuality;
-  if (resumeTime > 5) pv.start = resumeTime;
+  if (_resumePos > 5) pv.start = _resumePos;
 
   ytPlayer = new YT.Player("playerFrame", {
     videoId: currentVideoId,
@@ -1850,22 +1972,22 @@ resBtn.addEventListener("click", () => {
       onReady: (e) => {
         isPlayerReady = true;
         if (currentQuality !== "auto") {
-          // Belt-and-suspenders: try both API methods
           try { e.target.setPlaybackQuality(currentQuality); } catch(err) {}
           try { e.target.setPlaybackQualityRange(currentQuality, currentQuality); } catch(err) {}
         }
-        e.target.playVideo();
-        playPauseBtn.textContent = "Pause";
+        // Restore play/pause state from before quality change
+        if (_wasPlaying !== false) { e.target.playVideo(); playPauseBtn.textContent = "⏸"; }
+        else { e.target.pauseVideo(); playPauseBtn.textContent = "▶"; }
       },
       onStateChange: (e) => {
         if (e.data === YT.PlayerState.PLAYING) {
-          playPauseBtn.textContent = "Pause";
+          playPauseBtn.textContent = "⏸";
           // Re-apply quality after playback starts (some players need this)
           if (currentQuality !== "auto") {
             try { e.target.setPlaybackQuality(currentQuality); } catch(err) {}
           }
         }
-        if (e.data === YT.PlayerState.PAUSED) playPauseBtn.textContent = "Play";
+        if (e.data === YT.PlayerState.PAUSED) playPauseBtn.textContent = "▶";
         if (e.data === YT.PlayerState.ENDED && currentVideoId) clearResumePosition(currentVideoId);
         },
         onError: (e) => {
@@ -2189,6 +2311,40 @@ homeTab.addEventListener("click", async () => {
     if (hubRaw) {
       hubVideos = JSON.parse(hubRaw) || [];
       localStorage.removeItem("hubNewVideos");
+    }
+  } catch(e) {}
+
+  // Re-inject previously shown hub videos if user switched tabs and came back
+  try {
+    const prevIds = JSON.parse(sessionStorage.getItem("injectedHubIds") || "[]");
+    if (prevIds.length) {
+      setTimeout(async () => {
+        if (feedEl.querySelector('[data-hubvideo="1"]')) return; // already there
+        const data = await fetchYouTube("videos", { part: "snippet,statistics", id: prevIds.join(","), _: Date.now() });
+        if (!data.items || !data.items.length) return;
+        const frag = document.createDocumentFragment();
+        data.items.forEach(item => {
+          const snippet = item.snippet || {};
+          const videoId = item.id;
+          if (feedEl.querySelector('[data-videoid="' + videoId + '"]')) return;
+          const card = document.createElement("div");
+          card.className = "video-card parallax focusable";
+          card.dataset.videoid = videoId;
+          card.dataset.hubvideo = "1";
+          card.style.border = "1px solid rgba(255,68,68,0.7)";
+          card.style.boxShadow = "0 0 14px rgba(255,68,68,0.35)";
+          const thumb = snippet.thumbnails?.medium?.url || "";
+          card.innerHTML = '<div class="video-thumb"><img src="' + thumb + '" loading="lazy"></div><div class="video-info"><div class="video-title">' + (snippet.title||"") + '</div><div class="video-channel">' + (snippet.channelTitle||"") + '</div><div class="video-meta" style="color:rgba(255,100,100,0.9);">🔴 New · ' + timeAgo(snippet.publishedAt) + '</div></div>';
+          card.onclick = async () => {
+            sessionStorage.removeItem("injectedHubIds");
+            const short = await checkIsShort(videoId, snippet);
+            if (short) openAsShort(videoId, snippet);
+            else { setPlayerVideo(videoId, snippet); showHUD("Playing: " + (snippet.title||"")); }
+          };
+          frag.appendChild(card);
+        });
+        feedEl.insertBefore(frag, feedEl.firstChild);
+      }, 800);
     }
   } catch(e) {}
 
@@ -3797,11 +3953,12 @@ async function triggerReAuthFlow() {
 }
 
 // On startup, check if we need re-auth from a previous session
-(function checkReAuthOnLoad() {
+// checkReAuthOnLoad fires after DOM ready, not immediately
+document.addEventListener("DOMContentLoaded", function checkReAuthOnLoad() {
   if (localStorage.getItem("yt_needs_relogin") === "1") {
-    setTimeout(() => triggerReAuthFlow(), 2000);
+    setTimeout(() => triggerReAuthFlow(), 3000);
   }
-})();
+});
 
 
 /* ================================================================
@@ -3841,7 +3998,14 @@ async function _pollCheckNewContent() {
     const since = _pollLastCheck || (Date.now() - 86400000);
     const since48h = new Date(Date.now() - 172800000).toISOString();
     const allNew = [];
-    if (_pollKnownIds === null) _pollKnownIds = new Set();
+    if (_pollKnownIds === null) {
+      _pollKnownIds = new Set();
+      // Pre-load permanently seen hub video IDs so they never show as new again
+      try {
+        const seenHub = JSON.parse(localStorage.getItem("hubSeenIds") || "[]");
+        seenHub.forEach(id => _pollKnownIds.add(id));
+      } catch(e) {}
+    }
 
     // ── SOURCE 1: Subscriptions via PubSubHubbub Worker (instant, ZERO quota) ──
     // Runs every poll cycle (5-15 min) — free
@@ -3929,6 +4093,14 @@ async function _pollCheckNewContent() {
 async function _injectHubVideos(hubVideos) {
   if (!hubVideos || !hubVideos.length) return;
   try {
+    // Filter out already-watched videos before injecting
+    try {
+      const seenHub = JSON.parse(localStorage.getItem("hubSeenIds") || "[]");
+      const seenSet = new Set(seenHub);
+      hubVideos = hubVideos.filter(v => !seenSet.has(v.videoId));
+    } catch(e) {}
+    if (!hubVideos.length) return;
+
     const ids = hubVideos.map(v => v.videoId).join(",");
     const data = await fetchYouTube("videos", { part: "snippet,statistics", id: ids, _: Date.now() });
     if (!data.items || !data.items.length) return;
@@ -3956,6 +4128,11 @@ async function _injectHubVideos(hubVideos) {
     });
     feedEl.insertBefore(frag, feedEl.firstChild);
     window.scrollTo({ top: 0, behavior: "smooth" });
+    // Save injected cards so they survive tab switching
+    try {
+      const injectedIds = hubVideos.map(v => v.videoId);
+      sessionStorage.setItem("injectedHubIds", JSON.stringify(injectedIds));
+    } catch(e) {}
   } catch(e) {}
 }
 
@@ -4014,11 +4191,24 @@ function showAgeRestrictedOverlay(videoId) {
 }
 
 (async function init() {
-  // Dismiss boot splash after loading bar completes
-  setTimeout(() => {
+  // Safety: always dismiss boot splash even if init crashes
+  const splashTimeout = setTimeout(() => {
     const splash = document.getElementById("bootSplash");
     if (splash) { splash.classList.add("fade-out"); setTimeout(() => splash.remove(), 800); }
   }, 1400);
+
+  // Global error catch — prevents stuck boot screen
+  window.onerror = function(msg, src, line) {
+    console.error("ViewTube error:", msg, src, line);
+    const splash = document.getElementById("bootSplash");
+    if (splash) { splash.classList.add("fade-out"); setTimeout(() => splash.remove(), 800); }
+    return false;
+  };
+  window.onunhandledrejection = function(e) {
+    console.error("ViewTube unhandled promise:", e.reason);
+    const splash = document.getElementById("bootSplash");
+    if (splash) { splash.classList.add("fade-out"); setTimeout(() => splash.remove(), 800); }
+  };
   showSkeletons(6);
   // Start token refresh AND feed fetch in parallel — don't wait for auth before loading
   const hasRefresh = localStorage.getItem("yt_refresh_token");
