@@ -225,10 +225,17 @@ body.light #searchTab { background: linear-gradient(135deg, rgba(238,240,255,0.9
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
-.video-card:hover {
+.video-card:hover, .video-card:focus {
   transform: translateZ(22px) scale(1.03);
   box-shadow: 0 0 28px rgba(60,242,255,0.35), 0 0 55px rgba(60,242,255,0.18);
   transition: transform 0.15s ease-out, box-shadow 0.2s ease-out;
+  outline: 2px solid rgba(60,242,255,0.8);
+  outline-offset: 2px;
+}
+.video-card:active {
+  transform: translateZ(8px) scale(0.98);
+  box-shadow: 0 0 40px rgba(60,242,255,0.6);
+  outline: 2px solid #3cf2ff;
 }
 .video-card::after {
   content: ""; position: absolute; inset: 0; border-radius: 18px; z-index: -1;
@@ -555,6 +562,24 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
   60% { width: 75%; }
   100% { width: 100%; }
 }
+
+/* New content badge on Home tab */
+.tab-new-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #ff4444; color: #fff; font-size: 10px; font-weight: 700;
+  border-radius: 999px; min-width: 18px; height: 18px; padding: 0 5px;
+  margin-left: 5px; vertical-align: middle;
+  animation: badgePulse 1.8s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255,68,68,0.8);
+}
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(255,68,68,0.8); }
+  50% { transform: scale(1.15); box-shadow: 0 0 16px rgba(255,68,68,1); }
+}
+#homeTab.has-new-content {
+  border-color: #ff4444;
+  box-shadow: 0 0 18px rgba(255,68,68,0.6);
+}
 </style>
 </head>
 <body>
@@ -612,8 +637,9 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
       <div style="font-size:10px; opacity:0.65; margin-bottom:12px; line-height:1.4;">Reads your liked videos, playlists, subscriptions and activity to build a taste profile.</div>
       <div id="syncStatus" style="font-size:10px; color:rgba(60,242,255,0.9); min-height:14px; margin-bottom:10px;"></div>
       <div id="syncProgress" style="width:100%; height:3px; background:rgba(60,242,255,0.12); border-radius:3px; margin-bottom:12px; display:none;"><div id="syncProgressFill" style="height:100%; width:0%; background:linear-gradient(90deg,rgba(60,242,255,0.9),rgba(0,255,180,0.7)); border-radius:3px; transition:width 0.4s ease;"></div></div>
-      <div style="display:flex; gap:8px;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button id="syncStartBtn" class="topbar-btn" style="flex:1; font-size:11px; padding:6px 10px; min-height:32px;">Start Sync</button>
+        <button id="syncClearBtn" class="topbar-btn" style="flex:1; font-size:11px; padding:6px 10px; min-height:32px; background:radial-gradient(circle at 0% 0%,rgba(255,80,80,0.2),rgba(10,12,20,0.9));">🗑 Clear & Rebuild</button>
         <button id="syncCloseBtn" class="topbar-btn" style="flex:0 0 auto; font-size:11px; padding:6px 10px; min-height:32px;">Close</button>
       </div>
     </div>
@@ -636,14 +662,14 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
       <button id="searchGo">Go</button>
     </div>
     <div id="keyboard">
-      <div class="keyboard-row">
-        <div class="key-btn" data-key="Q">Q</div><div class="key-btn" data-key="W">W</div><div class="key-btn" data-key="E">E</div><div class="key-btn" data-key="R">R</div><div class="key-btn" data-key="T">T</div><div class="key-btn" data-key="Y">Y</div><div class="key-btn" data-key="U">U</div><div class="key-btn" data-key="I">I</div><div class="key-btn" data-key="O">O</div><div class="key-btn" data-key="P">P</div>
+      <div class="keyboard-row" id="kbRow0">
+        <div class="key-btn focusable" tabindex="0" data-key="Q">Q</div><div class="key-btn focusable" tabindex="0" data-key="W">W</div><div class="key-btn focusable" tabindex="0" data-key="E">E</div><div class="key-btn focusable" tabindex="0" data-key="R">R</div><div class="key-btn focusable" tabindex="0" data-key="T">T</div><div class="key-btn focusable" tabindex="0" data-key="Y">Y</div><div class="key-btn focusable" tabindex="0" data-key="U">U</div><div class="key-btn focusable" tabindex="0" data-key="I">I</div><div class="key-btn focusable" tabindex="0" data-key="O">O</div><div class="key-btn focusable" tabindex="0" data-key="P">P</div>
       </div>
-      <div class="keyboard-row">
-        <div class="key-btn" data-key="A">A</div><div class="key-btn" data-key="S">S</div><div class="key-btn" data-key="D">D</div><div class="key-btn" data-key="F">F</div><div class="key-btn" data-key="G">G</div><div class="key-btn" data-key="H">H</div><div class="key-btn" data-key="J">J</div><div class="key-btn" data-key="K">K</div><div class="key-btn" data-key="L">L</div>
+      <div class="keyboard-row" id="kbRow1">
+        <div class="key-btn focusable" tabindex="0" data-key="A">A</div><div class="key-btn focusable" tabindex="0" data-key="S">S</div><div class="key-btn focusable" tabindex="0" data-key="D">D</div><div class="key-btn focusable" tabindex="0" data-key="F">F</div><div class="key-btn focusable" tabindex="0" data-key="G">G</div><div class="key-btn focusable" tabindex="0" data-key="H">H</div><div class="key-btn focusable" tabindex="0" data-key="J">J</div><div class="key-btn focusable" tabindex="0" data-key="K">K</div><div class="key-btn focusable" tabindex="0" data-key="L">L</div>
       </div>
-      <div class="keyboard-row">
-        <div class="key-btn" data-key="Z">Z</div><div class="key-btn" data-key="X">X</div><div class="key-btn" data-key="C">C</div><div class="key-btn" data-key="V">V</div><div class="key-btn" data-key="B">B</div><div class="key-btn" data-key="N">N</div><div class="key-btn" data-key="M">M</div>
+      <div class="keyboard-row" id="kbRow2">
+        <div class="key-btn focusable" tabindex="0" data-key="Z">Z</div><div class="key-btn focusable" tabindex="0" data-key="X">X</div><div class="key-btn focusable" tabindex="0" data-key="C">C</div><div class="key-btn focusable" tabindex="0" data-key="V">V</div><div class="key-btn focusable" tabindex="0" data-key="B">B</div><div class="key-btn focusable" tabindex="0" data-key="N">N</div><div class="key-btn focusable" tabindex="0" data-key="M">M</div>
       </div>
       <div class="keyboard-row">
         <div class="key-btn" data-key="123" id="numToggleBtn">123</div>
@@ -730,7 +756,7 @@ body.fullscreen-active.ui-hidden .exit-full-btn { opacity: 0 !important; pointer
 
 <script>
 const API_KEYS = [
-   "AIzaSyCc97ABTRJOh5zcr9ATm67P9WKwTqmIvQU",
+  "AIzaSyCc97ABTRJOh5zcr9ATm67P9WKwTqmIvQU",
   "AIzaSyC1pCcPHsL11vrxRuUNoeN3urdwt3qjilM",
   "AIzaSyASan345SwgI0lcXKNK-DSW9-lhm4NqqGs",
   "AIzaSyAxz8JgYT02TS12fcdIYVNqmhT_0OwA48Q",
@@ -852,6 +878,37 @@ function saveToHistory(video) {
   if (historyList.length > 500) historyList = historyList.slice(0, 500);
   localStorage.setItem("historyList", JSON.stringify(historyList));
   updateTasteProfile(video);
+}
+
+function recordWatchDuration(videoId, watchedSecs, totalSecs) {
+  if (!videoId || !watchedSecs || watchedSecs < 5) return;
+  try {
+    const profile = getTasteProfile();
+    const pct = totalSecs > 0 ? watchedSecs / totalSecs : 0;
+    const hist = JSON.parse(localStorage.getItem("historyList") || "[]");
+    const entry = hist.find(h => (h.id?.videoId || h.id) === videoId);
+    if (!entry) return;
+    const snippet = entry.snippet || {};
+    const channelId = snippet.channelId || "";
+    const title = snippet.title || "";
+    let weight = pct >= 0.8 ? 3 : pct >= 0.4 ? 2 : pct >= 0.1 ? 1 : -1;
+    if (channelId) {
+      if (weight < 0) profile.channels[channelId] = Math.max(0, (profile.channels[channelId] || 1) + weight);
+      else profile.channels[channelId] = (profile.channels[channelId] || 0) + weight;
+    }
+    if (weight > 0 && title) {
+      const words = title.toLowerCase().replace(/[^a-z0-9 ]/g, "").split(" ").filter(w => w.length > 3);
+      words.forEach(w => { profile.keywords[w] = (profile.keywords[w] || 0) + weight; });
+      for (let i = 0; i < words.length - 1; i++) {
+        const bi = words[i] + " " + words[i+1];
+        profile.bigrams = profile.bigrams || {};
+        profile.bigrams[bi] = (profile.bigrams[bi] || 0) + weight;
+      }
+    }
+    profile.watchDurations = profile.watchDurations || {};
+    profile.watchDurations[videoId] = { watchedSecs, totalSecs, pct: Math.round(pct * 100), ts: Date.now() };
+    localStorage.setItem("tasteProfile", JSON.stringify(profile));
+  } catch(e) {}
 }
 
 function saveResumePosition(videoId, seconds) {
@@ -1026,6 +1083,8 @@ function getRecentSearches(n) { return ((getTasteProfile().searchHistory || []).
 ----------------------------------------------------------- */
 async function fetchPersonalizedFeed() {
   const token = await getValidToken();
+  const profile5 = getTasteProfile();
+  const watchedChannelIds = new Set(Object.keys(profile5.channels || {}));
   const watchedIds = new Set((getTasteProfile().recentVideoIds || []).slice(0, 50));
   let shownHistory = []; try { shownHistory = JSON.parse(localStorage.getItem("feedShownIds") || "[]"); } catch(e) {}
   const oneDayAgo = Date.now() - 86400000;
@@ -1116,6 +1175,25 @@ async function fetchPersonalizedFeed() {
   const updTimed = [...newTimed,...shownHistoryParsed].filter(e=>e.ts>oneDayAgo).slice(0,200);
   try { localStorage.setItem("feedShownTimed",JSON.stringify(updTimed)); } catch(e) {}
   try { localStorage.setItem("feedShownIds",JSON.stringify([...newIds,...shownHistory].slice(0,300))); } catch(e) {}
+
+  // ── DISCOVERY: Videos from channels you've never watched ──
+  const topKWd = getTopKeywords(3);
+  const topBId = getTopBigrams(2);
+  if (topKWd.length >= 2 || topBId.length) {
+    const discQ = topBId.length ? topBId[0] : topKWd.slice(0,2).join(" ");
+    try {
+      const since48h = new Date(Date.now() - 172800000).toISOString();
+      const discRes = await fetchYouTube("search", { part: "snippet", type: "video", q: discQ, order: "date", maxResults: 6, publishedAfter: since48h, _: Date.now() });
+      (discRes.items || []).forEach(item => {
+        const chId = item.snippet?.channelId;
+        if (chId && !watchedChannelIds.has(chId)) {
+          item.snippet._isDiscovery = true;
+          feed.push(item);
+        }
+      });
+    } catch(e) {}
+  }
+
   return feed;
 }
 
@@ -1134,6 +1212,14 @@ function hideUIForVideo() {
 }
 
 function showUIWithMiniPlayer() {
+  // Record partial watch when player closes
+  if (currentVideoId && ytPlayer) {
+    try {
+      const watched = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
+      const total = ytPlayer.getDuration ? ytPlayer.getDuration() : 0;
+      if (watched > 5) recordWatchDuration(currentVideoId, watched, total);
+    } catch(e) {}
+  }
   topbarEl.style.display = "flex";
   searchTabEl.style.display = "flex";
   tabsEl.style.display = "flex";
@@ -1311,7 +1397,18 @@ window.onYouTubeIframeAPIReady = function () {
         onStateChange: (e) => {
           if (e.data === YT.PlayerState.PLAYING) playPauseBtn.textContent = "Pause";
           if (e.data === YT.PlayerState.PAUSED)  playPauseBtn.textContent = "Play";
-          if (e.data === YT.PlayerState.ENDED && currentVideoId) clearResumePosition(currentVideoId);
+          if (e.data === YT.PlayerState.ENDED && currentVideoId) {
+            clearResumePosition(currentVideoId);
+            // Record full watch — video completed
+            try {
+              const dur = e.target.getDuration ? e.target.getDuration() : 0;
+              if (dur > 0) recordWatchDuration(currentVideoId, dur, dur);
+            } catch(err) {}
+          }
+        },
+        onError: (e) => {
+          if (e.data === 101 || e.data === 150) showAgeRestrictedOverlay(currentVideoId);
+          else if (e.data === 100) showHUD('Video not available');
         }
       }
     });
@@ -1358,7 +1455,11 @@ function createYTPlayer(videoId, startSeconds) {
         if (e.data === YT.PlayerState.PLAYING) playPauseBtn.textContent = "Pause";
         if (e.data === YT.PlayerState.PAUSED)  playPauseBtn.textContent = "Play";
         if (e.data === YT.PlayerState.ENDED && currentVideoId) clearResumePosition(currentVideoId);
-      }
+        },
+        onError: (e) => {
+          if (e.data === 101 || e.data === 150) showAgeRestrictedOverlay(currentVideoId);
+          else if (e.data === 100) showHUD('Video not available');
+        }
     }
   });
 }
@@ -1416,6 +1517,8 @@ async function loadVideoInfoPanel(videoId, snippet) {
     const ago = timeAgo(v.snippet?.publishedAt || publishedAt);
     document.getElementById("vipStats").textContent = [views && views + " Views", likes && likes + " Likes", ago].filter(Boolean).join("  ·  ");
     document.getElementById("vipLikeCount").textContent = likes || "";
+    // Store raw count for accurate incrementing
+    document.getElementById("vipLikeBtn").dataset.rawCount = stats.likeCount || "0";
   }
 
   // Channel info + avatar
@@ -1428,29 +1531,44 @@ async function loadVideoInfoPanel(videoId, snippet) {
     if (avatarUrl) avatarEl.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
   }
 
-  // Subscribe button
+  // Subscribe button — ALWAYS reset to default first, every single video
   const subBtn = document.getElementById("vipSubscribeBtn");
   let subscribed = false;
-  let subscriptionId = null; // needed to delete (unsubscribe)
+  let subscriptionId = null;
+  subBtn.textContent = "Subscribe";
+  subBtn.style.background = "#f5f7ff";
+  subBtn.style.color = "#000";
+  subBtn.disabled = false;
 
-  // Check if already subscribed on load
-  if (channelId) {
+  // Now check the NEW video's channel — captures channelId for this call only
+  const checkChannelId = channelId;
+  if (checkChannelId) {
     getValidToken().then(async token => {
       if (!token) return;
+      // Guard: if user already tapped a different video before this resolved, abort
+      if (checkChannelId !== channelId) return;
       try {
         const res = await fetch(
-          `https://www.googleapis.com/youtube/v3/subscriptions?part=id&mine=true&forChannelId=${channelId}`,
+          `https://www.googleapis.com/youtube/v3/subscriptions?part=id&mine=true&forChannelId=${checkChannelId}`,
           { headers: { Authorization: "Bearer " + token } }
         );
         const d = await res.json();
+        if (checkChannelId !== channelId) return; // still guard after await
         if (d.items && d.items.length > 0) {
           subscribed = true;
           subscriptionId = d.items[0].id;
           subBtn.textContent = "Subscribed ✓";
           subBtn.style.background = "rgba(60,242,255,0.2)";
           subBtn.style.color = "#3cf2ff";
+        } else {
+          // Explicitly confirm unsubscribed state — don't leave it ambiguous
+          subBtn.textContent = "Subscribe";
+          subBtn.style.background = "#f5f7ff";
+          subBtn.style.color = "#000";
         }
-      } catch(e) {}
+      } catch(e) {
+        // On error, stay in default Subscribe state — never show false positive
+      }
     });
   }
 
@@ -1549,8 +1667,27 @@ async function loadVideoInfoPanel(videoId, snippet) {
     const ok = await setRating(liked ? "like" : "none");
     if (ok) {
       showHUD(liked ? "👍 Liked!" : "Like removed");
+      // Update like count in UI immediately using raw count
+      const likeCountEl = document.getElementById("vipLikeCount");
+      const likeBtnEl = document.getElementById("vipLikeBtn");
+      if (likeCountEl && likeBtnEl) {
+        const rawCount = parseInt(likeBtnEl.dataset.rawCount || "0");
+        const newCount = liked ? rawCount + 1 : Math.max(0, rawCount - 1);
+        likeBtnEl.dataset.rawCount = String(newCount);
+        likeCountEl.textContent = formatViews(newCount);
+      }
+      // Boost taste profile on like
+      if (liked) {
+        try {
+          const profile = getTasteProfile();
+          if (snippet.channelId) profile.channels[snippet.channelId] = (profile.channels[snippet.channelId] || 0) + 5;
+          const words = (snippet.title || "").toLowerCase().replace(/[^a-z0-9 ]/g,"").split(" ").filter(w=>w.length>3);
+          words.forEach(w => { profile.keywords[w] = (profile.keywords[w] || 0) + 5; });
+          if (snippet.categoryId) profile.categories[snippet.categoryId] = (profile.categories[snippet.categoryId] || 0) + 3;
+          localStorage.setItem("tasteProfile", JSON.stringify(profile));
+        } catch(e) {}
+      }
     } else {
-      // Revert on failure
       liked = wasLiked;
       document.getElementById("vipLikeBtn").classList.toggle("active", liked);
       showHUD("Login required to like videos");
@@ -1566,10 +1703,20 @@ async function loadVideoInfoPanel(videoId, snippet) {
     const ok = await setRating(disliked ? "dislike" : "none");
     if (ok) {
       showHUD(disliked ? "👎 Disliked" : "Rating removed");
+      // Reduce taste profile on dislike
+      if (disliked) {
+        try {
+          const profile = getTasteProfile();
+          if (snippet.channelId) profile.channels[snippet.channelId] = Math.max(0, (profile.channels[snippet.channelId] || 1) - 3);
+          const words = (snippet.title || "").toLowerCase().replace(/[^a-z0-9 ]/g,"").split(" ").filter(w=>w.length>3);
+          words.forEach(w => { if (profile.keywords[w]) profile.keywords[w] = Math.max(0, profile.keywords[w] - 3); });
+          localStorage.setItem("tasteProfile", JSON.stringify(profile));
+        } catch(e) {}
+      }
     } else {
-      disliked = wasDisliked;
+      disliked = wasDisliked; liked = false;
       document.getElementById("vipDislikeBtn").classList.toggle("active", disliked);
-      showHUD("Login required to rate videos");
+      showHUD("Login required");
     }
   };
   document.getElementById("vipShareBtn").onclick = () => {
@@ -1720,7 +1867,11 @@ resBtn.addEventListener("click", () => {
         }
         if (e.data === YT.PlayerState.PAUSED) playPauseBtn.textContent = "Play";
         if (e.data === YT.PlayerState.ENDED && currentVideoId) clearResumePosition(currentVideoId);
-      }
+        },
+        onError: (e) => {
+          if (e.data === 101 || e.data === 150) showAgeRestrictedOverlay(currentVideoId);
+          else if (e.data === 100) showHUD('Video not available');
+        }
     }
   });
 });
@@ -1831,20 +1982,52 @@ async function checkIsShort(videoId, snippet) {
     return true;
   }
 
+  // Fast heuristic checks before hitting the API:
+
+  // 1. Title or description contains #shorts
+  if (snippet) {
+    const title = (snippet.title || "").toLowerCase();
+    const desc = (snippet.description || "").toLowerCase();
+    if (title.includes("#shorts") || title.includes("#short") || desc.includes("#shorts")) {
+      _shortsCache[videoId] = true;
+      return true;
+    }
+  }
+
+  // 2. Thumbnail is portrait (vertical) aspect ratio — strong shorts signal
+  // YouTube Shorts thumbnails use /hqdefault.jpg which is 16:9 BUT
+  // the maxresdefault for shorts is often 9:16 (720x1280)
+  // We can check via the thumbnail URL pattern for shorts
+  if (snippet && snippet.thumbnails) {
+    const thumb = snippet.thumbnails?.maxres || snippet.thumbnails?.standard || snippet.thumbnails?.high;
+    if (thumb && thumb.width && thumb.height && thumb.height > thumb.width) {
+      _shortsCache[videoId] = true;
+      return true;
+    }
+  }
+
+  // 3. API duration check (most reliable)
   try {
     const details = await fetchContentDetails([videoId]);
     const cd = details[videoId];
     if (cd) {
       const secs = parseDuration(cd.duration);
-      const result = secs !== null && secs > 0 && secs <= 180; // YouTube Shorts: up to 3 minutes
+      const result = secs !== null && secs > 0 && secs <= 180;
       _shortsCache[videoId] = result;
       return result;
     }
-    // Not in API response — not a short
     _shortsCache[videoId] = false;
     return false;
   } catch(e) {
-    // API failed — safe default
+    // API failed — use title heuristic as last resort
+    if (snippet) {
+      const title = (snippet.title || "").toLowerCase();
+      // Very short titles with common shorts patterns
+      if (title.includes("short") || title.includes("#")) {
+        _shortsCache[videoId] = true;
+        return true;
+      }
+    }
     _shortsCache[videoId] = false;
     return false;
   }
@@ -1871,10 +2054,8 @@ async function preCacheShorts(items) {
       const cd = details[id];
       if (cd) {
         const secs = parseDuration(cd.duration);
-        // Only ≤60s videos are Shorts — never guess, never false-positive
-        _shortsCache[id] = secs !== null && secs > 0 && secs <= 180; // YouTube Shorts: up to 3 minutes
+        _shortsCache[id] = secs !== null && secs > 0 && secs <= 164;
       } else {
-        // Not in API response = not a short
         _shortsCache[id] = false;
       }
     });
@@ -1999,34 +2180,37 @@ function setActiveTab(tab) {
 /* CHANGE: home tab uses personalized feed when history exists; seeds nextPageToken for infinite scroll */
 homeTab.addEventListener("click", async () => {
   nextPageToken = null; setActiveTab("home"); showSkeletons(6);
+  _pollClearBadge();
+
+  // Grab hub new videos BEFORE feed loads
+  let hubVideos = [];
+  try {
+    const hubRaw = localStorage.getItem("hubNewVideos");
+    if (hubRaw) {
+      hubVideos = JSON.parse(hubRaw) || [];
+      localStorage.removeItem("hubNewVideos");
+    }
+  } catch(e) {}
+
   const token = await getValidToken();
   const since48h = new Date(Date.now() - 172800000).toISOString();
   const cat = freshCategory();
   if (token && hasEnoughHistory()) {
-    // Logged in: personalized feed first, then supplement with fresh + trending
     const items = await fetchPersonalizedFeed();
     renderFeed(items);
     showHUD("For You ✦");
     const seed = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: cat, maxResults: 20, _: Date.now() });
     nextPageToken = seed.nextPageToken || null;
   } else {
-    // Not logged in: use local taste profile (watch history, keywords, searches) + fresh + popular
-    const seen = new Set();
-    const allItems = [];
+    const seen = new Set(); const allItems = [];
     function addU(items) { (items||[]).forEach(item => { const id = item.id?.videoId||item.id; if(!id||seen.has(id)) return; seen.add(id); allItems.push(item); }); }
-    const topKW = getTopKeywords(4);
-    const topBI = getTopBigrams(2);
-    const topCats = getTopCategories(2);
-    const recentS = getRecentSearches(2);
+    const topKW = getTopKeywords(4), topBI = getTopBigrams(2), topCats = getTopCategories(2), recentS = getRecentSearches(2);
     const myCatId = topCats.length ? topCats[0] : cat;
     const fetches = [];
-    // 1. Fresh videos from your taste keywords (order:date)
     if (topKW.length >= 2) fetches.push(fetchYouTube("search", { part: "snippet", type: "video", q: topKW.slice(0,3).join(" "), order: "date", maxResults: 10, publishedAfter: since48h, _: Date.now() }));
     if (topBI.length) fetches.push(fetchYouTube("search", { part: "snippet", type: "video", q: topBI[0], order: "date", maxResults: 8, publishedAfter: since48h, _: Date.now() }));
     if (recentS.length) fetches.push(fetchYouTube("search", { part: "snippet", type: "video", q: recentS[0], order: "date", maxResults: 8, publishedAfter: since48h, _: Date.now() }));
-    // 2. Fresh general videos in your top category (order:date)
     fetches.push(fetchYouTube("search", { part: "snippet", type: "video", order: "date", regionCode: "US", videoCategoryId: myCatId, maxResults: 10, publishedAfter: since48h, _: Date.now() }));
-    // 3. mostPopular in your category fills in after
     fetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", videoCategoryId: myCatId, maxResults: 12, _: Date.now() }));
     fetches.push(fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 10, _: Date.now() }));
     const results = await Promise.allSettled(fetches);
@@ -2040,6 +2224,11 @@ homeTab.addEventListener("click", async () => {
       const fallback = await fetchYouTube("videos", { part: "snippet,statistics", chart: "mostPopular", regionCode: "US", maxResults: 20, _: Date.now() });
       nextPageToken = fallback.nextPageToken || null; renderFeed(fallback.items || []); showHUD("Home");
     }
+  }
+
+  // Inject hub new videos at TOP after feed finishes loading
+  if (hubVideos.length) {
+    _injectHubVideos(hubVideos);
   }
 });
 
@@ -2455,6 +2644,8 @@ subsTab.addEventListener("click", async () => {
 
 const OAUTH_CLIENT_ID = "153049037088-10qnschnsie4mqpdsdscd0uk2auqogdt.apps.googleusercontent.com";
 const OAUTH_CLIENT_SECRET = "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";
+const HUB_WORKER_URL = "https://viewtube-hub.mediastarr86.workers.dev";
+const HUB_SECRET = "viewtube-hub-secret-2024";
 
 startLoginBtn.addEventListener("click", () => startDeviceLogin("subs"));
 document.getElementById("reloginBtn").addEventListener("click", () => {
@@ -2876,6 +3067,41 @@ searchTabEl.addEventListener("click", openKeyboard);
 searchBack.addEventListener("click", closeKeyboard);
 searchGo.addEventListener("click", () => { const q = searchInput.value.trim() || "music"; triggerSearch(q); });
 searchInput.addEventListener("input", async () => { const q = searchInput.value.trim(); showSuggestions(await fetchSuggestions(q)); });
+// Keyboard wrap-around navigation — within same row only
+// P swipe right → Q (wraps to start of same row)
+// L swipe right → A (wraps to start of same row)
+// M swipe right → Z (wraps to start of same row)
+// Q swipe left → P (wraps to end of same row)
+// A swipe left → L (wraps to end of same row)
+// Z swipe left → M (wraps to end of same row)
+document.getElementById("keyboard").addEventListener("keydown", (e) => {
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  const focused = document.activeElement;
+  if (!focused || !focused.classList.contains("key-btn")) return;
+
+  // Get the row this key belongs to
+  const row = focused.closest(".keyboard-row");
+  if (!row) return;
+
+  // Get all visible keys in THIS row only
+  const rowKeys = Array.from(row.querySelectorAll(".key-btn")).filter(k => k.offsetParent !== null);
+  const idx = rowKeys.indexOf(focused);
+  if (idx === -1) return;
+
+  let nextIdx;
+  if (e.key === "ArrowRight") {
+    // At last key of row? wrap to first key of same row
+    nextIdx = idx < rowKeys.length - 1 ? idx + 1 : 0;
+  } else {
+    // At first key of row? wrap to last key of same row
+    nextIdx = idx > 0 ? idx - 1 : rowKeys.length - 1;
+  }
+
+  e.preventDefault();
+  rowKeys[nextIdx].focus();
+  rowKeys[nextIdx].scrollIntoView({ block: "nearest", behavior: "smooth" });
+});
+
 keyboardEl.addEventListener("click", async (e) => {
   const btn = e.target.closest(".key-btn"); if (!btn) return;
   const key = btn.dataset.key;
@@ -3292,6 +3518,144 @@ const syncProgressFill = document.getElementById("syncProgressFill");
 const syncStartBtn = document.getElementById("syncStartBtn");
 const syncCloseBtn = document.getElementById("syncCloseBtn");
 syncBtn.onclick=function(){syncOverlay.style.display="flex";syncStatus.textContent="";syncProgressFill.style.width="0%";syncProgress.style.display="none";syncStartBtn.textContent="Start Sync";syncStartBtn.disabled=false;};
+
+document.getElementById("syncClearBtn").onclick = async function() {
+  const token = await getValidToken();
+  if (!token) { syncStatus.textContent = "Login required — go to Subscriptions tab first."; return; }
+
+  syncStatus.textContent = "Clearing taste profile…";
+  syncProgress.style.display = "block";
+  syncProgressFill.style.width = "10%";
+
+  // Clear existing taste profile completely
+  localStorage.removeItem("tasteProfile");
+  localStorage.removeItem("feedShownTimed");
+  localStorage.removeItem("feedShownIds");
+  localStorage.removeItem("trendingShownTimed");
+
+  syncStatus.textContent = "Fetching your actual YouTube subscriptions…";
+  syncProgressFill.style.width = "30%";
+
+  try {
+    // Fetch ALL subscriptions — paginate through all pages
+    let items = [];
+    let pageToken = "";
+    let page = 0;
+    while (true) {
+      const pageUrl = "https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&maxResults=50" + (pageToken ? "&pageToken=" + pageToken : "");
+      const res = await fetch(pageUrl, { headers: { Authorization: "Bearer " + token } });
+      const data = await res.json();
+      if (data.error) break;
+      items = items.concat(data.items || []);
+      syncStatus.textContent = "Fetching subscriptions… " + items.length + " so far";
+      if (!data.nextPageToken) break;
+      pageToken = data.nextPageToken;
+      page++;
+      if (page > 10) break; // safety cap at 500 subscriptions
+    }
+
+    if (!items.length) {
+      syncStatus.textContent = "No subscriptions found — make sure you're logged in.";
+      return;
+    }
+
+    syncProgressFill.style.width = "60%";
+    syncStatus.textContent = "Building taste profile from " + items.length + " subscriptions…";
+
+    // Build fresh profile from subscriptions only
+    const profile = { channels: {}, categories: {}, keywords: {}, bigrams: {}, recentVideoIds: [], syncedAt: Date.now() };
+    const extract = buildExtract(profile);
+
+    // Get channel uploads to learn taste from actual subscribed content
+    const channelIds = items.map(s => { extract(null, s.snippet.resourceId.channelId, s.snippet.title, 2); return s.snippet.resourceId.channelId; });
+
+    const chRes = await fetchYouTube("channels", { part: "contentDetails", id: channelIds.slice(0, 50).join(",") });
+    const uploadPlaylists = (chRes.items || []).map(ch => ch.contentDetails?.relatedPlaylists?.uploads).filter(Boolean);
+
+    syncProgressFill.style.width = "75%";
+
+    // Sample recent uploads from each subscribed channel for keyword extraction
+    for (const plId of uploadPlaylists.sort(() => Math.random() - 0.5).slice(0, 15)) {
+      try {
+        const ur = await fetchYouTube("playlistItems", { part: "snippet", playlistId: plId, maxResults: 5, _: Date.now() });
+        (ur.items || []).forEach(it => extract(it.snippet?.title, null, null, 1));
+      } catch(e) {}
+    }
+
+    syncProgressFill.style.width = "90%";
+
+    // Save clean profile
+    localStorage.setItem("tasteProfile", JSON.stringify(profile));
+
+    // Register ONLY subscribed channels with Worker
+    // The Worker will replace the full channel list, removing old ones like Crunchyroll
+    try {
+      const workerRes = await fetch(HUB_WORKER_URL + "/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-ViewTube-Secret": HUB_SECRET },
+        body: JSON.stringify({ channelIds: channelIds.slice(0, 100), replaceAll: true })
+      });
+      const d = await workerRes.json();
+      syncProgressFill.style.width = "100%";
+      syncStatus.textContent = "✓ Done — " + channelIds.length + " subscriptions · " + (d.subscribed || 0) + " registered for real-time alerts";
+    } catch(e) {
+      syncProgressFill.style.width = "100%";
+      syncStatus.textContent = "✓ Profile rebuilt from " + channelIds.length + " subscriptions";
+    }
+    // Also clear any cached new videos from old channels
+    localStorage.removeItem("hubNewVideos");
+    _pollKnownIds = null;
+    _pollBadgeCount = 0;
+    _pollClearBadge();
+
+    // Catch-up: fetch recent uploads from subscribed channels
+    // that may have uploaded before the Worker was set up
+    syncStatus.textContent = "Catching up on recent uploads…";
+    try {
+      const since24h = new Date(Date.now() - 86400000).toISOString();
+      const catchUpItems = [];
+      const catchUpSeen = new Set();
+      const catchUpFetches = channelIds.slice(0, 35).map(cid =>
+        fetchYouTube("search", {
+          part: "snippet", channelId: cid, type: "video",
+          order: "date", maxResults: 3, publishedAfter: since24h, _: Date.now()
+        })
+      );
+      const catchUpResults = await Promise.allSettled(catchUpFetches);
+      catchUpResults.forEach(r => {
+        if (r.status === "fulfilled") {
+          (r.value.items || []).forEach(item => {
+            const id = item.id?.videoId;
+            if (id && !catchUpSeen.has(id)) {
+              catchUpSeen.add(id);
+              catchUpItems.push({
+                videoId: id,
+                channelId: item.snippet?.channelId || "",
+                title: item.snippet?.title || "",
+                publishedAt: item.snippet?.publishedAt || "",
+                receivedAt: Date.now()
+              });
+            }
+          });
+        }
+      });
+      if (catchUpItems.length) {
+        localStorage.setItem("hubNewVideos", JSON.stringify(catchUpItems));
+        _pollKnownIds = new Set(catchUpItems.map(v => v.videoId));
+        _pollSetBadge(catchUpItems.length);
+        syncStatus.textContent = "✓ Done — found " + catchUpItems.length + " recent video" + (catchUpItems.length > 1 ? "s" : "") + " from your subscriptions";
+      } else {
+        syncStatus.textContent = "✓ Done — all caught up. New uploads will appear automatically.";
+      }
+    } catch(e) {}
+
+    showHUD("Taste profile rebuilt ✦");
+    setTimeout(() => { syncOverlay.style.display = "none"; homeTab.click(); }, 2500);
+
+  } catch(e) {
+    syncStatus.textContent = "Error: " + (e.message || "check connection");
+  }
+};
 syncCloseBtn.onclick=function(){syncOverlay.style.display="none";};
 syncOverlay.onclick=function(e){if(e.target===syncOverlay)syncOverlay.style.display="none";};
 syncBox.onclick=function(e){e.stopPropagation();};
@@ -3324,6 +3688,23 @@ syncStartBtn.onclick=async function(){
   // Clear feed dedup so synced content loads fresh on Home
   localStorage.removeItem("feedShownTimed"); localStorage.removeItem("feedShownIds");
   sp(100,"✓ Sync complete — "+total+" signals from your account");
+
+  // Register channels with Worker for real-time push notifications
+  try {
+    const channelIds = Object.keys(profile.channels || {});
+    if (channelIds.length > 0) {
+      const workerRes = await fetch(HUB_WORKER_URL + "/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-ViewTube-Secret": HUB_SECRET },
+        body: JSON.stringify({ channelIds: channelIds.slice(0, 100) })
+      });
+      const workerData = await workerRes.json();
+      if (workerData.subscribed > 0) {
+        sp(100, "✓ Sync complete — "+total+" signals · "+workerData.subscribed+" channels registered for real-time alerts ✦");
+      }
+    }
+  } catch(e) {}
+
   syncStartBtn.textContent="Sync Again";syncStartBtn.disabled=false;showHUD("YouTube synced ✦");
   setTimeout(()=>{syncOverlay.style.display="none";homeTab.click();},1500);
 };
@@ -3338,6 +3719,24 @@ async function silentSync(token){
   try{const ar=await fetch("https://www.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&mine=true&maxResults=50",{headers:{Authorization:"Bearer "+token}});const ad=await ar.json();(ad.items||[]).forEach(it=>{const s=it.snippet||{};extract(s.title,s.channelId,s.channelTitle,2);const vid=it.contentDetails?.upload?.videoId;if(vid&&!profile.recentVideoIds.includes(vid))profile.recentVideoIds.push(vid);});}catch(e){}
   profile.recentVideoIds=profile.recentVideoIds.slice(0,50);profile.syncedAt=Date.now();
   localStorage.setItem("tasteProfile",JSON.stringify(profile));
+
+  // Send channel IDs to Worker for PubSubHubbub subscriptions
+  // This is automatic — no user action needed
+  try {
+    const channelIds = Object.keys(profile.channels || {});
+    if (channelIds.length > 0) {
+      fetch(HUB_WORKER_URL + "/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-ViewTube-Secret": HUB_SECRET
+        },
+        body: JSON.stringify({ channelIds: channelIds.slice(0, 100) })
+      }).then(r => r.json()).then(d => {
+        if (d.subscribed > 0) console.log("Hub: subscribed", d.subscribed, "channels for real-time notifications");
+      }).catch(() => {});
+    }
+  } catch(e) {}
 }
 
 
@@ -3404,6 +3803,216 @@ async function triggerReAuthFlow() {
   }
 })();
 
+
+/* ================================================================
+   SMART BACKGROUND POLLING — checks for new subscription uploads
+   every 5-15 minutes (randomized to avoid quota spikes)
+   Shows badge on Home tab when new videos found
+================================================================ */
+let _pollKnownIds = null; // null = not initialized yet
+let _pollBadgeCount = 0;
+let _pollTimer = null;
+let _pollLastCheck = null; // timestamp of last successful poll
+
+function _pollSetBadge(count) {
+  // Cap at 20 — more than that is noise not signal
+  _pollBadgeCount = Math.min(count, 20);
+  const btn = document.getElementById("homeTab");
+  if (!btn) return;
+  const existing = btn.querySelector(".tab-new-badge");
+  if (existing) existing.remove();
+  if (_pollBadgeCount > 0) {
+    btn.classList.add("has-new-content");
+    const badge = document.createElement("span");
+    badge.className = "tab-new-badge";
+    badge.textContent = _pollBadgeCount;
+    btn.appendChild(badge);
+  } else {
+    btn.classList.remove("has-new-content");
+  }
+}
+
+function _pollClearBadge() {
+  _pollSetBadge(0);
+}
+
+async function _pollCheckNewContent() {
+  try {
+    const since = _pollLastCheck || (Date.now() - 86400000);
+    const since48h = new Date(Date.now() - 172800000).toISOString();
+    const allNew = [];
+    if (_pollKnownIds === null) _pollKnownIds = new Set();
+
+    // ── SOURCE 1: Subscriptions via PubSubHubbub Worker (instant, ZERO quota) ──
+    // Runs every poll cycle (5-15 min) — free
+    try {
+      const res = await fetch(HUB_WORKER_URL + "/poll?since=" + since, { headers: { "X-ViewTube-Secret": HUB_SECRET } });
+      if (res.ok) {
+        const data = await res.json();
+        _pollLastCheck = data.serverTime || Date.now();
+        (data.videos || []).forEach(v => {
+          if (!_pollKnownIds.has(v.videoId)) { _pollKnownIds.add(v.videoId); allNew.push({ ...v, source: "subscription" }); }
+        });
+      }
+    } catch(e) {}
+
+    // ── SOURCES 2 & 3: Only run every 30 minutes — costs quota ──
+    const now = Date.now();
+    const lastTasteCheck = parseInt(localStorage.getItem("_pollLastTasteCheck") || "0");
+    const tasteCheckDue = now - lastTasteCheck > 30 * 60 * 1000;
+
+    if (tasteCheckDue) {
+      localStorage.setItem("_pollLastTasteCheck", String(now));
+
+      // ── SOURCE 2: Channels you watch often (taste profile) ──
+      const topCh = getTopChannels(3); // reduced from 5 to 3
+      if (topCh.length) {
+        const chResults = await Promise.allSettled(topCh.map(ch =>
+          fetchYouTube("search", { part: "snippet", channelId: ch.id, type: "video", order: "date", maxResults: 2, publishedAfter: since48h, _: Date.now() })
+        ));
+        chResults.forEach(r => {
+          if (r.status === "fulfilled") (r.value.items || []).forEach(item => {
+            const id = item.id?.videoId;
+            if (id && !_pollKnownIds.has(id)) {
+              _pollKnownIds.add(id);
+              allNew.push({ videoId: id, channelId: item.snippet?.channelId || "", title: item.snippet?.title || "", publishedAt: item.snippet?.publishedAt || "", receivedAt: Date.now(), source: "watched" });
+            }
+          });
+        });
+      }
+
+      // ── SOURCE 3: Top keywords/topics ──
+      const topKW = getTopKeywords(3);
+      const topBI = getTopBigrams(1);
+      if (topKW.length >= 2 || topBI.length) {
+        const q = topBI.length ? topBI[0] : topKW.slice(0, 2).join(" ");
+        try {
+          const kwRes = await fetchYouTube("search", { part: "snippet", type: "video", q, order: "date", maxResults: 4, publishedAfter: since48h, _: Date.now() });
+          (kwRes.items || []).forEach(item => {
+            const id = item.id?.videoId;
+            if (id && !_pollKnownIds.has(id)) {
+              _pollKnownIds.add(id);
+              allNew.push({ videoId: id, channelId: item.snippet?.channelId || "", title: item.snippet?.title || "", publishedAt: item.snippet?.publishedAt || "", receivedAt: Date.now(), source: "topic" });
+            }
+          });
+        } catch(e) {}
+      }
+    }
+
+    if (!allNew.length) return;
+
+    // Store merged for home tab
+    try {
+      const existing = JSON.parse(localStorage.getItem("hubNewVideos") || "[]");
+      const merged = [...allNew, ...existing].filter((v, i, a) => a.findIndex(x => x.videoId === v.videoId) === i).slice(0, 30);
+      localStorage.setItem("hubNewVideos", JSON.stringify(merged));
+    } catch(e) {}
+
+    // Badge + HUD with breakdown
+    _pollSetBadge(_pollBadgeCount + allNew.length);
+    const subCount = allNew.filter(v => v.source === "subscription").length;
+    const watchedCount = allNew.filter(v => v.source === "watched").length;
+    const topicCount = allNew.filter(v => v.source === "topic").length;
+    const parts = [];
+    if (subCount) parts.push(subCount + " from subs");
+    if (watchedCount) parts.push(watchedCount + " from channels you watch");
+    if (topicCount) parts.push(topicCount + " matching your interests");
+    showHUD("🔴 " + _pollBadgeCount + " new — " + parts.join(" · "));
+
+    if (currentTab === "home" && feedEl) _injectHubVideos(allNew);
+
+  } catch(e) {
+    // Silent fail
+  }
+}
+
+async function _injectHubVideos(hubVideos) {
+  if (!hubVideos || !hubVideos.length) return;
+  try {
+    const ids = hubVideos.map(v => v.videoId).join(",");
+    const data = await fetchYouTube("videos", { part: "snippet,statistics", id: ids, _: Date.now() });
+    if (!data.items || !data.items.length) return;
+    const frag = document.createDocumentFragment();
+    data.items.forEach(item => {
+      const snippet = item.snippet || {};
+      const videoId = item.id;
+      // Remove existing card for this video if present
+      const existing = feedEl.querySelector('[data-videoid="' + videoId + '"]');
+      if (existing) existing.remove();
+      const card = document.createElement("div");
+      card.className = "video-card parallax focusable";
+      card.dataset.videoid = videoId;
+      card.style.border = "1px solid rgba(255,68,68,0.7)";
+      card.style.boxShadow = "0 0 14px rgba(255,68,68,0.35)";
+      const thumb = snippet.thumbnails?.medium?.url || "";
+      const ago = timeAgo(snippet.publishedAt);
+      card.innerHTML = '<div class="video-thumb"><img src="' + thumb + '" loading="lazy"></div><div class="video-info"><div class="video-title">' + (snippet.title||"") + '</div><div class="video-channel">' + (snippet.channelTitle||"") + '</div><div class="video-meta" style="color:rgba(255,100,100,0.9);">🔴 New · ' + ago + '</div></div>';
+      card.onclick = async () => {
+        const short = await checkIsShort(videoId, snippet);
+        if (short) openAsShort(videoId, snippet);
+        else { setPlayerVideo(videoId, snippet); showHUD("Playing: " + (snippet.title||"")); }
+      };
+      frag.appendChild(card);
+    });
+    feedEl.insertBefore(frag, feedEl.firstChild);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch(e) {}
+}
+
+function _startPolling() {
+  // Initial poll after 2 minutes (let app settle first)
+  setTimeout(async () => {
+    await _pollCheckNewContent();
+    // Then repeat every 5-15 minutes (randomized)
+    function scheduleNext() {
+      const delay = (5 + Math.floor(Math.random() * 10)) * 60 * 1000; // 5-15 min
+      _pollTimer = setTimeout(async () => {
+        await _pollCheckNewContent();
+        scheduleNext();
+      }, delay);
+    }
+    scheduleNext();
+  }, 2 * 60 * 1000);
+}
+
+
+/* ── Age-restricted / not embeddable video overlay ── */
+function showAgeRestrictedOverlay(videoId) {
+  const container = document.getElementById("playerSection");
+  if (!container) return;
+  // Remove existing overlay if any
+  const existing = document.getElementById("ageRestrictedOverlay");
+  if (existing) existing.remove();
+  const overlay = document.createElement("div");
+  overlay.id = "ageRestrictedOverlay";
+  overlay.style.cssText = "position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(5,6,12,0.96);border-radius:22px;padding:20px;text-align:center;";
+  overlay.innerHTML = '<div style="font-size:28px;">🔞</div>' +
+    '<div style="font-size:13px;font-weight:600;color:#f5f7ff;line-height:1.4;margin-top:4px;">Age-restricted video</div>' +
+    '<div style="font-size:11px;opacity:0.65;line-height:1.5;margin-top:4px;">This video cannot play here.<br>Watch it directly on YouTube.</div>' +
+    '<button id="ageWatchBtn" style="display:inline-block;margin-top:10px;padding:10px 20px;border-radius:999px;background:#ff0000;color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;touch-action:manipulation;">▶ Watch on YouTube</button>' +
+    '<button id="ageCloseBtn" style="margin-top:6px;padding:8px 16px;border-radius:999px;border:1px solid rgba(120,130,160,0.6);background:rgba(10,12,20,0.9);color:#f5f7ff;font-size:12px;cursor:pointer;touch-action:manipulation;">✕ Close</button>';
+  overlay.querySelector('#ageCloseBtn').addEventListener('click', () => { overlay.remove(); document.getElementById('closeMini').click(); });
+  overlay.querySelector('#ageWatchBtn').addEventListener('click', () => {
+    // Try multiple methods — glasses browser blocks window.open and target=_blank
+    const ytUrl = 'https://www.youtube.com/watch?v=' + videoId;
+    try { window.open(ytUrl, '_blank'); } catch(e) {}
+    // Fallback: copy link and show it
+    setTimeout(() => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(ytUrl).then(() => {
+          overlay.querySelector('#ageWatchBtn').textContent = '✓ Link copied — open YouTube';
+        }).catch(() => {
+          overlay.querySelector('#ageWatchBtn').textContent = ytUrl;
+        });
+      } else {
+        overlay.querySelector('#ageWatchBtn').textContent = 'youtube.com/watch?v=' + videoId;
+      }
+    }, 300);
+  });
+  container.appendChild(overlay);
+  showHUD("Age-restricted — open on YouTube");
+}
+
 (async function init() {
   // Dismiss boot splash after loading bar completes
   setTimeout(() => {
@@ -3462,6 +4071,9 @@ async function triggerReAuthFlow() {
   // Silent background sync every 6 hours
   const tkn = await getValidToken();
   if (tkn) { const p = getTasteProfile(); if (Date.now() - (p.syncedAt||0) > 7200000) { silentSync(tkn).then(()=>showHUD("Feed updated ✦")).catch(()=>{}); } }
+
+  // Start background polling for new content
+  _startPolling();
 
   // Proactive token refresh every 55 minutes — keeps session alive indefinitely
   // Access tokens expire in 60 min; this refreshes before they expire
